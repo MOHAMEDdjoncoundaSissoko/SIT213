@@ -1,5 +1,4 @@
 package destinations;
-
 import information.*;
 
 

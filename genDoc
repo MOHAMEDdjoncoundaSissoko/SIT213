@@ -1,0 +1,8 @@
+#!/bin/bash
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+mkdir -p "$DIR/docs"
+find "$DIR/src" -name "*.java" > /tmp/simulateur_sources_$$.txt
+javadoc -encoding UTF-8 -d "$DIR/docs" -quiet @/tmp/simulateur_sources_$$.txt
+STATUS=$?
+rm -f /tmp/simulateur_sources_$$.txt
+exit $STATUS
