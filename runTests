@@ -1,0 +1,35 @@
+#!/bin/bash
+SIM="./simulateur"
+NB_OK=0; NB_KO=0
+
+check_teb_zero() {
+    local desc="$1"; shift
+    local out; out="$("$SIM" "$@" 2>&1)"
+    if echo "$out" | grep -q "TEB : 0.0"; then
+        echo "[OK]  $desc"; NB_OK=$((NB_OK + 1))
+    else
+        echo "[KO]  $desc"; echo "      sortie : $out"; NB_KO=$((NB_KO + 1))
+    fi
+}
+
+check_error() {
+    local desc="$1"; shift
+    local out; out="$("$SIM" "$@" 2>&1)"
+    if echo "$out" | grep -q "ArgumentsException"; then
+        echo "[OK]  $desc"; NB_OK=$((NB_OK + 1))
+    else
+        echo "[KO]  $desc"; echo "      sortie : $out"; NB_KO=$((NB_KO + 1))
+    fi
+}
+
+echo "=== Autotests simulateur ==="
+check_teb_zero "message aleatoire par defaut (longueur 100)"
+check_teb_zero "message binaire impose de longueur 7"       -mess 0110101
+check_teb_zero "message aleatoire de longueur imposee (20)" -mess 20
+check_teb_zero "TEB nul avec -seed"                         -mess 20 -seed 42
+check_error    "argument -mess invalide"                     -mess abc
+check_error    "option non reconnue"                         -foo
+
+echo
+echo "=== Bilan : $NB_OK OK, $NB_KO KO ==="
+[ "$NB_KO" -eq 0 ]

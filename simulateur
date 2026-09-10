@@ -1,0 +1,10 @@
+#!/bin/sh
+# Lance une simulation. Voir OPTIONS ci-dessous (document "commande unique").
+#
+# SYNOPSIS
+#   simulateur [-mess m] [-s] [-seed v]
+if [ ! -d bin ] || [ -z "$(ls -A bin 2>/dev/null)" ]; then
+    echo "Compilation en cours..."
+    sh compile
+fi
+java -cp bin simulateur.Simulateur "$@"

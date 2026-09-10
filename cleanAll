@@ -1,0 +1,5 @@
+#!/bin/sh
+# Vide les dossiers bin/ et docs/ (contenus générés)
+rm -rf bin docs
+mkdir -p bin docs
+echo "Nettoyage termine."
