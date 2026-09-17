@@ -1,2 +1,4 @@
-bin/
-docs/
+bin/*
+!bin/.gitignore
+docs/*
+!docs/.gitignore
