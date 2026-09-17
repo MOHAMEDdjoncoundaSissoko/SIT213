@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "Bonjour !!!"
+echo "Execution du script !!!"
 java -cp bin simulateur.Simulateur "$@"
-echo "Done"
+
