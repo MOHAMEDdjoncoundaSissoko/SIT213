@@ -1,4 +1,0 @@
-bin/*
-!bin/.gitignore
-docs/*
-!docs/.gitignore
