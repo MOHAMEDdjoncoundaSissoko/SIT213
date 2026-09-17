@@ -1,0 +1,9 @@
+#!/bin/bash
+
+./cleanAll
+
+echo "++++++++++++ Creating deliverable archive ++++++++++++"
+
+tar -czvf Nanda-Ziani-Sissoko-Blombou-Bouaboud.SIT213.Etapeé.tar.gz src bin docs compile genDoc cleanAll simulateur runTests genDeliverable readme
+
+echo "++++++++++++ Done ++++++++++++"
