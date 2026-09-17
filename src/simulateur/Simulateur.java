@@ -218,7 +218,7 @@ public class Simulateur {
         try {
             simulateur = new Simulateur(args);
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             System.exit(1);
         }
 

@@ -1,4 +1,3 @@
 #!/bin/bash
-echo "Début du script"
 
 java -cp bin simulateur.Simulateur "$@"

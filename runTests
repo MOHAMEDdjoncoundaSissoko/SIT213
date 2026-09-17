@@ -44,7 +44,7 @@ run_error_test() {
 
     echo -n "Test $NB_TESTS : $description ... "
 
-    eval "$commande" 2>/dev/null
+    output=$(eval "$commande" 2>/dev/null)
     exit_code=$?
 
     if [ $exit_code -ne 0 ]; then
