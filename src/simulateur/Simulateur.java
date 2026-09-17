@@ -1,3 +1,4 @@
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
 package simulateur;
 
 import destinations.Destination;
@@ -7,222 +8,181 @@ import sources.Source;
 import sources.SourceAleatoire;
 import sources.SourceFixe;
 import transmetteurs.Transmetteur;
+import transmetteurs.TransmetteurAnalogiqueLogique;
+import transmetteurs.TransmetteurAnalogiqueParfait;
+import transmetteurs.TransmetteurLogiqueAnalogique;
 import transmetteurs.TransmetteurParfait;
+import visualisations.SondeAnalogique;
 import visualisations.SondeLogique;
 
-
-/** La classe Simulateur permet de construire et simuler une chaîne de
- * transmission composée d'une Source, d'un nombre variable de
- * Transmetteur(s) et d'une Destination.
- * @author cousin
- * @author prou
- *
- */
 public class Simulateur {
+   private boolean affichage = false;
+   private boolean messageAleatoire = true;
+   private boolean aleatoireAvecGerme = false;
+   private Integer seed = null;
+   private int nbBitsMess = 100;
+   private String messageString = "100";
+   private boolean simulationAnalogique = false;
+   private String forme = "RZ";
+   private int nbEch = 30;
+   private float aMin = 0.0f;
+   private float aMax = 1.0f;
+   private Source<Boolean> source = null;
+   private Transmetteur<Boolean, Boolean> transmetteurLogique = null;
+   private Destination<Boolean> destination = null;
 
-    /** indique si le Simulateur utilise des sondes d'affichage */
-    private boolean affichage = false;
-
-    /** indique si le Simulateur utilise un message généré de manière aléatoire (message imposé sinon) */
-    private boolean messageAleatoire = true;
-
-    /** indique si le Simulateur utilise un germe pour initialiser les générateurs aléatoires */
-    private boolean aleatoireAvecGerme = false;
-
-    /** la valeur de la semence utilisée pour les générateurs aléatoires */
-    private Integer seed = null; // pas de semence par défaut
-
-    /** la longueur du message aléatoire à transmettre si un message n'est pas imposé */
-    private int nbBitsMess = 100;
-
-    /** la chaîne de caractères correspondant à m dans l'argument -mess m */
-    private String messageString = "100";
-
-
-    /** le  composant Source de la chaine de transmission */
-    private Source <Boolean>  source = null;
-
-    /** le  composant Transmetteur parfait logique de la chaine de transmission */
-    private Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
-
-    /** le  composant Destination de la chaine de transmission */
-    private Destination <Boolean>  destination = null;
+   public Simulateur(String[] var1) throws ArgumentsException {
+        this.analyseArguments(var1);
+        if (this.messageAleatoire) {
+            if (this.aleatoireAvecGerme) {
+                this.source = new SourceAleatoire(this.nbBitsMess, this.seed);
+            } else {
+                this.source = new SourceAleatoire(this.nbBitsMess);
+            }
+        } else {
+            this.source = new SourceFixe(this.messageString);
+        }
 
 
-    /** Le constructeur de Simulateur construit une chaîne de
-     * transmission composée d'une Source de Boolean, d'une Destination
-     * de Boolean et de Transmetteur(s) [voir la méthode
-     * analyseArguments]...  <br> Les différents composants de la
-     * chaîne de transmission (Source, Transmetteur(s), Destination,
-     * Sonde(s) de visualisation) sont créés et connectés.
-     * @param args le tableau des différents arguments.
-     *
-     * @throws ArgumentsException si un des arguments est incorrect
-     *
-     */
-    public  Simulateur(String [] args) throws ArgumentsException {
-    	// analyser et récupérer les arguments
-    	analyseArguments(args);
+      // Création commune de la destination
+      this.destination = new DestinationFinale();
 
-    	// création de la source : message imposé ou message aléatoire
-    	if (messageAleatoire) {
-    		if (aleatoireAvecGerme) {
-    			source = new SourceAleatoire(nbBitsMess, seed);
-    		} else {
-    			source = new SourceAleatoire(nbBitsMess);
-    		}
-    	} else {
-    		source = new SourceFixe(messageString);
-    	}
+      if (!this.simulationAnalogique) {
+            // --- CE QUI EXISTE DÉJÀ ---
+            this.transmetteurLogique = new TransmetteurParfait();
+            this.source.connecter(this.transmetteurLogique);
+            this.transmetteurLogique.connecter(this.destination);
+            
+            if (this.affichage) {
+               this.source.connecter(new SondeLogique("Emetteur", 10));
+               this.transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
+            }
+        } else {
+            // --- NOUVEAU : CAS ANALOGIQUE ---
+            TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(this.forme, this.nbEch, this.aMin, this.aMax);
+            TransmetteurAnalogiqueParfait canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
+            TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(this.nbEch, this.aMin, this.aMax);
 
-    	// création du transmetteur parfait et de la destination finale
-    	transmetteurLogique = new TransmetteurParfait();
-    	destination = new DestinationFinale();
+            this.source.connecter(emetteur);
+            emetteur.connecter(canal);
+            canal.connecter(recepteur);
+            recepteur.connecter(this.destination);
 
-    	// connexion de la chaîne : source -> transmetteur -> destination
-    	source.connecter(transmetteurLogique);
-    	transmetteurLogique.connecter(destination);
+            if (this.affichage) {
+               emetteur.connecter(new SondeAnalogique("Signal emis"));
+               canal.connecter(new SondeAnalogique("Signal recu"));
+            }
+        }
+   }
 
-    	// connexion des sondes d'affichage si l'option -s est active
-    	if (affichage) {
-    		source.connecter(new SondeLogique("Emetteur", 10));
-    		transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
-    	}
-    }
+   private void analyseArguments(String[] var1) throws ArgumentsException {
+      for(int var2 = 0; var2 < var1.length; ++var2) {
+         if (var1[var2].matches("-s")) {
+            this.affichage = true;
+         } else if (var1[var2].matches("-seed")) {
+            this.aleatoireAvecGerme = true;
+            ++var2;
 
+            try {
+               this.seed = Integer.valueOf(var1[var2]);
+            } catch (Exception var4) {
+               throw new ArgumentsException("Valeur du parametre -seed  invalide :" + var1[var2]);
+            }
+         } else if (var1[var2].matches("-mess")) {
+            ++var2;
+            this.messageString = var1[var2];
+            if (var1[var2].matches("[0,1]{7,}")) {
+               this.messageAleatoire = false;
+               this.nbBitsMess = var1[var2].length();
+            } else {
+               if (!var1[var2].matches("[0-9]{1,6}")) {
+                  throw new ArgumentsException("Valeur du parametre -mess invalide : " + var1[var2]);
+               }
 
+               this.messageAleatoire = true;
+               this.nbBitsMess = Integer.valueOf(var1[var2]);
+               if (this.nbBitsMess < 1) {
+                  throw new ArgumentsException("Valeur du parametre -mess invalide : " + this.nbBitsMess);
+               }
+            }
+         } else if (var1[var2].matches("-form")) {
+            this.simulationAnalogique = true;
+            ++var2;
+            this.forme = var1[var2];
+         } else if (var1[var2].matches("-nbEch")) {
+            this.simulationAnalogique = true;
+            ++var2;
+            try {
+               this.nbEch = Integer.parseInt(var1[var2]);
+               
+               // AJOUTER CECI :
+               if (this.nbEch < 1) {
+                   throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + this.nbEch + " (doit être > 0)");
+               }
+               
+            } catch (Exception var4) {
+               throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + var1[var2]);
+            }
+         } else if (var1[var2].matches("-ampl")) {
+            this.simulationAnalogique = true;
+            try {
+               ++var2;
+               this.aMin = Float.parseFloat(var1[var2]);
+               ++var2;
+               this.aMax = Float.parseFloat(var1[var2]);
+            } catch (Exception var4) {
+               throw new ArgumentsException("Valeurs du parametre -ampl invalides");
+            }
+         } else {
+            // Si l'option n'est rien de tout ça, c'est une erreur
+            throw new ArgumentsException("Option invalide :" + var1[var2]);
+         }
+      }
+   }
 
-    /** La méthode analyseArguments extrait d'un tableau de chaînes de
-     * caractères les différentes options de la simulation.  <br>Elle met
-     * à jour les attributs correspondants du Simulateur.
-     *
-     * @param args le tableau des différents arguments.
-     * <br>
-     * <br>Les arguments autorisés sont :
-     * <br>
-     * <dl>
-     * <dt> -mess m  </dt><dd> m (String) constitué de 7 ou plus digits à 0 | 1, le message à transmettre</dd>
-     * <dt> -mess m  </dt><dd> m (int) constitué de 1 à 6 digits, le nombre de bits du message "aléatoire" à transmettre</dd>
-     * <dt> -s </dt><dd> pour demander l'utilisation des sondes d'affichage</dd>
-     * <dt> -seed v </dt><dd> v (int) d'initialisation pour les générateurs aléatoires</dd>
-     * </dl>
-     *
-     * @throws ArgumentsException si un des arguments est incorrect.
-     *
-     */
-    private  void analyseArguments(String[] args)  throws  ArgumentsException {
+   public void execute() throws Exception {
+      this.source.emettre();
+   }
 
-    	for (int i=0;i<args.length;i++){ // traiter les arguments 1 par 1
+   public float calculTauxErreurBinaire() {
+      Information var1 = this.source.getInformationEmise();
+      Information var2 = this.destination.getInformationRecue();
+      int var3 = var1.nbElements();
+      int var4 = 0;
 
-    		if (args[i].matches("-s")){
-    			affichage = true;
-    		}
+      for(int var5 = 0; var5 < var3; ++var5) {
+         if (!((Boolean)var1.iemeElement(var5)).equals(var2.iemeElement(var5))) {
+            ++var4;
+         }
+      }
 
-    		else if (args[i].matches("-seed")) {
-    			aleatoireAvecGerme = true;
-    			i++;
-    			// traiter la valeur associee
-    			try {
-    				seed = Integer.valueOf(args[i]);
-    			}
-    			catch (Exception e) {
-    				throw new ArgumentsException("Valeur du parametre -seed  invalide :" + args[i]);
-    			}
-    		}
+      return (float)var4 / (float)var3;
+   }
 
-    		else if (args[i].matches("-mess")){
-    			i++;
-    			// traiter la valeur associee
-    			messageString = args[i];
-    			if (args[i].matches("[0,1]{7,}")) { // au moins 7 digits
-    				messageAleatoire = false;
-    				nbBitsMess = args[i].length();
-    			}
-    			else if (args[i].matches("[0-9]{1,6}")) { // de 1 à 6 chiffres
-    				messageAleatoire = true;
-    				nbBitsMess = Integer.valueOf(args[i]);
-    				if (nbBitsMess < 1)
-    					throw new ArgumentsException ("Valeur du parametre -mess invalide : " + nbBitsMess);
-    			}
-    			else
-    				throw new ArgumentsException("Valeur du parametre -mess invalide : " + args[i]);
-    		}
+   public static void main(String[] var0) {
+      Simulateur var1 = null;
 
-    		//TODO : ajouter ci-après le traitement des nouvelles options
+      try {
+         var1 = new Simulateur(var0);
+      } catch (Exception var4) {
+         System.out.println(var4);
+         System.exit(1);
+      }
 
-    		else throw new ArgumentsException("Option invalide :"+ args[i]);
-    	}
+      try {
+         var1.execute();
+         String var2 = "java  Simulateur  ";
 
-    }
+         for(int var3 = 0; var3 < var0.length; ++var3) {
+            var2 = var2 + var0[var3] + "  ";
+         }
 
+         System.out.println(var2 + "  =>   TEB : " + var1.calculTauxErreurBinaire());
+      } catch (Exception var5) {
+         System.out.println(var5);
+         var5.printStackTrace();
+         System.exit(-2);
+      }
 
-
-    /** La méthode execute effectue un envoi de message par la source
-     * de la chaîne de transmission du Simulateur.
-     *
-     * @throws Exception si un problème survient lors de l'exécution
-     *
-     */
-    public void execute() throws Exception {
-
-    	source.emettre();
-
-    }
-
-
-
-    /** La méthode qui calcule le taux d'erreur binaire en comparant
-     * les bits du message émis avec ceux du message reçu.
-     *
-     * @return  La valeur du Taux dErreur Binaire.
-     */
-    public float  calculTauxErreurBinaire() {
-
-    	Information<Boolean> emis = source.getInformationEmise();
-    	Information<Boolean> recu = destination.getInformationRecue();
-
-    	int nbBits = emis.nbElements();
-    	int erreurs = 0;
-    	for (int i = 0; i < nbBits; i++) {
-    		if (!emis.iemeElement(i).equals(recu.iemeElement(i))) {
-    			erreurs++;
-    		}
-    	}
-    	return (float) erreurs / (float) nbBits;
-    }
-
-
-
-
-    /** La fonction main instancie un Simulateur à l'aide des
-     *  arguments paramètres et affiche le résultat de l'exécution
-     *  d'une transmission.
-     *  @param args les différents arguments qui serviront à l'instanciation du Simulateur.
-     */
-    public static void main(String [] args) {
-
-    	Simulateur simulateur = null;
-
-    	try {
-    		simulateur = new Simulateur(args);
-    	}
-    	catch (Exception e) {
-    		System.out.println(e);
-    		System.exit(-1);
-    	}
-
-    	try {
-    		simulateur.execute();
-    		String s = "java  Simulateur  ";
-    		for (int i = 0; i < args.length; i++) { //copier tous les paramètres de simulation
-    			s += args[i] + "  ";
-    		}
-    		System.out.println(s + "  =>   TEB : " + simulateur.calculTauxErreurBinaire());
-    	}
-    	catch (Exception e) {
-    		System.out.println(e);
-    		e.printStackTrace();
-    		System.exit(-2);
-    	}
-    }
+   }
 }
