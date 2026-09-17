@@ -14,34 +14,44 @@ NB_TESTS=0
 NB_OK=0
 NB_KO=0
 
-# Fonction pour exécuter un test
-# $1 = Description du test
-# $2 = Commande à lancer
-# $3 = Code de sortie attendu (0 par défaut)
+# Fonction pour les tests normaux (doit reussir et afficher TEB)
+# $1 = Description, $2 = Commande
 run_test() {
     NB_TESTS=$((NB_TESTS + 1))
     local description="$1"
     local commande="$2"
-    local expected_exit=${3:-0}
 
     echo -n "Test $NB_TESTS : $description ... "
 
-    # On exécute la commande, on redirige stdout et stderr vers /dev/null pour ne pas polluer l'affichage
-    # Mais on pourrait vouloir vérifier le TEB, donc on garde stdout mais pas stderr des simulations
     output=$(eval "$commande" 2>/dev/null)
     exit_code=$?
 
-    if [ $exit_code -eq $expected_exit ]; then
-        # Optionnel : vérifier si le TEB est présent dans la sortie pour les cas réussis
-        if [[ $exit_code -eq 0 && "$output" != *"TEB"* ]]; then
-            echo -e "${ROUGE}KO (Pas de TEB dans la sortie)${NEUTRE}"
-            NB_KO=$((NB_KO + 1))
-        else
-            echo -e "${VERT}OK${NEUTRE}"
-            NB_OK=$((NB_OK + 1))
-        fi
+    if [ $exit_code -eq 0 ] && [[ "$output" == *"TEB"* ]]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
     else
-        echo -e "${ROUGE}KO (Exit code: $exit_code attendu: $expected_exit)${NEUTRE}"
+        echo -e "${ROUGE}KO (exit=$exit_code, sortie: $output)${NEUTRE}"
+        NB_KO=$((NB_KO + 1))
+    fi
+}
+
+# Fonction pour les tests d'erreur (doit echouer avec code non-zero)
+# $1 = Description, $2 = Commande
+run_error_test() {
+    NB_TESTS=$((NB_TESTS + 1))
+    local description="$1"
+    local commande="$2"
+
+    echo -n "Test $NB_TESTS : $description ... "
+
+    eval "$commande" 2>/dev/null
+    exit_code=$?
+
+    if [ $exit_code -ne 0 ]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
+    else
+        echo -e "${ROUGE}KO (devait echouer mais exit=0)${NEUTRE}"
         NB_KO=$((NB_KO + 1))
     fi
 }
@@ -84,13 +94,13 @@ run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
 # --- TESTS D'ERREURS ---
 
 # Test 10: Option inconnue (doit planter)
-run_test "Erreur (Option inconnue)" "./simulateur -foobar" 1
+run_error_test "Erreur (Option inconnue)" "./simulateur -foobar"
 
 # Test 11: Amplitude invalide (doit planter)
-run_test "Erreur (Amplitude invalide)" "./simulateur -ampl abc" 1
+run_error_test "Erreur (Amplitude invalide)" "./simulateur -ampl abc"
 
 # Test 12: Nombre d'échantillons invalide (doit planter)
-run_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5" 1
+run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 
 
 echo "------------------------------------------"

@@ -4,11 +4,24 @@ import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConformeException;
 
+/**
+ * Récepteur analogique : reconvertit le signal Float en bits Boolean
+ * par seuillage au milieu du temps bit.
+ *
+ * @author ziani
+ * @author sissoko
+ * @author nanda
+ */
 public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> {
 
     private int nbEch;
     private float seuil;
 
+    /**
+     * @param nbEch  nombre d'échantillons par bit
+     * @param aMin   amplitude minimale
+     * @param aMax   amplitude maximale
+     */
     public TransmetteurAnalogiqueLogique(int nbEch, float aMin, float aMax) {
         super();
         this.nbEch = nbEch;
@@ -27,7 +40,7 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         int nbBits = informationRecue.nbElements() / nbEch;
 
         for (int i = 0; i < nbBits; i++) {
-            // échantillonnage au milieu du temps bit
+            // décision prise sur l'échantillon au milieu du temps bit
             float valeurMilieu = informationRecue.iemeElement(i * nbEch + nbEch / 2);
             informationEmise.add(valeurMilieu > seuil);
         }

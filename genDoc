@@ -1,4 +1,9 @@
 #!/bin/bash
-
-echo "Generation de la documentation.."
-javadoc -d docs $(find src -name "*.java")
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$DIR"
+mkdir -p docs
+find src -name "*.java" > /tmp/sim_sources_$$.txt
+javadoc -encoding UTF-8 -d docs -quiet @/tmp/sim_sources_$$.txt
+STATUS=$?
+rm -f /tmp/sim_sources_$$.txt
+exit $STATUS

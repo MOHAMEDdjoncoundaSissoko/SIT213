@@ -1,6 +1,6 @@
 # SIT213 - Etape 1
 
-**Auteurs :** Ziani Amine, Sissoko M.Djoncounda, Nanda Laurent
+**Auteurs :** Ziani Amine, Sissoko Mohamed, Nanda Laurent
 **Projet :** Simulation d'une chaîne de transmission numérique
 
 ---
@@ -36,25 +36,25 @@ Compiler le projet :
 
 Lancer une simulation :
 ```bash
-./simulateur [options]
+./run [options]
 ```
 
 Exemples concrets :
 ```bash
 # par défaut : message aléatoire de 100 bits
-./simulateur
+./run
 
 # message fixe qu'on impose (7 caractères minimum)
-./simulateur -mess 0110101
+./run -mess 0110101
 
 # message aléatoire de 50 bits
-./simulateur -mess 50
+./run -mess 50
 
 # même chose mais reproductible (même seed = même tirage)
-./simulateur -mess 50 -seed 42
+./run -mess 50 -seed 42
 
 # avec affichage des signaux en fenêtre graphique
-./simulateur -mess 0110101 -s
+./run -mess 0110101 -s
 ```
 
 ---

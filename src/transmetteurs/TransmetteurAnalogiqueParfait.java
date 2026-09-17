@@ -4,11 +4,15 @@ import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConformeException;
 
+/**
+ * Canal analogique parfait : transmet le signal Float sans modification.
+ *
+ * @author ziani
+ * @author sissoko
+ * @author nanda
+ */
 public class TransmetteurAnalogiqueParfait extends Transmetteur<Float, Float> {
 
-    // Le canal parfait n'a pas besoin de stocker nbEch ou le seuil 
-    // pour fonctionner, mais on garde le constructeur avec arguments 
-    // pour ne pas casser l'appel dans Simulateur.java
     public TransmetteurAnalogiqueParfait(int nbEch, float aMin, float aMax) {
         super();
     }
@@ -19,12 +23,9 @@ public class TransmetteurAnalogiqueParfait extends Transmetteur<Float, Float> {
         emettre();
     }
 
-    @Override 
+    @Override
     public void emettre() throws InformationNonConformeException {
-        // Un canal parfait analogique transmet l'information telle quelle 
-        // sans modification (pas de seuil, pas de transformation en Boolean).
         this.informationEmise = this.informationRecue;
-
         for (DestinationInterface<Float> dest : destinationsConnectees) {
             dest.recevoir(this.informationEmise);
         }
