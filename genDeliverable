@@ -4,6 +4,6 @@
 
 echo "++++++++++++ Creating deliverable archive ++++++++++++"
 
-tar -czvf B4.Bouabouod.Blombou.Nanda.Sissoko.Ziani.logiciel.etape2.tar.gz src bin docs tests compile genDoc cleanAll simulateur runTests genDeliverable readme
+tar -czvf B4.Bouabouod.Blombou.Nanda.Sissoko.Ziani.logiciel.etape2.tar.gz src bin docs compile genDoc cleanAll simulateur runTests genDeliverable README.md
 
 echo "++++++++++++ Done ++++++++++++"
