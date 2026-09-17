@@ -9,6 +9,8 @@ import information.Information;
  * @author ziani
  * @author sissoko
  * @author nanda
+ * @author blombou
+ * @author bouaboud
  */
 public class SourceFixe extends Source<Boolean> {
 

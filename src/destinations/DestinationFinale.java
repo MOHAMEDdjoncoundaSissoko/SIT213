@@ -10,15 +10,15 @@ import information.InformationNonConformeException;
  * @author ziani
  * @author sissoko
  * @author nanda
+ * @author blombou
+ * @author bouaboud
  */
 public class DestinationFinale extends Destination<Boolean> {
-
-    public DestinationFinale() {
-        super();
-    }
-
+    /**
+    * @param information information binaire reçue
+    */
     @Override
     public void recevoir(Information<Boolean> information) throws InformationNonConformeException {
-        this.informationRecue = information;
+        informationRecue = information;
     }
 }

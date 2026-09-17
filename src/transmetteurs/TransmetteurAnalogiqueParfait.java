@@ -7,9 +7,11 @@ import information.InformationNonConformeException;
 /**
  * Canal analogique parfait : transmet le signal Float sans modification.
  *
- * @author ziani
+ * * @author ziani
  * @author sissoko
  * @author nanda
+ * @author blombou
+ * @author bouaboud
  */
 public class TransmetteurAnalogiqueParfait extends Transmetteur<Float, Float> {
 

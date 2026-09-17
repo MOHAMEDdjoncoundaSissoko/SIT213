@@ -1,8 +1,7 @@
 package transmetteurs;
 
-import destinations.DestinationInterface;
-import information.Information;
-import information.InformationNonConformeException;
+import destinations.*;
+import information.*;
 
 /**
  * Transmetteur sans bruit : retransmet les bits reçus sans les modifier.
@@ -11,22 +10,20 @@ import information.InformationNonConformeException;
  * @author ziani
  * @author sissoko
  * @author nanda
+ * @author blombou
+ * @author bouaboud
  */
 public class TransmetteurParfait extends Transmetteur<Boolean, Boolean> {
 
-    public TransmetteurParfait() {
-        super();
-    }
-
     @Override
     public void recevoir(Information<Boolean> information) throws InformationNonConformeException {
-        this.informationRecue = information;
+        informationRecue = information;
         emettre();
     }
 
     @Override
     public void emettre() throws InformationNonConformeException {
-        this.informationEmise = this.informationRecue;
+        informationEmise = informationRecue;
         for (DestinationInterface<Boolean> dest : destinationsConnectees) {
             dest.recevoir(informationEmise);
         }

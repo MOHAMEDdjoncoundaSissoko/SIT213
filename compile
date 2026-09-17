@@ -1,9 +1,5 @@
 #!/bin/bash
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$DIR"
-mkdir -p bin
-find src -name "*.java" > /tmp/sim_sources_$$.txt
-javac -encoding UTF-8 -d bin @/tmp/sim_sources_$$.txt
-STATUS=$?
-rm -f /tmp/sim_sources_$$.txt
-exit $STATUS
+
+echo "Compiling.."
+rm -rf bin/*
+javac -d bin $(find src/* -name "*.java")

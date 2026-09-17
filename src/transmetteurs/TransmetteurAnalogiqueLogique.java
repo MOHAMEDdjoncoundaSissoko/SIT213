@@ -11,6 +11,8 @@ import information.InformationNonConformeException;
  * @author ziani
  * @author sissoko
  * @author nanda
+ * @author blombou
+ * @author bouaboud
  */
 public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> {
 

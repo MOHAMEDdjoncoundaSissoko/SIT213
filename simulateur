@@ -1,8 +1,4 @@
 #!/bin/bash
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$DIR"
-if [ ! -d bin ] || [ -z "$(ls -A bin 2>/dev/null)" ]; then
-    echo "Compilation en cours..."
-    sh "$DIR/compile"
-fi
+echo "Début du script"
+
 java -cp bin simulateur.Simulateur "$@"

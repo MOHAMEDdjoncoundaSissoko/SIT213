@@ -1,29 +1,41 @@
-# SIT213 - Etape 1
+# SIT213 - Chaîne de transmission
 
-**Auteurs :** Ziani Amine, Sissoko Mohamed, Nanda Laurent
+**Auteurs :** Ziani Amine, Sissoko Mohamed, Nanda Laurent, Blombou Ethan, Bouaboud Anis-Melwan
+
 **Projet :** Simulation d'une chaîne de transmission numérique
 
 ---
 
 ## Ce que fait ce projet
 
-L'idée de base est de simuler ce qui se passe quand on envoie un message binaire (une suite de 0 et de 1) d'un point A à un point B à travers un canal de transmission.
+On simule l'envoi d'un message binaire (une suite de 0 et de 1) d'une source vers une destination, à travers un ou plusieurs transmetteurs.
 
-Dans cette première étape, le canal est parfait : aucun bruit, aucune perte. Le message arrive exactement tel qu'il a été envoyé. L'intérêt c'est de poser les bases de l'architecture avant d'ajouter du bruit dans les étapes suivantes.
+Deux modes sont possibles :
 
-La chaîne se décompose en trois blocs :
+**Mode logique (par défaut)**
 
 ```
-Source  -->  TransmetteurParfait  -->  DestinationFinale
+Source  -->  TransmetteurParfait  -->  Destination
 ```
 
-- La **Source** génère le message : soit un message qu'on lui impose (ex : `0110101`), soit un message aléatoire d'une longueur donnée.
-- Le **TransmetteurParfait** reçoit les bits et les retransmet tels quels, sans toucher à rien.
-- La **DestinationFinale** reçoit et stocke le message pour qu'on puisse le comparer avec ce qui a été envoyé.
+Le canal est parfait : aucun bruit, aucune perte, le message arrive tel quel. Le TEB (Taux d'Erreur Binaire) vaut donc toujours 0.0. C'est la base de l'architecture avant d'ajouter du bruit.
 
-A la fin, on calcule le **TEB (Taux d'Erreur Binaire)** : c'est le rapport entre le nombre de bits mal reçus et le nombre de bits total. Ici le TEB vaut toujours 0.0 puisque le transmetteur est parfait.
+**Mode analogique**
 
-Si on active l'option `-s`, des fenêtres graphiques s'ouvrent pour visualiser le signal en sortie de la source et en sortie du transmetteur.
+```
+Source --> TransmetteurLogiqueAnalogique --> TransmetteurAnalogiqueParfait --> TransmetteurAnalogiqueLogique --> Destination
+```
+
+Ici le message binaire est converti en un vrai signal analogique (une forme d'onde), transmis à travers un canal, puis reconverti en binaire à la réception. On passe automatiquement dans ce mode dès qu'on utilise une des options `-form`, `-nbEch` ou `-ampl`.
+
+Trois formes d'onde sont disponibles :
+- `NRZ` : signal qui reste au niveau haut ou bas pendant tout le bit.
+- `RZ` : signal actif seulement sur le tiers central du temps bit, retour à zéro sinon.
+- `NRZT` : comme NRZ mais avec des transitions progressives (montée/descente) entre les niveaux, en fonction des bits voisins.
+
+Dans les deux modes, la Source génère le message (imposé ou aléatoire), et à la fin on compare le message émis et le message reçu pour calculer le TEB.
+
+Si on active l'option `-s`, des fenêtres graphiques s'ouvrent pour visualiser le signal (sondes logiques ou analogiques selon le mode).
 
 ---
 
@@ -36,25 +48,31 @@ Compiler le projet :
 
 Lancer une simulation :
 ```bash
-./run [options]
+./simulateur [options]
 ```
 
 Exemples concrets :
 ```bash
-# par défaut : message aléatoire de 100 bits
-./run
+# par défaut : message aléatoire de 100 bits, chaîne logique parfaite
+./simulateur
 
 # message fixe qu'on impose (7 caractères minimum)
-./run -mess 0110101
+./simulateur -mess 0110101
 
 # message aléatoire de 50 bits
-./run -mess 50
+./simulateur -mess 50
 
 # même chose mais reproductible (même seed = même tirage)
-./run -mess 50 -seed 42
+./simulateur -mess 50 -seed 42
 
 # avec affichage des signaux en fenêtre graphique
-./run -mess 0110101 -s
+./simulateur -mess 0110101 -s
+
+# chaîne analogique avec une forme NRZ
+./simulateur -mess 1100 -form NRZ
+
+# chaîne analogique avec amplitude et nombre d'échantillons personnalisés
+./simulateur -mess 101 -form NRZT -nbEch 30 -ampl 0 5 -s
 ```
 
 ---
@@ -70,6 +88,12 @@ Exemples concrets :
 
 `-s` : active les sondes graphiques pour voir le signal à l'émission et à la réception.
 
+`-form f` : force le passage en mode analogique et fixe la forme d'onde (`NRZ`, `RZ` ou `NRZT`). Par défaut : `RZ`.
+
+`-nbEch n` : force le passage en mode analogique et fixe le nombre d'échantillons par bit. Par défaut : 30.
+
+`-ampl min max` : force le passage en mode analogique et fixe les amplitudes basse et haute du signal. Par défaut : 0.0 et 1.0.
+
 ---
 
 ## Tests automatiques
@@ -78,7 +102,7 @@ Exemples concrets :
 ./runTests
 ```
 
-Lance 6 tests et affiche le bilan OK/KO.
+Lance une douzaine de tests (chaîne logique, chaîne analogique dans ses différentes configurations, et cas d'erreurs) et affiche le bilan OK/KO.
 
 ## Nettoyage
 

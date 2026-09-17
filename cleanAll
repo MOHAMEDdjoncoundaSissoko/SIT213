@@ -1,5 +1,8 @@
 #!/bin/bash
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-rm -rf "$DIR/bin" "$DIR/docs"
-mkdir -p "$DIR/bin" "$DIR/docs"
-echo "Nettoyage termine."
+
+echo "Deleting files..."
+
+rm -rf bin/*
+rm -rf docs/*
+
+echo "Done"
