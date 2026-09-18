@@ -1,0 +1,4 @@
+tests/TransmetteurTest.class
+tests/InformationTest.class
+tests/VisualisationsTest.class
+tests/SimulateurTest.class
