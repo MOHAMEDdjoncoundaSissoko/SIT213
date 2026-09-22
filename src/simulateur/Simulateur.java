@@ -137,7 +137,7 @@ public class Simulateur {
             } else if (args[i].matches("-mess")) {
                 i++;
                 messageString = args[i];
-                if (args[i].matches("[0,1]{7,}")) {
+                if (args[i].matches("[01]{7,}")) {
                     messageAleatoire = false;
                     nbBitsMess = args[i].length();
                 } else if (args[i].matches("[0-9]{1,6}")) {
@@ -159,12 +159,16 @@ public class Simulateur {
                 i++;
                 try {
                     nbEch = Integer.parseInt(args[i]);
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + args[i]);
                 }
-                if (nbEch < 1)
-                    throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + nbEch);
 
+                // VALIDATION DU PROF : Il faut au moins NB_ECH_MIN échantillons pour avoir une forme propre
+                // (le message précis n'est plus avalé par un catch(Exception) générique)
+                if (nbEch < TransmetteurLogiqueAnalogique.NB_ECH_MIN) {
+                    throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + nbEch
+                        + " (minimum " + TransmetteurLogiqueAnalogique.NB_ECH_MIN + " pour la lisibilité)");
+                }
             } else if (args[i].matches("-ampl")) {
                 simulationAnalogique = true;
                 try {

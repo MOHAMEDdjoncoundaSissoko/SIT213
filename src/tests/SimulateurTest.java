@@ -193,6 +193,12 @@ public class SimulateurTest {
     }
 
     @Test
+    @DisplayName("Exception - -nbEch 3 doit echouer (minimum 10)")
+    void testNbEchTroisEchoue() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-nbEch", "3"}));
+    }
+
+    @Test
     @DisplayName("NRZT - TEB nul avec amplitudes negatives")
     void testNRZTAmplNegatives() throws Exception {
         Simulateur s = new Simulateur(new String[]{"-form", "NRZT", "-ampl", "-1.0", "1.0", "-mess", "50", "-seed", "3"});
