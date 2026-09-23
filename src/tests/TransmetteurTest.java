@@ -167,6 +167,13 @@ public class TransmetteurTest {
         }
     }
 
+    @Test
+    @DisplayName("TLA - nbEch trop petit (3) doit echouer a la construction")
+    void testTLANbEchTropPetitEchoue() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new TransmetteurLogiqueAnalogique("RZ", 3, 0f, 1f));
+    }
+
     // -------------------------------------------------------
     // TransmetteurAnalogiqueParfait
     // -------------------------------------------------------

@@ -7,13 +7,13 @@ import java.util.*;
  */
 public  class Information <T>  implements Iterable <T> {
 
-    private LinkedList <T> content;
+    private ArrayList <T> content;
 
     /**
      * pour construire une information vide
      */
     public Information() {
-	this.content = new LinkedList <T> ();
+	this.content = new ArrayList <T> ();
     }
 
     /**
@@ -21,10 +21,10 @@ public  class Information <T>  implements Iterable <T> {
      * @param content le tableau d'éléments pour initialiser l'information construite
      */
     public Information(T [] content) {
-	this.content = new LinkedList <T> ();
-	for (int i = 0; i < content.length; i++) {
-            this.content.addLast(content[i]);
-	}
+        this.content = new ArrayList <T> ();
+        for (int i = 0; i < content.length; i++) {
+                this.content.addLast(content[i]);
+        }
     }
 
     /**
@@ -32,7 +32,7 @@ public  class Information <T>  implements Iterable <T> {
      * @return le nombre d'éléments de l'information
      */
     public int nbElements() {
-	return this.content.size();
+	    return this.content.size();
     }
 
     /**
@@ -41,7 +41,7 @@ public  class Information <T>  implements Iterable <T> {
      * @return le ieme élément de l'information
      */
     public T iemeElement(int i) {
-	return this.content.get(i);
+	    return this.content.get(i);
     }
 
     /**
@@ -58,7 +58,7 @@ public  class Information <T>  implements Iterable <T> {
      * @param valeur  l'élément à rajouter
      */
     public void add(T valeur) {
-	this.content.add(valeur);
+	    this.content.add(valeur);
     }
 
     /**
@@ -69,16 +69,16 @@ public  class Information <T>  implements Iterable <T> {
      */
     @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
-	if (!(o instanceof Information))
+        if (!(o instanceof Information))
+                return false;
+        Information <T> information =  (Information <T>) o;
+        if (this.nbElements() != information.nbElements())
+                return false;
+        for (int i = 0; i < this.nbElements(); i++) {
+                if (!this.iemeElement(i).equals(information.iemeElement(i)))
             return false;
-	Information <T> information =  (Information <T>) o;
-	if (this.nbElements() != information.nbElements())
-            return false;
-	for (int i = 0; i < this.nbElements(); i++) {
-            if (!this.iemeElement(i).equals(information.iemeElement(i)))
-		return false;
-	}
-	return true;
+        }
+        return true;
     }
 
     /**
@@ -86,17 +86,17 @@ public  class Information <T>  implements Iterable <T> {
      * @return representation de l'information sous forme de String
      */
     public String toString() {
-	String s = "";
-	for (int i = 0; i < this.nbElements(); i++) {
-            s += " " + this.iemeElement(i);
-	}
-	return s;
+        String s = "";
+        for (int i = 0; i < this.nbElements(); i++) {
+                s += " " + this.iemeElement(i);
+        }
+        return s;
     }
 
     /**
      * pour utilisation du "for each"
      */
     public Iterator <T> iterator() {
-	return content.iterator();
+	    return content.iterator();
     }
 }

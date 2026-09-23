@@ -150,13 +150,26 @@ public class VueCourbe  extends Vue {
 	else if (yMax <= 0) {
             y0Axe += 0;
 	}
-	getContentPane().getGraphics().drawLine(x0Axe, y0Axe, x0Axe + (int) deltaX + x0Axe, y0Axe);
-	getContentPane().getGraphics().drawLine(x0Axe + (int) deltaX + x0Axe - 5, y0Axe - 5, x0Axe + (int) deltaX + x0Axe, y0Axe);
-	getContentPane().getGraphics().drawLine(x0Axe + (int) deltaX + x0Axe - 5, y0Axe + 5, x0Axe + (int) deltaX + x0Axe, y0Axe);
+	// On récupère UNE SEULE FOIS le contexte graphique du contentPane et on le
+	// réutilise pour tous les traits. Auparavant, getContentPane().getGraphics()
+	// était rappelé à chaque drawLine (y compris dans la boucle ci-dessous, soit
+	// potentiellement plusieurs centaines de milliers de fois pour un long message
+	// du type -mess 10000) : chaque appel recrée un contexte graphique, ce qui est
+	// très coûteux et peut même renvoyer null si la fenêtre n'est pas encore
+	// totalement affichée, d'où les figures tronquées / à moitié tracées et les
+	// blocages sur les longs messages.
+	Graphics gc = getContentPane().getGraphics();
+	if (gc == null) {
+            return;
+	}
 
-	getContentPane().getGraphics().drawLine(x0Axe, y0Axe, x0Axe, y0Axe - (int) deltaY - y0Axe);
-	getContentPane().getGraphics().drawLine(x0Axe + 5, 5, x0Axe, 0);
-	getContentPane().getGraphics().drawLine(x0Axe - 5, 5, x0Axe, 0);
+	gc.drawLine(x0Axe, y0Axe, x0Axe + (int) deltaX + x0Axe, y0Axe);
+	gc.drawLine(x0Axe + (int) deltaX + x0Axe - 5, y0Axe - 5, x0Axe + (int) deltaX + x0Axe, y0Axe);
+	gc.drawLine(x0Axe + (int) deltaX + x0Axe - 5, y0Axe + 5, x0Axe + (int) deltaX + x0Axe, y0Axe);
+
+	gc.drawLine(x0Axe, y0Axe, x0Axe, y0Axe - (int) deltaY - y0Axe);
+	gc.drawLine(x0Axe + 5, 5, x0Axe, 0);
+	gc.drawLine(x0Axe - 5, 5, x0Axe, 0);
 
 	float dx =  deltaX / (float) coordonnees[coordonnees.length - 1].getX();
 	float dy = 0.0f;
@@ -175,7 +188,7 @@ public class VueCourbe  extends Vue {
             int x2 = (int) (coordonnees[i].getX() * dx);
             int y1 = (int) (coordonnees[i-1].getY() * dy);
             int y2 = (int) (coordonnees[i].getY() * dy);
-            getContentPane().getGraphics().drawLine( x0Axe + x1, y0Axe - y1, x0Axe + x2, y0Axe - y2);
+            gc.drawLine( x0Axe + x1, y0Axe - y1, x0Axe + x2, y0Axe - y2);
 	}
     }
 }

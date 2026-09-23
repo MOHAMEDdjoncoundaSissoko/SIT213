@@ -91,6 +91,18 @@ run_test "Analogique complet" "./simulateur -mess 101 -form NRZ -nbEch 30 -ampl 
 # Test 9: Analogique avec sondes (vérifie que SondeAnalogique fonctionne sans crash graphique ici)
 run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
 
+# Test : message long (performance) - doit se terminer rapidement (10s max), sans sonde graphique
+# timeout (GNU coreutils) n'existe pas sur macOS par défaut ; on utilise gtimeout
+# si disponible (brew install coreutils), sinon on lance sans limite de temps.
+if command -v timeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="timeout 10"
+elif command -v gtimeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="gtimeout 10"
+else
+    TIMEOUT_CMD=""
+fi
+run_test "Performance (message aléatoire de 10000 bits)" "$TIMEOUT_CMD ./simulateur -mess 10000 -form NRZT -nbEch 30"
+
 # --- TESTS D'ERREURS ---
 
 # Test 10: Option inconnue (doit planter)
@@ -101,6 +113,7 @@ run_error_test "Erreur (Amplitude invalide)" "./simulateur -ampl abc"
 
 # Test 12: Nombre d'échantillons invalide (doit planter)
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
+run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
 
 
 echo "------------------------------------------"
