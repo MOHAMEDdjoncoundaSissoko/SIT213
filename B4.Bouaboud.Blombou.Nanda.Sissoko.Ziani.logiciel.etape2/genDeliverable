@@ -1,0 +1,9 @@
+#!/bin/bash
+
+./cleanAll
+
+echo "++++++++++++ Creating deliverable archive ++++++++++++"
+
+tar -czvf B4.Bouaboud.Blombou.Nanda.Sissoko.Ziani.logiciel.etape2.tar.gz --exclude='.gitignore' src bin docs lib compile genDoc cleanAll simulateur runTests genDeliverable README.md
+
+echo "++++++++++++ Done ++++++++++++"

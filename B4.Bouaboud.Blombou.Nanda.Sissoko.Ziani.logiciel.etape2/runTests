@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# -----------------------------------------------------------
+# Script de test pour le Simulateur - Etape 1 & 2
+# -----------------------------------------------------------
+
+# Couleurs pour l'affichage
+VERT='\033[0;32m'
+ROUGE='\033[0;31m'
+NEUTRE='\033[0m'
+
+# Compteurs
+NB_TESTS=0
+NB_OK=0
+NB_KO=0
+
+# Fonction pour les tests normaux (doit reussir et afficher TEB)
+# $1 = Description, $2 = Commande
+run_test() {
+    NB_TESTS=$((NB_TESTS + 1))
+    local description="$1"
+    local commande="$2"
+
+    echo -n "Test $NB_TESTS : $description ... "
+
+    output=$(eval "$commande" 2>/dev/null)
+    exit_code=$?
+
+    if [ $exit_code -eq 0 ] && [[ "$output" == *"TEB"* ]]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
+    else
+        echo -e "${ROUGE}KO (exit=$exit_code, sortie: $output)${NEUTRE}"
+        NB_KO=$((NB_KO + 1))
+    fi
+}
+
+# Fonction pour les tests d'erreur (doit echouer avec code non-zero)
+# $1 = Description, $2 = Commande
+run_error_test() {
+    NB_TESTS=$((NB_TESTS + 1))
+    local description="$1"
+    local commande="$2"
+
+    echo -n "Test $NB_TESTS : $description ... "
+
+    output=$(eval "$commande" 2>/dev/null)
+    exit_code=$?
+
+    if [ $exit_code -ne 0 ]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
+    else
+        echo -e "${ROUGE}KO (devait echouer mais exit=0)${NEUTRE}"
+        NB_KO=$((NB_KO + 1))
+    fi
+}
+
+echo "------------------------------------------"
+echo "  LANCEMENT DES TESTS (Étape 1 & 2)"
+echo "------------------------------------------"
+
+# --- TESTS DE RÉGRESSION (Étape 1) ---
+
+# Test 1: Message aléatoire par défaut
+run_test "Aléatoire (défaut)" "./simulateur"
+
+# Test 2: Message fixe
+run_test "Message fixe" "./simulateur -mess 1010101"
+
+# Test 3: Seed
+run_test "Seed (reproductibilité)" "./simulateur -mess 50 -seed 42"
+
+# --- TESTS NOUVEAUX (Étape 2 : Analogique) ---
+
+# Test 4: Activation mode analogique avec -form
+run_test "Analogique (-form RZ)" "./simulateur -mess 1100 -form RZ"
+
+# Test 5: Activation mode analogique avec -form NRZ
+run_test "Analogique (-form NRZ)" "./simulateur -mess 1100 -form NRZ"
+
+# Test 6: Activation mode analogique avec -nbEch
+run_test "Analogique (-nbEch 50)" "./simulateur -mess 1100 -nbEch 50"
+
+# Test 7: Activation mode analogique avec -ampl
+run_test "Analogique (-ampl)" "./simulateur -mess 1100 -ampl -2.0 2.0"
+
+# Test 8: Chaîne analogique complète (toutes les options)
+run_test "Analogique complet" "./simulateur -mess 101 -form NRZ -nbEch 30 -ampl 0 5"
+
+# Test 9: Analogique avec sondes (vérifie que SondeAnalogique fonctionne sans crash graphique ici)
+run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
+
+# --- TESTS D'ERREURS ---
+
+# Test 10: Option inconnue (doit planter)
+run_error_test "Erreur (Option inconnue)" "./simulateur -foobar"
+
+# Test 11: Amplitude invalide (doit planter)
+run_error_test "Erreur (Amplitude invalide)" "./simulateur -ampl abc"
+
+# Test 12: Nombre d'échantillons invalide (doit planter)
+run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
+
+
+echo "------------------------------------------"
+echo -e "  RÉSULTAT : ${VERT}${NB_OK}/${NB_TESTS}${NEUTRE} OK"
+if [ $NB_KO -gt 0 ]; then
+    echo -e "           ${ROUGE}${NB_KO}/${NB_TESTS}${NEUTRE} KO"
+fi
+echo "------------------------------------------"
+
+# Code de sortie du script (0 si tout est OK, 1 sinon)
+if [ $NB_KO -gt 0 ]; then
+    exit 1
+else
+    exit 0
+fi

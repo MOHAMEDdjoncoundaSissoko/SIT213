@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Generating documentation.."
+javadoc -d docs $(find src -name "*.java")
