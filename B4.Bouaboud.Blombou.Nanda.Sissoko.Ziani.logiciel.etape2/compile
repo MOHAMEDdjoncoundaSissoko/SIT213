@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo "Compiling.."
-rm -rf bin/*
-javac -cp "lib/*" -d bin $(find src/* -name "*.java")
