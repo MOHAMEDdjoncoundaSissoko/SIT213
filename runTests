@@ -91,6 +91,11 @@ run_test "Analogique complet" "./simulateur -mess 101 -form NRZ -nbEch 30 -ampl 
 # Test 9: Analogique avec sondes (vérifie que SondeAnalogique fonctionne sans crash graphique ici)
 run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
 
+# TESTS NOUVEAUX (Étape 3 : Bruit)
+run_test "Bruit (Eb/N0 élevé, peu d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -ebn0 20"
+run_test "Bruit (Eb/N0 faible, beaucoup d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -ebn0 -5"
+run_test "Bruit complet (NRZT + ampl + ebn0)" "./simulateur -mess 100 -form NRZT -nbEch 30 -ampl -1 1 -ebn0 5"
+
 # Test : message long (performance) - doit se terminer rapidement (10s max), sans sonde graphique
 # timeout (GNU coreutils) n'existe pas sur macOS par défaut ; on utilise gtimeout
 # si disponible (brew install coreutils), sinon on lance sans limite de temps.

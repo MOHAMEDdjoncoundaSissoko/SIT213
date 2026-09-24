@@ -7,6 +7,7 @@ import sources.Source;
 import sources.SourceAleatoire;
 import sources.SourceFixe;
 import transmetteurs.Transmetteur;
+import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueLogique;
 import transmetteurs.TransmetteurAnalogiqueParfait;
 import transmetteurs.TransmetteurLogiqueAnalogique;
@@ -54,6 +55,12 @@ public class Simulateur {
     private float aMin = 0.0f;
     private float aMax = 1.0f;
 
+    /** indique si un canal bruité (AWGN) doit être utilisé à la place du canal parfait */
+    private boolean canalBruite = false;
+
+    /** le rapport signal-sur-bruit par bit (Eb/N0, en dB) souhaité pour le canal bruité */
+    private float ebN0 = 0.0f;
+
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
 
@@ -97,7 +104,14 @@ public class Simulateur {
             }
         } else {
             TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
-            TransmetteurAnalogiqueParfait canal     = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
+            Transmetteur<Float, Float> canal;
+            if (canalBruite) {
+                canal = aleatoireAvecGerme
+                    ? new TransmetteurAnalogiqueBruite(nbEch, ebN0, seed)
+                    : new TransmetteurAnalogiqueBruite(nbEch, ebN0, null);
+            } else {
+                canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
+            }
             TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(nbEch, aMin, aMax);
 
             source.connecter(emetteur);
@@ -178,6 +192,16 @@ public class Simulateur {
                     aMax = Float.parseFloat(args[i]);
                 } catch (Exception e) {
                     throw new ArgumentsException("Valeurs du parametre -ampl invalides");
+                }
+
+            } else if (args[i].matches("-ebn0")) {
+                simulationAnalogique = true;
+                canalBruite = true;
+                i++;
+                try {
+                    ebN0 = Float.parseFloat(args[i]);
+                } catch (Exception e) {
+                    throw new ArgumentsException("Valeur du parametre -ebn0 invalide : " + args[i]);
                 }
 
             } else {
