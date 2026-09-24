@@ -1,121 +1,116 @@
-# SIT213 - Chaîne de transmission
+# Simulateur de Chaîne de Transmission Numérique - SIT213
 
-**Auteurs :** Ziani Amine, Sissoko Mohamed, Nanda Laurent, Blombou Ethan, Bouaboud Anis-Melwan
+Ce projet est un simulateur en Java permettant de modéliser, simuler et analyser les performances d'une chaîne de transmission numérique complète. Il permet d'étudier l'impact de différents codages en ligne, de l'ajout d'un canal bruité (Bruit Blanc Gaussien Additif - AWGN), et des modulations sur la qualité du signal transmis, mesurée par le Taux d'Erreur Binaire (TEB).
 
-**Projet :** Simulation d'une chaîne de transmission numérique
+## Fonctionnalités principales
 
----
+* **Source d'information** : Génération de messages binaires (séquences aléatoires de $N$ bits ou déterministes à partir d'une chaîne de caractères).
+* **Codage en ligne (Bande de base)** : Transformation du flux binaire en un signal analogique.
+  * `NRZ` (Non-Return to Zero)
+  * `NRZT` (Non-Return to Zero Trapezoidal)
+  * `RZ` (Return to Zero)
+* **Canal de transmission** : 
+  * Canal idéal (sans déformation).
+  * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
+* **Réception et Décision** : Échantillonnage du signal reçu et seuillage pour reconstituer le message logique.
+* **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
 
-## Ce que fait ce projet
+## 🛠️ Architecture du projet
 
-On simule l'envoi d'un message binaire (une suite de 0 et de 1) d'une source vers une destination, à travers un ou plusieurs transmetteurs.
-
-Deux modes sont possibles :
-
-**Mode logique (par défaut)**
-
-```
-Source  -->  TransmetteurParfait  -->  Destination
-```
-
-Le canal est parfait : aucun bruit, aucune perte, le message arrive tel quel. Le TEB (Taux d'Erreur Binaire) vaut donc toujours 0.0. C'est la base de l'architecture avant d'ajouter du bruit.
-
-**Mode analogique**
+Le projet respecte une architecture modulaire orientée objet (Interfaces `Emetteur`, `Recepteur`). 
 
 ```
-Source --> TransmetteurLogiqueAnalogique --> TransmetteurAnalogiqueParfait --> TransmetteurAnalogiqueLogique --> Destination
+[Source] -> (Bits) -> [Transmetteur] -> (Signal analogique) -> [Canal + Bruit] -> (Signal bruité) -> [Récepteur] -> (Bits) -> [Destination]
+                                                                                                                        |
+                                                                                                                        v
+                                                                                                           [Comparateur (TEB)]
 ```
 
-Ici le message binaire est converti en un vrai signal analogique (une forme d'onde), transmis à travers un canal, puis reconverti en binaire à la réception. On passe automatiquement dans ce mode dès qu'on utilise une des options `-form`, `-nbEch` ou `-ampl`.
+## Compilation et Exécution
 
-Trois formes d'onde sont disponibles :
-- `NRZ` : signal qui reste au niveau haut ou bas pendant tout le bit.
-- `RZ` : signal actif seulement sur le tiers central du temps bit, retour à zéro sinon.
-- `NRZT` : comme NRZ mais avec des transitions progressives (montée/descente) entre les niveaux, en fonction des bits voisins.
-
-Dans les deux modes, la Source génère le message (imposé ou aléatoire), et à la fin on compare le message émis et le message reçu pour calculer le TEB.
-
-Si on active l'option `-s`, des fenêtres graphiques s'ouvrent pour visualiser le signal (sondes logiques ou analogiques selon le mode).
-
----
-
-## Compilation et lancement
-
-Compiler le projet :
+### Compilation
+Placez-vous à la racine du projet et compilez les fichiers Java :
 ```bash
-./compile
+javac *.java
 ```
 
-Lancer une simulation :
+### Syntaxe de base
 ```bash
 ./simulateur [options]
 ```
 
-Exemples concrets :
-```bash
-# par défaut : message aléatoire de 100 bits, chaîne logique parfaite
-./simulateur
-
-# message fixe qu'on impose (7 caractères minimum)
-./simulateur -mess 0110101
-
-# message aléatoire de 50 bits
-./simulateur -mess 50
-
-# même chose mais reproductible (même seed = même tirage)
-./simulateur -mess 50 -seed 42
-
-# avec affichage des signaux en fenêtre graphique
-./simulateur -mess 0110101 -s
-
-# chaîne analogique avec une forme NRZ
-./simulateur -mess 1100 -form NRZ
-
-# chaîne analogique avec amplitude et nombre d'échantillons personnalisés
-./simulateur -mess 101 -form NRZT -nbEch 30 -ampl 0 5 -s
-```
+**Options disponibles :**
+* `-mess <n | string>` : Longueur du message aléatoire (entier) ou chaîne de caractères à transmettre.
+* `-form <NRZ | NRZT | RZ>` : Type de forme d'onde.
+* `-nbEch <n>` : Nombre d'échantillons par bit.
+* `-ampl <min> <max>` : Amplitudes du signal (ex: `-1 1`).
+* `-ebn0 <valeur>` : Rapport signal sur bruit par bit ($E_b/N_0$) en dB.
+* `-sondes` : Active les graphiques (oscilloscopes temporels).
 
 ---
 
-## Options
+## Cas d'usage concrets et Analyse des performances
 
-`-mess m` : précise le message ou sa longueur.
-- Si m est une suite de 0 et 1 d'au moins 7 caractères → c'est le message à envoyer.
-- Si m est un entier entre 1 et 6 chiffres → c'est le nombre de bits du message aléatoire à générer.
-- Par défaut : 100 bits aléatoires.
+Voici plusieurs scénarios progressifs pour comprendre l'impact des paramètres sur la transmission.
 
-`-seed v` : fixe la semence du générateur aléatoire. Utile pour rejouer exactement la même simulation.
+### Cas n°1 : Le canal idéal (Le monde parfait)
+On transmet 10 000 bits avec un codage NRZ classique. Aucun bruit n'est ajouté.
 
-`-s` : active les sondes graphiques pour voir le signal à l'émission et à la réception.
+**Commande :**
+```bash
+./simulateur -mess 10000 -form NRZ -nbEch 30 -ampl -1 1
+```
 
-`-form f` : force le passage en mode analogique et fixe la forme d'onde (`NRZ`, `RZ` ou `NRZT`). Par défaut : `RZ`.
+**Résultat attendu :**
+> TEB : 0.0
 
-`-nbEch n` : force le passage en mode analogique et fixe le nombre d'échantillons par bit. Par défaut : 30.
+**Analyse :** Le signal analogique généré arrive parfaitement intact au récepteur. L'échantillonnage et la décision se font sans ambiguïté. Le Taux d'Erreur Binaire est nul.
 
-`-ampl min max` : force le passage en mode analogique et fixe les amplitudes basse et haute du signal. Par défaut : 0.0 et 1.0.
+### Cas n°2 : Introduction d'un bruit modéré ($E_b/N_0 = 8 \text{ dB}$)
+On ajoute un bruit gaussien, mais la puissance du signal reste nettement supérieure à celle du bruit.
+
+**Commande :**
+```bash
+./simulateur -mess 10000 -form NRZT -nbEch 30 -ampl -1 1 -ebn0 8
+```
+
+**Résultat attendu :**
+> TEB : ~ 0.002 (soit 0.2% d'erreur)
+
+**Analyse :** Le signal reçu est "bruité" (tremblotant si vous activez `-sondes`), mais l'amplitude du bruit est généralement insuffisante pour faire passer un niveau bas au-dessus du seuil de décision (ou inversement). Quelques erreurs isolées apparaissent.
+
+### Cas n°3 : Canal fortement bruité ($E_b/N_0 = 1 \text{ dB}$)
+On dégrade fortement le rapport signal sur bruit. Le signal commence à être noyé dans le bruit.
+
+**Commande :**
+```bash
+./simulateur -mess 10000 -form NRZT -nbEch 30 -ampl -1 1 -ebn0 1
+```
+
+**Résultat attendu :**
+> TEB : ~ 0.15 à 0.25
+
+**Analyse :** Avec un $E_b/N_0$ aussi faible, le bruit gaussien provoque de fortes variations de tension. Le récepteur prend très souvent la mauvaise décision lors de l'échantillonnage. Jusqu'à un quart des bits reçus sont faux.
+
+### Cas n°4 : Transmission d'un message textuel (avec sondes)
+Au lieu de bits aléatoires, on veut transmettre un mot précis et visualiser les étapes.
+
+**Commande :**
+```bash
+./simulateur -mess "HELLO" -form RZ -nbEch 20 -ampl 0 5 -sondes
+```
+
+**Analyse :** Le simulateur convertit la chaîne "HELLO" en binaire (via ASCII). Il utilise un codage Return to Zero avec des niveaux de tension de 0V à 5V. L'option `-sondes` ouvrira des fenêtres graphiques permettant de voir le flux binaire initial, le signal RZ généré, et le signal à la réception.
 
 ---
 
-## Tests automatiques
+## Courbe du TEB en fonction du $E_b/N_0$
 
-```bash
-./runTests
-```
+Si vous effectuez une campagne de tests en faisant varier le `-ebn0` de $0$ à $10$ dB, vous observerez que la courbe du TEB suit la forme de la fonction ERFC (fonction d'erreur complémentaire), validant ainsi le modèle théorique des télécommunications :
+* **$E_b/N_0 < 0 \text{ dB}$** : TEB proche de $0.5$ (Le signal est illisible, c'est comme tirer à pile ou face).
+* **$E_b/N_0 \approx 5 \text{ dB}$** : TEB critique (chute drastique des erreurs).
+* **$E_b/N_0 > 10 \text{ dB}$** : TEB proche de $0$ (Transmission fiable).
 
-Lance une douzaine de tests (chaîne logique, chaîne analogique dans ses différentes configurations, et cas d'erreurs) et affiche le bilan OK/KO.
-
-## Nettoyage
-
-```bash
-./cleanAll
-```
-
-Supprime les fichiers compilés (`bin/`) et la documentation (`docs/`).
-
-## Javadoc
-
-```bash
-./genDoc
-```
-
-Génère la documentation dans `docs/`.
+## 👥 Auteurs
+* **[ ]**
+* Projet SIT213 - Simulation de systèmes de télécommunications.
