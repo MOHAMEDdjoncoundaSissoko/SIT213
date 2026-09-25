@@ -21,8 +21,8 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
 
     /**
      * @param nbEch  nombre d'échantillons par bit
-     * @param aMin   amplitude minimale
-     * @param aMax   amplitude maximale
+     * @param aMin   amplitude du bit 0
+     * @param aMax   amplitude du bit 1 ; le seuil de décision est (aMin + aMax) / 2
      */
     public TransmetteurAnalogiqueLogique(int nbEch, float aMin, float aMax) {
         super();
@@ -42,7 +42,6 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         int nbBits = informationRecue.nbElements() / nbEch;
 
         for (int i = 0; i < nbBits; i++) {
-            // décision prise sur l'échantillon au milieu du temps bit
             float valeurMilieu = informationRecue.iemeElement(i * nbEch + nbEch / 2);
             informationEmise.add(valeurMilieu > seuil);
         }

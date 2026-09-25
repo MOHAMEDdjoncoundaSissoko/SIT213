@@ -5,7 +5,6 @@ import information.Information;
 
 /**
  * Source générant un message binaire aléatoire.
- * On peut fixer une semence pour reproduire le même tirage d'une exécution à l'autre.
  *
  * @author ziani
  * @author sissoko
@@ -24,7 +23,7 @@ public class SourceAleatoire extends Source<Boolean> {
 
     /**
      * @param nbBits longueur du message à générer
-     * @param seed   semence du générateur aléatoire, null si on n'en veut pas
+     * @param seed   semence du générateur, ou null
      */
     public SourceAleatoire(int nbBits, Integer seed) {
         super();

@@ -7,6 +7,7 @@ import sources.Source;
 import sources.SourceAleatoire;
 import sources.SourceFixe;
 import transmetteurs.Transmetteur;
+import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueLogique;
 import transmetteurs.TransmetteurAnalogiqueParfait;
 import transmetteurs.TransmetteurLogiqueAnalogique;
@@ -54,6 +55,12 @@ public class Simulateur {
     private float aMin = 0.0f;
     private float aMax = 1.0f;
 
+    /** indique si le canal est bruité (option -snrpb) */
+    private boolean canalBruite = false;
+
+    /** Eb/N0 en dB (option -snrpb) */
+    private float ebN0 = 0.0f;
+
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
 
@@ -97,7 +104,14 @@ public class Simulateur {
             }
         } else {
             TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
-            TransmetteurAnalogiqueParfait canal     = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
+            Transmetteur<Float, Float> canal;
+            if (canalBruite) {
+                canal = aleatoireAvecGerme
+                    ? new TransmetteurAnalogiqueBruite(nbEch, ebN0, seed)
+                    : new TransmetteurAnalogiqueBruite(nbEch, ebN0, null);
+            } else {
+                canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
+            }
             TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(nbEch, aMin, aMax);
 
             source.connecter(emetteur);
@@ -163,8 +177,6 @@ public class Simulateur {
                     throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + args[i]);
                 }
 
-                // VALIDATION DU PROF : Il faut au moins NB_ECH_MIN échantillons pour avoir une forme propre
-                // (le message précis n'est plus avalé par un catch(Exception) générique)
                 if (nbEch < TransmetteurLogiqueAnalogique.NB_ECH_MIN) {
                     throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + nbEch
                         + " (minimum " + TransmetteurLogiqueAnalogique.NB_ECH_MIN + " pour la lisibilité)");
@@ -178,6 +190,20 @@ public class Simulateur {
                     aMax = Float.parseFloat(args[i]);
                 } catch (Exception e) {
                     throw new ArgumentsException("Valeurs du parametre -ampl invalides");
+                }
+                if (!(aMin < aMax)) {
+                    throw new ArgumentsException("Valeurs du parametre -ampl invalides : min (" + aMin
+                        + ") doit etre strictement inferieur a max (" + aMax + ")");
+                }
+
+            } else if (args[i].matches("-snrpb")) {
+                simulationAnalogique = true;
+                canalBruite = true;
+                i++;
+                try {
+                    ebN0 = Float.parseFloat(args[i]);
+                } catch (Exception e) {
+                    throw new ArgumentsException("Valeur du parametre -snrpb invalide");
                 }
 
             } else {

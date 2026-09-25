@@ -23,9 +23,7 @@ public class VisualisationsTest {
         System.setProperty("java.awt.headless", "true");
     }
 
-    // -------------------------------------------------------
     // SondeTextuelle - pas de GUI, entierement testable
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("SondeTextuelle Boolean - construction et reception")
@@ -56,9 +54,7 @@ public class VisualisationsTest {
         assertEquals(info, sonde.getInformationRecue());
     }
 
-    // -------------------------------------------------------
     // SondePuissance - calcul puissance testable (GUI catchee)
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("SondePuissance - reception et stockage")
@@ -88,9 +84,7 @@ public class VisualisationsTest {
         assertEquals(info, sonde.getInformationRecue());
     }
 
-    // -------------------------------------------------------
     // Vue - methodes statiques testables sans affichage
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("Vue - resetPosition remet yPosition a zero")
@@ -122,9 +116,7 @@ public class VisualisationsTest {
         assertDoesNotThrow(() -> Vue.kill());
     }
 
-    // -------------------------------------------------------
     // SondeLogique / SondeAnalogique - stockage info (GUI catchee)
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("SondeLogique - informationRecue stockee avant affichage")

@@ -9,7 +9,7 @@ import simulateur.Simulateur;
 
 /**
  * Tests JUnit pour le Simulateur SIT213.
- * Couvre les etapes 1 et 2 (chaine logique et analogique sans bruit).
+ * Couvre les etapes 1 a 3 (chaine logique, analogique, canal bruite).
  */
 public class SimulateurTest {
 
@@ -18,9 +18,7 @@ public class SimulateurTest {
         System.setProperty("java.awt.headless", "true");
     }
 
-    // -------------------------------------------------------
     // Etape 1 : chaine logique
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("TEB nul - message aleatoire par defaut")
@@ -72,9 +70,7 @@ public class SimulateurTest {
         });
     }
 
-    // -------------------------------------------------------
     // Etape 2 : chaine analogique NRZ
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("NRZ - TEB nul, parametres par defaut")
@@ -108,9 +104,7 @@ public class SimulateurTest {
         assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
     }
 
-    // -------------------------------------------------------
     // Etape 2 : chaine analogique NRZT
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("NRZT - TEB nul, parametres par defaut")
@@ -136,9 +130,7 @@ public class SimulateurTest {
         assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
     }
 
-    // -------------------------------------------------------
     // Etape 2 : chaine analogique RZ
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("RZ - TEB nul, parametres par defaut")
@@ -164,9 +156,7 @@ public class SimulateurTest {
         assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
     }
 
-    // -------------------------------------------------------
-    // Branches manquantes dans Simulateur
-    // -------------------------------------------------------
+    // Cas d'erreur des arguments
 
     @Test
     @DisplayName("Exception - -mess 0 (trop court)")
@@ -230,9 +220,7 @@ public class SimulateurTest {
         assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
     }
 
-    // -------------------------------------------------------
-    // Branches affichage (-s) : couvre les blocs if (affichage)
-    // -------------------------------------------------------
+    // Affichage (-s)
 
     @Test
     @DisplayName("Affichage logique - option -s construction OK")
@@ -254,5 +242,47 @@ public class SimulateurTest {
     void testAffichageAnalogiqueNRZT() throws Exception {
         Simulateur s = new Simulateur(new String[]{"-form", "NRZT", "-mess", "20", "-seed", "2", "-s"});
         try { s.execute(); } catch (Exception e) { /* GUI non disponible */ }
+    }
+
+    // Etape 3 : conformite commande unique
+
+    @Test
+    @DisplayName("Exception - -ampl avec min > max")
+    void testAmplMinSupMax() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ampl", "1.0", "0.0"}));
+    }
+
+    @Test
+    @DisplayName("Exception - -ampl avec min = max")
+    void testAmplMinEgalMax() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ampl", "1.0", "1.0"}));
+    }
+
+    @Test
+    @DisplayName("-snrpb accepte et TEB non nul a faible Eb/N0")
+    void testSnrpbFaible() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1", "-mess", "10000", "-snrpb", "0", "-seed", "1"});
+        s.execute();
+        assertTrue(s.calculTauxErreurBinaire() > 0.0f);
+    }
+
+    @Test
+    @DisplayName("-snrpb : TEB nul a tres fort Eb/N0")
+    void testSnrpbFort() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1", "-mess", "1000", "-snrpb", "40", "-seed", "1"});
+        s.execute();
+        assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
+    }
+
+    @Test
+    @DisplayName("Exception - -snrpb non flottant")
+    void testSnrpbInvalide() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-snrpb", "abc"}));
+    }
+
+    @Test
+    @DisplayName("Exception - ancienne option -ebn0 refusee")
+    void testEbn0Refusee() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ebn0", "5"}));
     }
 }

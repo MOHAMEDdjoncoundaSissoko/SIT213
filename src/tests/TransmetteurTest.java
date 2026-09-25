@@ -16,9 +16,7 @@ import destinations.DestinationFinale;
  */
 public class TransmetteurTest {
 
-    // -------------------------------------------------------
     // Transmetteur (classe abstraite via TransmetteurParfait)
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("getInformationRecue - retourne l information recue")
@@ -92,9 +90,7 @@ public class TransmetteurTest {
         assertEquals(info, d2.getInformationRecue());
     }
 
-    // -------------------------------------------------------
     // TransmetteurLogiqueAnalogique
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("TLA NRZ - taille signal = nbBits * nbEch")
@@ -174,9 +170,7 @@ public class TransmetteurTest {
             () -> new TransmetteurLogiqueAnalogique("RZ", 3, 0f, 1f));
     }
 
-    // -------------------------------------------------------
     // TransmetteurAnalogiqueParfait
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("TAP - signal transmis sans modification")
@@ -188,9 +182,7 @@ public class TransmetteurTest {
         assertEquals(signal, tap.getInformationEmise());
     }
 
-    // -------------------------------------------------------
     // TransmetteurAnalogiqueLogique
-    // -------------------------------------------------------
 
     @Test
     @DisplayName("TAL - decision correcte bit 1")

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------------------------
-# Script de test pour le Simulateur - Etape 1 & 2
+# Script de test pour le Simulateur - Etapes 1 a 3
 # -----------------------------------------------------------
 
 # Couleurs pour l'affichage
@@ -57,7 +57,7 @@ run_error_test() {
 }
 
 echo "------------------------------------------"
-echo "  LANCEMENT DES TESTS (Étape 1 & 2)"
+echo "  LANCEMENT DES TESTS (Étapes 1 à 3)"
 echo "------------------------------------------"
 
 # --- TESTS DE RÉGRESSION (Étape 1) ---
@@ -91,6 +91,12 @@ run_test "Analogique complet" "./simulateur -mess 101 -form NRZ -nbEch 30 -ampl 
 # Test 9: Analogique avec sondes (vérifie que SondeAnalogique fonctionne sans crash graphique ici)
 run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
 
+# TESTS NOUVEAUX (Étape 3 : Bruit)
+run_test "Bruit (Eb/N0 élevé, peu d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 20"
+run_test "Bruit (Eb/N0 faible, beaucoup d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb -5"
+run_test "Bruit complet (NRZT + ampl + snrpb)" "./simulateur -mess 100 -form NRZT -nbEch 30 -ampl -1 1 -snrpb 5"
+run_test "Bruit seul (-snrpb active le mode analogique)" "./simulateur -mess 100 -snrpb 10 -seed 1"
+
 # Test : message long (performance) - doit se terminer rapidement (10s max), sans sonde graphique
 # timeout (GNU coreutils) n'existe pas sur macOS par défaut ; on utilise gtimeout
 # si disponible (brew install coreutils), sinon on lance sans limite de temps.
@@ -114,6 +120,10 @@ run_error_test "Erreur (Amplitude invalide)" "./simulateur -ampl abc"
 # Test 12: Nombre d'échantillons invalide (doit planter)
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
+run_error_test "Erreur (ampl min > max)" "./simulateur -ampl 1 0"
+run_error_test "Erreur (ampl min = max)" "./simulateur -ampl 1 1"
+run_error_test "Erreur (snrpb non flottant)" "./simulateur -snrpb abc"
+run_error_test "Erreur (snrpb sans valeur)" "./simulateur -snrpb"
 
 
 echo "------------------------------------------"

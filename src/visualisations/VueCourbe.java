@@ -150,14 +150,7 @@ public class VueCourbe  extends Vue {
 	else if (yMax <= 0) {
             y0Axe += 0;
 	}
-	// On récupère UNE SEULE FOIS le contexte graphique du contentPane et on le
-	// réutilise pour tous les traits. Auparavant, getContentPane().getGraphics()
-	// était rappelé à chaque drawLine (y compris dans la boucle ci-dessous, soit
-	// potentiellement plusieurs centaines de milliers de fois pour un long message
-	// du type -mess 10000) : chaque appel recrée un contexte graphique, ce qui est
-	// très coûteux et peut même renvoyer null si la fenêtre n'est pas encore
-	// totalement affichée, d'où les figures tronquées / à moitié tracées et les
-	// blocages sur les longs messages.
+	// Contexte graphique récupéré une seule fois : un appel par drawLine est très lent sur les longs messages.
 	Graphics gc = getContentPane().getGraphics();
 	if (gc == null) {
             return;

@@ -3,8 +3,7 @@ package sources;
 import information.Information;
 
 /**
- * Source émettant un message binaire imposé, fourni sous forme de chaîne
- * de caractères ('0' et '1').
+ * Source émettant un message binaire imposé (option -mess suivie de 0 et de 1).
  *
  * @author ziani
  * @author sissoko
@@ -15,7 +14,7 @@ import information.Information;
 public class SourceFixe extends Source<Boolean> {
 
     /**
-     * @param messageBinaire chaîne composée de '0' et '1'
+     * @param messageBinaire suite de '0' et de '1'
      */
     public SourceFixe(String messageBinaire) {
         super();

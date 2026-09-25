@@ -14,9 +14,7 @@ import information.InformationNonConformeException;
  * @author bouaboud
  */
 public class DestinationFinale extends Destination<Boolean> {
-    /**
-    * @param information information binaire reçue
-    */
+
     @Override
     public void recevoir(Information<Boolean> information) throws InformationNonConformeException {
         informationRecue = information;

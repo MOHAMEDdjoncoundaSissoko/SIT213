@@ -1,121 +1,73 @@
-# SIT213 - Chaîne de transmission
+# Simulateur de Chaîne de Transmission Numérique - SIT213
 
-**Auteurs :** Ziani Amine, Sissoko Mohamed, Nanda Laurent, Blombou Ethan, Bouaboud Anis-Melwan
+Ce projet est un simulateur en Java permettant de modéliser, simuler et analyser les performances d'une chaîne de transmission numérique complète. Il permet d'étudier l'impact de différents codages en ligne, de l'ajout d'un canal bruité (Bruit Blanc Gaussien Additif - AWGN), et des modulations sur la qualité du signal transmis, mesurée par le Taux d'Erreur Binaire (TEB).
 
-**Projet :** Simulation d'une chaîne de transmission numérique
+## Fonctionnalités principales
 
----
+* **Source d'information** : Génération de messages binaires (séquences aléatoires de $N$ bits ou fixées par une suite de 0 et de 1).
+* **Codage en ligne (Bande de base)** : Transformation du flux binaire en un signal analogique.
+  * `NRZ` (Non-Return to Zero)
+  * `NRZT` (Non-Return to Zero Trapezoidal)
+  * `RZ` (Return to Zero)
+* **Canal de transmission** : 
+  * Canal idéal (sans déformation).
+  * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
+* **Réception et Décision** : Échantillonnage du signal reçu et seuillage pour reconstituer le message logique.
+* **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
 
-## Ce que fait ce projet
+## 🛠️ Architecture du projet
 
-On simule l'envoi d'un message binaire (une suite de 0 et de 1) d'une source vers une destination, à travers un ou plusieurs transmetteurs.
-
-Deux modes sont possibles :
-
-**Mode logique (par défaut)**
-
-```
-Source  -->  TransmetteurParfait  -->  Destination
-```
-
-Le canal est parfait : aucun bruit, aucune perte, le message arrive tel quel. Le TEB (Taux d'Erreur Binaire) vaut donc toujours 0.0. C'est la base de l'architecture avant d'ajouter du bruit.
-
-**Mode analogique**
+Le projet respecte une architecture modulaire orientée objet (interfaces `SourceInterface`, `DestinationInterface`). 
 
 ```
-Source --> TransmetteurLogiqueAnalogique --> TransmetteurAnalogiqueParfait --> TransmetteurAnalogiqueLogique --> Destination
+[Source] -> (Bits) -> [Transmetteur] -> (Signal analogique) -> [Canal + Bruit] -> (Signal bruité) -> [Récepteur] -> (Bits) -> [Destination]
+                                                                                                                        |
+                                                                                                                        v
+                                                                                                           [Comparateur (TEB)]
 ```
 
-Ici le message binaire est converti en un vrai signal analogique (une forme d'onde), transmis à travers un canal, puis reconverti en binaire à la réception. On passe automatiquement dans ce mode dès qu'on utilise une des options `-form`, `-nbEch` ou `-ampl`.
+## Compilation et exécution
 
-Trois formes d'onde sont disponibles :
-- `NRZ` : signal qui reste au niveau haut ou bas pendant tout le bit.
-- `RZ` : signal actif seulement sur le tiers central du temps bit, retour à zéro sinon.
-- `NRZT` : comme NRZ mais avec des transitions progressives (montée/descente) entre les niveaux, en fonction des bits voisins.
-
-Dans les deux modes, la Source génère le message (imposé ou aléatoire), et à la fin on compare le message émis et le message reçu pour calculer le TEB.
-
-Si on active l'option `-s`, des fenêtres graphiques s'ouvrent pour visualiser le signal (sondes logiques ou analogiques selon le mode).
-
----
-
-## Compilation et lancement
-
-Compiler le projet :
+Depuis la racine du projet :
 ```bash
-./compile
+./compile      # compile src/ vers bin/
+./runTests     # tests de bout en bout du simulateur
+./genDoc       # génère la javadoc dans docs/
+./cleanAll     # vide bin/ et docs/
 ```
 
-Lancer une simulation :
+### Syntaxe
 ```bash
 ./simulateur [options]
 ```
 
-Exemples concrets :
-```bash
-# par défaut : message aléatoire de 100 bits, chaîne logique parfaite
-./simulateur
+**Options (conformes à la commande unique SIT213) :**
+* `-mess m` : suite de 0 et de 1 d'au moins 7 caractères (message à émettre), ou entier d'au plus 6 chiffres (longueur d'un message aléatoire). Défaut : 100 bits aléatoires.
+* `-s` : active les sondes (affichage graphique des signaux).
+* `-seed v` : semence entière des générateurs aléatoires (message et bruit), pour rejouer une simulation à l'identique.
+* `-form f` : forme d'onde `NRZ`, `NRZT` ou `RZ`. Défaut : `RZ`.
+* `-nbEch ne` : nombre d'échantillons par bit. Défaut : 30. **Minimum : 10**, choix de l'équipe : en dessous, le tiers central du RZ et la rampe du NRZT tiennent sur 0 ou 1 échantillon et la forme d'onde n'est plus représentée correctement.
+* `-ampl min max` : amplitudes flottantes, avec `min < max` (sinon erreur). Défaut : 0.0 et 1.0.
+* `-snrpb s` : canal bruité (bruit blanc additif gaussien), `s` est le rapport signal sur bruit par bit $E_b/N_0$ en dB (flottant). Défaut : canal non bruité.
 
-# message fixe qu'on impose (7 caractères minimum)
-./simulateur -mess 0110101
-
-# message aléatoire de 50 bits
-./simulateur -mess 50
-
-# même chose mais reproductible (même seed = même tirage)
-./simulateur -mess 50 -seed 42
-
-# avec affichage des signaux en fenêtre graphique
-./simulateur -mess 0110101 -s
-
-# chaîne analogique avec une forme NRZ
-./simulateur -mess 1100 -form NRZ
-
-# chaîne analogique avec amplitude et nombre d'échantillons personnalisés
-./simulateur -mess 101 -form NRZT -nbEch 30 -ampl 0 5 -s
-```
+La présence d'au moins une des options `-form`, `-nbEch`, `-ampl` ou `-snrpb` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
 
 ---
 
-## Options
+## Exemples
 
-`-mess m` : précise le message ou sa longueur.
-- Si m est une suite de 0 et 1 d'au moins 7 caractères → c'est le message à envoyer.
-- Si m est un entier entre 1 et 6 chiffres → c'est le nombre de bits du message aléatoire à générer.
-- Par défaut : 100 bits aléatoires.
+Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'une semence à l'autre).
 
-`-seed v` : fixe la semence du générateur aléatoire. Utile pour rejouer exactement la même simulation.
+| Commande | TEB |
+|---|---|
+| `./simulateur -mess 10000 -form NRZ -ampl -1 1` | 0.0 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 8 -seed 1` | ≈ 0.25 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 20 -seed 1` | ≈ 0.003 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 25 -seed 1` | 0.0 |
+| `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
 
-`-s` : active les sondes graphiques pour voir le signal à l'émission et à la réception.
+**Remarque sur les performances en présence de bruit :** le récepteur actuel décide sur l'échantillon central de chaque bit. Il n'exploite donc qu'un échantillon sur `nbEch` et perd $10\log_{10}(\text{nbEch})$ dB (≈ 14,8 dB pour 30 échantillons) par rapport au récepteur optimal. Le TEB mesuré suit $Q\big(\sqrt{2\,(E_b/N_0)/\text{nbEch}}\big)$ en NRZ antipodal ; voir le rapport de l'étape 3.
 
-`-form f` : force le passage en mode analogique et fixe la forme d'onde (`NRZ`, `RZ` ou `NRZT`). Par défaut : `RZ`.
-
-`-nbEch n` : force le passage en mode analogique et fixe le nombre d'échantillons par bit. Par défaut : 30.
-
-`-ampl min max` : force le passage en mode analogique et fixe les amplitudes basse et haute du signal. Par défaut : 0.0 et 1.0.
-
----
-
-## Tests automatiques
-
-```bash
-./runTests
-```
-
-Lance une douzaine de tests (chaîne logique, chaîne analogique dans ses différentes configurations, et cas d'erreurs) et affiche le bilan OK/KO.
-
-## Nettoyage
-
-```bash
-./cleanAll
-```
-
-Supprime les fichiers compilés (`bin/`) et la documentation (`docs/`).
-
-## Javadoc
-
-```bash
-./genDoc
-```
-
-Génère la documentation dans `docs/`.
+## Auteurs
+Groupe B4 – FIP2A : BLOMBOU Ethan, BOUABOUD Anis-Melwan, NANDA Laurent, SISSOKO Mohamed Djoncounda, ZIANI Mohamed Amine.
+Projet SIT213 – IMT Atlantique.

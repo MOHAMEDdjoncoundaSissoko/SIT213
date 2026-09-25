@@ -4,6 +4,6 @@
 
 echo "++++++++++++ Creating deliverable archive ++++++++++++"
 
-tar -czvf B4.Bouaboud.Blombou.Nanda.Sissoko.Ziani.logiciel.etape2.tar.gz --exclude='.gitignore' src bin docs lib compile genDoc cleanAll simulateur runTests genDeliverable README.md
+tar -czvf B4.Bouaboud.Blombou.Nanda.Sissoko.Ziani.logiciel.etape3.tar.gz --exclude='.gitignore' --exclude='.DS_Store' src bin docs lib compile genDoc cleanAll simulateur runTests README.md
 
 echo "++++++++++++ Done ++++++++++++"
