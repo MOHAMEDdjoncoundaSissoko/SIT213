@@ -285,4 +285,42 @@ public class SimulateurTest {
     void testEbn0Refusee() {
         assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ebn0", "5"}));
     }
+
+    @Test
+    @DisplayName("-trajets active le canal avec echos")
+    void testTrajetsActifs() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-nbEch", "10",
+            "-ampl", "-1", "1", "-mess", "10000", "-trajets", "1", "0.5", "10", "-seed", "42"});
+
+        s.execute();
+
+        assertTrue(s.calculTauxErreurBinaire() > 0.0f);
+    }
+
+    @Test
+    @DisplayName("-trajets accepte le chemin sans seed")
+    void testTrajetsSansSeed() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-mess", "100",
+            "-trajets", "1", "0.5", "30"});
+
+        s.execute();
+
+        assertTrue(Float.isFinite(s.calculTauxErreurBinaire()));
+    }
+
+    @Test
+    @DisplayName("Exception - nombre de trajets hors limites")
+    void testNombreTrajetsInvalide() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-trajets", "0"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-trajets", "6"}));
+    }
+
+    @Test
+    @DisplayName("Exception - valeurs de trajets mal formees ou manquantes")
+    void testValeursTrajetsInvalides() {
+        assertThrows(Exception.class,
+            () -> new Simulateur(new String[]{"-trajets", "1", "alpha", "10"}));
+        assertThrows(Exception.class,
+            () -> new Simulateur(new String[]{"-trajets", "1", "0.5"}));
+    }
 }

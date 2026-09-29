@@ -115,7 +115,7 @@ public class Simulateur {
         } else {
             TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
             Transmetteur<Float, Float> canal;
-            if (canalBruite) {
+            if (canalTrajetsMultiples) {
                 canal = aleatoireAvecGerme
                     ? new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, seed)
                     : new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, null);
