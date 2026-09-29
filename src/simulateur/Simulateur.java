@@ -10,6 +10,7 @@ import transmetteurs.Transmetteur;
 import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueLogique;
 import transmetteurs.TransmetteurAnalogiqueParfait;
+import transmetteurs.TransmetteurAnalogiqueTrajetsMultiples;
 import transmetteurs.TransmetteurLogiqueAnalogique;
 import transmetteurs.TransmetteurParfait;
 import visualisations.SondeAnalogique;
@@ -61,6 +62,15 @@ public class Simulateur {
     /** Eb/N0 en dB (option -snrpb) */
     private float ebN0 = 0.0f;
 
+    /** indique si un canal à trajets multiples doit être utilisé */
+    private boolean canalTrajetsMultiples = false;
+
+    /** atténuations des trajets secondaires (max 5) */
+    private float[] trajetsAlphas = new float[0];
+ 
+    /** retards des trajets secondaires, en nombre d'échantillons (max 5) */
+    private int[] trajetsTaus = new int[0];
+
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
 
@@ -107,9 +117,13 @@ public class Simulateur {
             Transmetteur<Float, Float> canal;
             if (canalBruite) {
                 canal = aleatoireAvecGerme
+                    ? new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, seed)
+                    : new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, null);
+            } else if (canalBruite){
+                canal = aleatoireAvecGerme
                     ? new TransmetteurAnalogiqueBruite(nbEch, ebN0, seed)
                     : new TransmetteurAnalogiqueBruite(nbEch, ebN0, null);
-            } else {
+            }else {
                 canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
             }
             TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(nbEch, aMin, aMax);
@@ -204,6 +218,31 @@ public class Simulateur {
                     ebN0 = Float.parseFloat(args[i]);
                 } catch (Exception e) {
                     throw new ArgumentsException("Valeur du parametre -snrpb invalide");
+                }
+
+            } else if (args[i].matches("-trajets")) {
+                // Syntaxe : -trajets n alpha1 tau1 alpha2 tau2 ... alphaN tauN  (n <= 5)
+                simulationAnalogique = true;
+                canalTrajetsMultiples = true;
+                try {
+                    i++;
+                    int nbTrajets = Integer.parseInt(args[i]);
+                    if (nbTrajets < 1 || nbTrajets > TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX) {
+                        throw new ArgumentsException("Valeur du parametre -trajets invalide : " + nbTrajets
+                            + " (entre 1 et " + TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + ")");
+                    }
+                    trajetsAlphas = new float[nbTrajets];
+                    trajetsTaus = new int[nbTrajets];
+                    for (int k = 0; k < nbTrajets; k++) {
+                        i++;
+                        trajetsAlphas[k] = Float.parseFloat(args[i]);
+                        i++;
+                        trajetsTaus[k] = Integer.parseInt(args[i]);
+                    }
+                } catch (ArgumentsException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new ArgumentsException("Valeurs du parametre -trajets invalides");
                 }
 
             } else {

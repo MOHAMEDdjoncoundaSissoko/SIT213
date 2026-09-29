@@ -109,6 +109,11 @@ else
 fi
 run_test "Performance (message aléatoire de 10000 bits)" "$TIMEOUT_CMD ./simulateur -mess 10000 -form NRZT -nbEch 30"
 
+# TESTS PARTIE 4 : trajets multiples (-trajets)
+
+run_test "Trajets multiples (1 trajet)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -trajets 1 0.5 10"
+run_test "Trajets multiples (3 trajets)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -trajets 3 0.5 10 0.3 20 0.1 30"
+
 # --- TESTS D'ERREURS ---
 
 # Test 10: Option inconnue (doit planter)
