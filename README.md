@@ -27,6 +27,26 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
                                                                                                            [Comparateur (TEB)]
 ```
 
+## Contenu de l'archive
+
+| Élément | Contenu |
+|---|---|
+| `src/` | sources Java du simulateur, par paquetage :<br>`sources` (source fixe ou aléatoire), `transmetteurs` (émetteur, canaux parfait, bruité et à trajets multiples, récepteur à filtre adapté), `destinations`, `information`, `visualisations` (sondes et vues graphiques), `simulateur` (programme principal et analyse des options) et `tests` (tests unitaires JUnit) |
+| `bin/` | classes compilées ; **vide dans l'archive**, rempli par `./compile` |
+| `docs/` | documentation Javadoc ; **vide dans l'archive**, remplie par `./genDoc` |
+| `lib/` | bibliothèques de test : JUnit 4, Hamcrest et JUnit Platform Console Standalone (utilisées pour compiler et lancer les tests de `src/tests`) |
+| `compile` | compile toutes les sources de `src/` (tests compris) vers `bin/` |
+| `genDoc` | génère la Javadoc des sources (hors tests) dans `docs/` |
+| `cleanAll` | vide `bin/` et `docs/` |
+| `simulateur` | lance une simulation ; options conformes à la commande unique (voir ci-dessous) |
+| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 4) : 17 exécutions nominales et 11 cas d'erreur |
+| `README.md` | ce fichier |
+
+Les tests unitaires JUnit se lancent, après `./compile`, avec :
+```bash
+java -jar lib/junit-platform-console-standalone-6.1.3.jar execute -cp bin --scan-classpath
+```
+
 ## Compilation et exécution
 
 Depuis la racine du projet :
