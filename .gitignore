@@ -1,0 +1,8 @@
+# fichiers générés : ./compile remplit bin/, ./genDoc remplit docs/
+bin/**/*.class
+docs/*
+!docs/.gitignore
+
+# fichiers parasites
+.DS_Store
+__pycache__/
