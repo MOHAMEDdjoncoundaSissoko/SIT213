@@ -131,7 +131,7 @@ public class Simulateur {
             } else {
                 canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
             }
-            TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(nbEch, aMin, aMax);
+            TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax);
 
             source.connecter(emetteur);
             emetteur.connecter(canal);

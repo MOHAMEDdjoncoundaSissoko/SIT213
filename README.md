@@ -13,7 +13,7 @@ Ce projet est un simulateur en Java permettant de modéliser, simuler et analyse
   * Canal idéal (sans déformation).
   * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
   * Canal à trajets multiples (jusqu'à 5 trajets indirects, retardés et atténués), bruité ou non.
-* **Réception et Décision** : Échantillonnage du signal reçu et seuillage pour reconstituer le message logique.
+* **Réception et Décision** : filtre adapté à la forme d'onde (corrélation de chaque temps bit avec $s_1 - s_0$) puis seuillage pour reconstituer le message logique.
 * **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
 
 ## 🛠️ Architecture du projet
@@ -63,14 +63,14 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | Commande | TEB |
 |---|---|
 | `./simulateur -mess 10000 -form NRZ -ampl -1 1` | 0.0 |
-| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 8 -seed 1` | ≈ 0.25 |
-| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 20 -seed 1` | ≈ 0.003 |
-| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 25 -seed 1` | 0.0 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 0 -seed 1` | ≈ 0.095 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 4 -seed 1` | ≈ 0.021 |
+| `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 8 -seed 1` | ≈ 0.0007 |
 | `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.5 -seed 1` | 0.0 (écho trop faible pour franchir le seuil) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |
 
-**Remarque sur les performances en présence de bruit :** le récepteur actuel décide sur l'échantillon central de chaque bit. Il n'exploite donc qu'un échantillon sur `nbEch` et perd $10\log_{10}(\text{nbEch})$ dB (≈ 14,8 dB pour 30 échantillons) par rapport au récepteur optimal. Le TEB mesuré suit $Q\big(\sqrt{2\,(E_b/N_0)/\text{nbEch}}\big)$ en NRZ antipodal ; voir le rapport de l'étape 3.
+**Performances en présence de bruit :** le récepteur utilise un filtre adapté. Pour chaque bit, il corrèle les `nbEch` échantillons reçus avec $g = s_1 - s_0$ (différence des formes d'un bit 1 et d'un bit 0, générées par l'émetteur) et compare le résultat au seuil $(\lVert s_1\rVert^2 - \lVert s_0\rVert^2)/2$. La même formule sert pour NRZ, NRZT et RZ. Le TEB mesuré suit la théorie : $Q\big(\sqrt{2E_b/N_0}\big)$ en NRZ antipodal ($1{,}25\cdot10^{-2}$ à 4 dB), $Q\big(\sqrt{E_b/N_0}\big)$ en NRZ unipolaire. À l'étape 3, le récepteur décidait sur le seul échantillon central et perdait $10\log_{10}(\text{nbEch})$ dB (≈ 14,8 dB pour 30 échantillons).
 
 ## Auteurs
 Groupe B4 – FIP2A : BLOMBOU Ethan, BOUABOUD Anis-Melwan, NANDA Laurent, SISSOKO Mohamed Djoncounda, ZIANI Mohamed Amine.

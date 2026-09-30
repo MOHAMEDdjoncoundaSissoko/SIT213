@@ -210,7 +210,7 @@ public class TransmetteurTest {
     @DisplayName("TLA - signal vide transmis a une destination")
     void testTLASignalVide() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", 10, 0f, 1f);
-        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(10, 0f, 1f);
+        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         tla.connecter(destination);
 
         tla.recevoir(new Information<>());
@@ -236,7 +236,7 @@ public class TransmetteurTest {
     @Test
     @DisplayName("TAL - decision correcte bit 1")
     void testTALDecisionBit1() throws Exception {
-        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique(10, 0f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         Information<Float> signal = new Information<>();
         // 10 echantillons a 1.0 (bit 1)
         for (int i = 0; i < 10; i++) signal.add(1.0f);
@@ -247,7 +247,7 @@ public class TransmetteurTest {
     @Test
     @DisplayName("TAL - decision correcte bit 0")
     void testTALDecisionBit0() throws Exception {
-        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique(10, 0f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         Information<Float> signal = new Information<>();
         for (int i = 0; i < 10; i++) signal.add(0.0f);
         tal.recevoir(signal);
@@ -259,11 +259,51 @@ public class TransmetteurTest {
     void testTALSequence() throws Exception {
         int nbEch = 10;
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, 0f, 1f);
-        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique(nbEch, 0f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, 0f, 1f);
         tla.connecter(tal);
 
         Information<Boolean> entree = new Information<>();
         entree.add(true); entree.add(false); entree.add(true); entree.add(true); entree.add(false);
+        tla.recevoir(entree);
+
+        assertEquals(entree, tal.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("TAL - filtre adapte RZ : ignore les tiers hors impulsion")
+    void testTALFiltreAdapteRZ() throws Exception {
+        // bit 0 en RZ, mais tres perturbe hors du tiers central : sans effet sur la decision
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("RZ", 30, 0f, 1f);
+        Information<Float> signal = new Information<>();
+        for (int k = 0; k < 30; k++) signal.add((k >= 10 && k < 20) ? 0.0f : 5.0f);
+
+        tal.recevoir(signal);
+
+        assertFalse(tal.getInformationEmise().iemeElement(0));
+    }
+
+    @Test
+    @DisplayName("TAL - filtre adapte : decision sur tout le bit, pas sur un echantillon")
+    void testTALFiltreAdapteMoyenne() throws Exception {
+        // bit 1 en NRZ dont l'echantillon du milieu est tres bas : la corrélation reste positive
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
+        Information<Float> signal = new Information<>();
+        for (int k = 0; k < 10; k++) signal.add(k == 5 ? -3.0f : 1.0f);
+
+        tal.recevoir(signal);
+
+        assertTrue(tal.getInformationEmise().iemeElement(0));
+    }
+
+    @Test
+    @DisplayName("TAL - NRZT : sequence correcte quelle que soit la rampe du bit precedent")
+    void testTALSequenceNRZT() throws Exception {
+        TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZT", 30, -1f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZT", 30, -1f, 1f);
+        tla.connecter(tal);
+        Information<Boolean> entree = new Information<>();
+        for (boolean b : new boolean[] {true, true, false, false, true, false, true, true}) entree.add(b);
+
         tla.recevoir(entree);
 
         assertEquals(entree, tal.getInformationEmise());
@@ -276,7 +316,7 @@ public class TransmetteurTest {
     void testTABruitReproductible() throws Exception {
         TransmetteurAnalogiqueBruite premier = new TransmetteurAnalogiqueBruite(10, 0f, 42);
         TransmetteurAnalogiqueBruite second = new TransmetteurAnalogiqueBruite(10, 0f, 42);
-        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
+        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
         premier.connecter(destination);
 
         Information<Float> signal = new Information<>();
@@ -307,7 +347,7 @@ public class TransmetteurTest {
     @DisplayName("TAB - signal vide transmis sans erreur")
     void testTABruitSignalVide() throws Exception {
         TransmetteurAnalogiqueBruite transmetteur = new TransmetteurAnalogiqueBruite(10, 0f, 42);
-        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
+        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
         transmetteur.connecter(destination);
         Information<Float> signal = new Information<>();
 
@@ -340,7 +380,7 @@ public class TransmetteurTest {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
             new TransmetteurAnalogiqueTrajetsMultiples(10, Float.POSITIVE_INFINITY,
                 new int[] {2}, new float[] {0.5f}, 42);
-        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
+        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
         transmetteur.connecter(destination);
         Information<Float> signal = new Information<>();
         signal.add(1.0f); signal.add(2.0f); signal.add(3.0f); signal.add(4.0f);
@@ -376,7 +416,7 @@ public class TransmetteurTest {
     void testTATMSansSeedSignalVide() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
             new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], null);
-        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
+        TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
         transmetteur.connecter(destination);
         Information<Float> signal = new Information<>();
 

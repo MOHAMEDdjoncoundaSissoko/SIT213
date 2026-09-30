@@ -275,6 +275,16 @@ public class SimulateurTest {
     }
 
     @Test
+    @DisplayName("-snrpb : TEB conforme a la theorie grace au filtre adapte (NRZ antipodal)")
+    void testSnrpbTheorie() throws Exception {
+        // theorie : TEB = Q(sqrt(2 Eb/N0)) = 1.25e-2 a 4 dB ; ~1250 erreurs attendues sur 1e5 bits
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1",
+            "-mess", "100000", "-snrpb", "4", "-seed", "1"});
+        s.execute();
+        assertEquals(1.25e-2, s.calculTauxErreurBinaire(), 0.15e-2);
+    }
+
+    @Test
     @DisplayName("Exception - -snrpb non flottant")
     void testSnrpbInvalide() {
         assertThrows(Exception.class, () -> new Simulateur(new String[]{"-snrpb", "abc"}));

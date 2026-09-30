@@ -53,40 +53,11 @@ public class TransmetteurLogiqueAnalogique extends Transmetteur<Boolean, Float> 
         informationEmise = new Information<Float>();
         int nbBits = informationRecue.nbElements();
 
-        // 2e borne dérivée de la 1re pour rester cohérent si nbEch n'est pas multiple de 3
-        int finPremierTiers = nbEch / 3;
-        int finDeuxiemeTiers = 2 * finPremierTiers;
-
         for (int i = 0; i < nbBits; i++) {
             boolean bit = informationRecue.iemeElement(i);
-            float niveau = bit ? aMax : aMin;
-
-            // NRZT : la rampe part du niveau du bit précédent
-            float debut = (i == 0) ? aMin : (informationRecue.iemeElement(i - 1) ? aMax : aMin);
-
-            for (int e = 0; e < nbEch; e++) {
-                float valeur;
-                switch (forme) {
-                    case "NRZ":
-                        valeur = niveau;
-                        break;
-
-                    case "RZ":
-                        valeur = (e >= finPremierTiers && e < finDeuxiemeTiers) ? niveau : aMin;
-                        break;
-
-                    case "NRZT":
-                        if (e < finPremierTiers) {
-                            float p = (float) e / (float) finPremierTiers;
-                            valeur = debut + p * (niveau - debut);
-                        } else {
-                            valeur = niveau;
-                        }
-                        break;
-
-                    default:
-                        valeur = niveau;
-                }
+            // NRZT : la rampe part du niveau du bit précédent (aMin avant le premier bit)
+            boolean bitPrecedent = (i > 0) && informationRecue.iemeElement(i - 1);
+            for (float valeur : formeBit(forme, nbEch, aMin, aMax, bit, bitPrecedent)) {
                 informationEmise.add(valeur);
             }
         }
@@ -94,5 +65,53 @@ public class TransmetteurLogiqueAnalogique extends Transmetteur<Boolean, Float> 
         for (DestinationInterface<Float> dest : destinationsConnectees) {
             dest.recevoir(informationEmise);
         }
+    }
+
+    /**
+     * Échantillons d'un bit pour une forme d'onde donnée. Partagé avec le
+     * récepteur, qui en déduit son filtre adapté.
+     * @param forme         forme d'onde ("NRZ", "NRZT" ou "RZ" ; niveau constant sinon)
+     * @param nbEch         nombre d'échantillons par bit
+     * @param aMin          amplitude du bit 0
+     * @param aMax          amplitude du bit 1
+     * @param bit           valeur du bit
+     * @param bitPrecedent  valeur du bit précédent (utilisée par la rampe NRZT)
+     * @return les nbEch échantillons du bit
+     */
+    static float[] formeBit(String forme, int nbEch, float aMin, float aMax, boolean bit, boolean bitPrecedent) {
+        float niveau = bit ? aMax : aMin;
+        float debut = bitPrecedent ? aMax : aMin;
+
+        // 2e borne dérivée de la 1re pour rester cohérent si nbEch n'est pas multiple de 3
+        int finPremierTiers = nbEch / 3;
+        int finDeuxiemeTiers = 2 * finPremierTiers;
+
+        float[] echantillons = new float[nbEch];
+        for (int e = 0; e < nbEch; e++) {
+            float valeur;
+            switch (forme) {
+                case "NRZ":
+                    valeur = niveau;
+                    break;
+
+                case "RZ":
+                    valeur = (e >= finPremierTiers && e < finDeuxiemeTiers) ? niveau : aMin;
+                    break;
+
+                case "NRZT":
+                    if (e < finPremierTiers) {
+                        float p = (float) e / (float) finPremierTiers;
+                        valeur = debut + p * (niveau - debut);
+                    } else {
+                        valeur = niveau;
+                    }
+                    break;
+
+                default:
+                    valeur = niveau;
+            }
+            echantillons[e] = valeur;
+        }
+        return echantillons;
     }
 }
