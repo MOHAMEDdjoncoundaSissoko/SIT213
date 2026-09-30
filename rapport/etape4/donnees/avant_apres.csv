@@ -1,0 +1,45 @@
+serie;recepteur;x;teb;teb_th;nb_bits;commande
+NRZ ±1 étape 3;etape3;-4;0.43482;0.43529366995061447;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4
+NRZ ±1 étape 3;etape3;-2;0.41848;0.4187490809872656;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2
+NRZ ±1 étape 3;etape3;0;0.3979;0.39812670736881967;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0
+NRZ ±1 étape 3;etape3;2;0.372125;0.37257042542831365;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2
+NRZ ±1 étape 3;etape3;4;0.340755;0.3411899667579586;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4
+NRZ ±1 étape 3;etape3;6;0.303215;0.303215538185275;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 6
+NRZ ±1 étape 3;etape3;8;0.25845;0.25830937589163266;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 8
+NRZ ±1 étape 3;etape3;10;0.206775;0.20710808912126252;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 10
+NRZ ±1 étape 3;etape3;12;0.15092;0.15199648377800248;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 12
+NRZ ±1 étape 3;etape3;14;0.09618;0.0978223703332182;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 14
+NRZ ±1 étape 3;etape3;16;0.05119;0.051643294929393124;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 16
+NRZ ±1 étape 3;etape3;18;0.020065;0.020136069629808254;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 18
+NRZ ±1 étape 3;etape3;20;0.005015;0.004911637253759627;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 20
+NRZ ±1 étape 3;etape3;22;0.000625;0.0005759476639374433;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 22
+NRZ ±1 filtre;filtre;-4;0.186125;0.1861138174833891;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4
+NRZ ±1 filtre;filtre;-2;0.1305;0.13064448852282923;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2
+NRZ ±1 filtre;filtre;0;0.077875;0.0786496035251426;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0
+NRZ ±1 filtre;filtre;2;0.037055;0.037506128358925986;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2
+NRZ ±1 filtre;filtre;4;0.01252;0.012500818040737565;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4
+NRZ ±1 filtre;filtre;6;0.002475;0.0023882907809328097;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 6
+NRZ ±1 filtre;filtre;8;0.00017833333333333332;0.00019090777407599314;600000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 8
+RZ 0/1 étape 3;etape3;-4;0.420785;0.4209255630432319;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -4
+RZ 0/1 étape 3;etape3;-2;0.400845;0.4008341322988809;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -2
+RZ 0/1 étape 3;etape3;0;0.37576;0.3759148170229246;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 0
+RZ 0/1 étape 3;etape3;2;0.344815;0.3452755944935355;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 2
+RZ 0/1 étape 3;etape3;4;0.30819;0.30811967906576465;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 4
+RZ 0/1 étape 3;etape3;6;0.264245;0.264034207638018;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 6
+RZ 0/1 étape 3;etape3;8;0.213065;0.2135021855040061;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 8
+RZ 0/1 étape 3;etape3;10;0.157355;0.15865525393145707;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 10
+RZ 0/1 étape 3;etape3;12;0.10247;0.10402863708538869;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 12
+RZ 0/1 étape 3;etape3;14;0.05597;0.0564953017493617;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 14
+RZ 0/1 étape 3;etape3;16;0.0228;0.023007138877866016;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 16
+RZ 0/1 étape 3;etape3;18;0.00613;0.006004386400163567;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 18
+RZ 0/1 étape 3;etape3;20;0.00087;0.0007827011290012761;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 20
+RZ 0/1 étape 3;etape3;22;2.9e-05;3.430262386641529e-05;1000000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 22
+RZ 0/1 filtre;filtre;-4;0.261615;0.264034207638018;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -4
+RZ 0/1 filtre;filtre;-2;0.21117;0.21350218550400615;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -2
+RZ 0/1 filtre;filtre;0;0.15704;0.1586552539314571;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 0
+RZ 0/1 filtre;filtre;2;0.103125;0.10402863708538869;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 2
+RZ 0/1 filtre;filtre;4;0.056285;0.0564953017493617;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 4
+RZ 0/1 filtre;filtre;6;0.02298;0.02300713887786605;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 6
+RZ 0/1 filtre;filtre;8;0.00603;0.006004386400163567;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 8
+RZ 0/1 filtre;filtre;10;0.00079;0.0007827011290012761;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 10
+RZ 0/1 filtre;filtre;12;3.8e-05;3.4302623866415476e-05;1000000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 12
