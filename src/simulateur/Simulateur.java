@@ -2,10 +2,14 @@ package simulateur;
 
 import destinations.Destination;
 import destinations.DestinationFinale;
+import destinations.DestinationInterface;
 import information.Information;
 import sources.Source;
 import sources.SourceAleatoire;
 import sources.SourceFixe;
+import sources.SourceInterface;
+import transmetteurs.CodeurCanal;
+import transmetteurs.DecodeurCanal;
 import transmetteurs.Transmetteur;
 import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueLogique;
@@ -74,6 +78,9 @@ public class Simulateur {
     /** amplitudes relatives ar des trajets indirects (5 au maximum) */
     private float[] trajetsAmplitudes = new float[0];
 
+    /** indique si un codage de canal est utilisé (option -codeur) */
+    private boolean codageCanal = false;
+
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
 
@@ -106,13 +113,31 @@ public class Simulateur {
 
         destination = new DestinationFinale();
 
-        if (!simulationAnalogique) {
-            transmetteurLogique = new TransmetteurParfait();
-            source.connecter(transmetteurLogique);
-            transmetteurLogique.connecter(destination);
+        // extrémités logiques de la transmission : la source et la destination,
+        // ou le codeur et le décodeur de canal avec l'option -codeur
+        SourceInterface<Boolean> entree = source;
+        DestinationInterface<Boolean> sortie = destination;
+        if (codageCanal) {
+            CodeurCanal codeur = new CodeurCanal();
+            DecodeurCanal decodeur = new DecodeurCanal();
+            source.connecter(codeur);
+            decodeur.connecter(destination);
+            entree = codeur;
+            sortie = decodeur;
 
             if (affichage) {
-                source.connecter(new SondeLogique("Emetteur", 10));
+                source.connecter(new SondeLogique("Message emis", 10));
+                decodeur.connecter(new SondeLogique("Message decode", 10));
+            }
+        }
+
+        if (!simulationAnalogique) {
+            transmetteurLogique = new TransmetteurParfait();
+            entree.connecter(transmetteurLogique);
+            transmetteurLogique.connecter(sortie);
+
+            if (affichage) {
+                entree.connecter(new SondeLogique("Emetteur", 10));
                 transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
             }
         } else {
@@ -133,10 +158,10 @@ public class Simulateur {
             }
             TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax);
 
-            source.connecter(emetteur);
+            entree.connecter(emetteur);
             emetteur.connecter(canal);
             canal.connecter(recepteur);
-            recepteur.connecter(destination);
+            recepteur.connecter(sortie);
 
             if (affichage) {
                 emetteur.connecter(new SondeAnalogique("Signal emis"));
@@ -224,6 +249,9 @@ public class Simulateur {
                 } catch (Exception e) {
                     throw new ArgumentsException("Valeur du parametre -snrpb invalide");
                 }
+
+            } else if (args[i].matches("-codeur")) {
+                codageCanal = true;
 
             } else if (args[i].matches("-ti")) {
                 // Syntaxe : -ti dt1 ar1 [dt2 ar2 ...] (5 couples au maximum)

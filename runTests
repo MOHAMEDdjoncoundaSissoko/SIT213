@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------------------------
-# Script de test pour le Simulateur - Etapes 1 a 4
+# Script de test pour le Simulateur - Etapes 1 a 5
 # -----------------------------------------------------------
 
 # Couleurs pour l'affichage
@@ -57,7 +57,7 @@ run_error_test() {
 }
 
 echo "------------------------------------------"
-echo "  LANCEMENT DES TESTS (Étapes 1 à 4)"
+echo "  LANCEMENT DES TESTS (Étapes 1 à 5)"
 echo "------------------------------------------"
 
 # --- ÉTAPE 1 : transmission logique ---
@@ -128,40 +128,54 @@ run_test "Trajets indirects (1 trajet, bruité)" "./simulateur -mess 1000 -form 
 # Test 17 : trois trajets indirects et bruit gaussien (étape 4b)
 run_test "Trajets indirects (3 trajets, bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -ti 10 0.5 20 0.3 30 0.1"
 
+# --- ÉTAPE 5 : codage de canal (-codeur) ---
+
+# Test 18 : codage sur la chaîne logique
+run_test "Codage de canal (logique)" "./simulateur -mess 1011001 -codeur"
+
+# Test 19 : codage sur la chaîne analogique bruitée
+run_test "Codage de canal (analogique bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4 -codeur"
+
+# Test 20 : codage avec trajets indirects et bruit
+run_test "Codage de canal (trajets indirects, bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -ti 15 0.5 -codeur"
+
 # --- TESTS D'ERREURS (le simulateur doit échouer) ---
 
-# Test 18 : option inconnue
+# Test 21 : option inconnue
 run_error_test "Erreur (option inconnue)" "./simulateur -foobar"
 
-# Test 19 : amplitude non numérique
+# Test 22 : amplitude non numérique
 run_error_test "Erreur (amplitude invalide)" "./simulateur -ampl abc"
 
-# Test 20 : nombre d'échantillons négatif
+# Test 23 : nombre d'échantillons négatif
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 
-# Test 21 : nombre d'échantillons sous le minimum
+# Test 24 : nombre d'échantillons sous le minimum
 run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
 
-# Test 22 : amplitude min > max
+# Test 25 : amplitude min > max
 run_error_test "Erreur (ampl min > max)" "./simulateur -ampl 1 0"
 
-# Test 23 : amplitude min = max
+# Test 26 : amplitude min = max
 run_error_test "Erreur (ampl min = max)" "./simulateur -ampl 1 1"
 
-# Test 24 : Eb/N0 non numérique
+# Test 27 : Eb/N0 non numérique
 run_error_test "Erreur (snrpb non flottant)" "./simulateur -snrpb abc"
 
-# Test 25 : Eb/N0 manquant
+# Test 28 : Eb/N0 manquant
 run_error_test "Erreur (snrpb sans valeur)" "./simulateur -snrpb"
 
-# Test 26 : -ti sans couple dt ar
+# Test 29 : -ti sans couple dt ar
 run_error_test "Erreur (ti sans couple)" "./simulateur -ti"
 
-# Test 27 : -ti avec dt mais sans ar
+# Test 30 : -ti avec dt mais sans ar
 run_error_test "Erreur (ti sans valeur ar)" "./simulateur -ti 10"
 
-# Test 28 : -ti avec plus de 5 couples
+# Test 31 : -ti avec plus de 5 couples
 run_error_test "Erreur (ti plus de 5 couples)" "./simulateur -ti 1 0.1 2 0.1 3 0.1 4 0.1 5 0.1 6 0.1"
+
+# Test 32 : -codeur ne prend pas de paramètre
+run_error_test "Erreur (codeur avec paramètre)" "./simulateur -codeur 3"
 
 echo "------------------------------------------"
 echo -e "  RÉSULTAT : ${VERT}${NB_OK}/${NB_TESTS}${NEUTRE} OK"

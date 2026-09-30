@@ -13,6 +13,7 @@ Ce projet est un simulateur en Java permettant de modéliser, simuler et analyse
   * Canal idéal (sans déformation).
   * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
   * Canal à trajets multiples (jusqu'à 5 trajets indirects, retardés et atténués), bruité ou non.
+* **Codage de canal** (optionnel) : chaque bit est émis sur trois bits (`0 → 010`, `1 → 101`) ; le décodeur corrige une erreur par paquet de trois bits.
 * **Réception et Décision** : filtre adapté à la forme d'onde (corrélation de chaque temps bit avec $s_1 - s_0$) puis seuillage pour reconstituer le message logique.
 * **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
 
@@ -31,7 +32,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 
 | Élément | Contenu |
 |---|---|
-| `src/` | sources Java du simulateur, par paquetage :<br>`sources` (source fixe ou aléatoire), `transmetteurs` (émetteur, canaux parfait, bruité et à trajets multiples, récepteur à filtre adapté), `destinations`, `information`, `visualisations` (sondes et vues graphiques), `simulateur` (programme principal et analyse des options) et `tests` (tests unitaires JUnit) |
+| `src/` | sources Java du simulateur, par paquetage :<br>`sources` (source fixe ou aléatoire), `transmetteurs` (codeur et décodeur de canal, émetteur, canaux parfait, bruité et à trajets multiples, récepteur à filtre adapté), `destinations`, `information`, `visualisations` (sondes et vues graphiques), `simulateur` (programme principal et analyse des options) et `tests` (tests unitaires JUnit) |
 | `bin/` | classes compilées ; **vide dans l'archive**, rempli par `./compile` |
 | `docs/` | documentation Javadoc ; **vide dans l'archive**, remplie par `./genDoc` |
 | `lib/` | bibliothèques de test : JUnit 4, Hamcrest et JUnit Platform Console Standalone (utilisées pour compiler et lancer les tests de `src/tests`) |
@@ -39,7 +40,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 | `genDoc` | génère la Javadoc des sources (hors tests) dans `docs/` |
 | `cleanAll` | vide `bin/` et `docs/` |
 | `simulateur` | lance une simulation ; options conformes à la commande unique (voir ci-dessous) |
-| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 4) : 17 exécutions nominales et 11 cas d'erreur |
+| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : 20 exécutions nominales et 12 cas d'erreur |
 | `README.md` | ce fichier |
 
 Les tests unitaires JUnit se lancent, après `./compile`, avec :
@@ -71,6 +72,7 @@ Depuis la racine du projet :
 * `-ampl min max` : amplitudes flottantes, avec `min < max` (sinon erreur). Défaut : 0.0 et 1.0.
 * `-snrpb s` : canal bruité (bruit blanc additif gaussien), `s` est le rapport signal sur bruit par bit $E_b/N_0$ en dB (flottant). Défaut : canal non bruité.
 * `-ti dt ar [dt ar ...]` : canal à trajets multiples. Chaque couple ajoute un trajet indirect décalé de `dt` échantillons (entier ≥ 0) et d'amplitude relative `ar` (flottant) : $r(n) = s(n) + \sum_k ar_k \, s(n - dt_k)$. De 1 à 5 couples. Sans `-snrpb`, seuls les échos perturbent le signal ; avec `-snrpb`, le bruit gaussien est ajouté après les échos. Défaut : pas de trajet indirect.
+* `-codeur` : active le codage de canal. Un codeur est inséré juste après la source (`0 → 010`, `1 → 101`) et un décodeur juste avant la destination (mot de code le plus proche, soit une erreur corrigée par paquet de trois bits). Le TEB est mesuré entre la source et la destination. Défaut : pas de codage.
 
 La présence d'au moins une des options `-form`, `-nbEch`, `-ampl`, `-snrpb` ou `-ti` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
 
@@ -87,6 +89,8 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 4 -seed 1` | ≈ 0.021 |
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 8 -seed 1` | ≈ 0.0007 |
 | `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
+| `./simulateur -mess 60000 -form NRZ -nbEch 10 -ampl -1 1 -snrpb 2 -seed 1` | ≈ 0.038 |
+| `./simulateur -mess 60000 -form NRZ -nbEch 10 -ampl -1 1 -snrpb 2 -seed 1 -codeur` | ≈ 0.0041 (théorie $3p^2 - 2p^3$ avec $p = 0{,}0375$) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.5 -seed 1` | 0.0 (écho trop faible pour franchir le seuil) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |
 

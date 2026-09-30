@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import information.Information;
+import transmetteurs.CodeurCanal;
+import transmetteurs.DecodeurCanal;
 import transmetteurs.TransmetteurParfait;
 import transmetteurs.TransmetteurLogiqueAnalogique;
 import transmetteurs.TransmetteurAnalogiqueParfait;
@@ -454,5 +456,101 @@ public class TransmetteurTest {
         assertThrows(IllegalArgumentException.class,
             () -> new TransmetteurAnalogiqueTrajetsMultiples(10, 0f,
                 new int[] {-1}, new float[] {0.5f}, 42));
+    }
+
+    // CodeurCanal et DecodeurCanal
+
+    /** Construit une Information logique à partir d'une suite de 0 et de 1. */
+    private static Information<Boolean> bits(String suite) {
+        Information<Boolean> info = new Information<>();
+        for (char c : suite.toCharArray()) info.add(c == '1');
+        return info;
+    }
+
+    @Test
+    @DisplayName("Codeur - 0 donne 010 et 1 donne 101")
+    void testCodeurMotsDeCode() throws Exception {
+        CodeurCanal codeur = new CodeurCanal();
+
+        codeur.recevoir(bits("01"));
+
+        assertEquals(bits("010101"), codeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Codeur - jamais plus de deux bits consecutifs identiques")
+    void testCodeurPasDeLonguesSuites() throws Exception {
+        CodeurCanal codeur = new CodeurCanal();
+
+        // toutes les transitions possibles entre bits, et de longues suites de 0 et de 1
+        codeur.recevoir(bits("0000011111001101"));
+
+        Information<Boolean> code = codeur.getInformationEmise();
+        assertEquals(3 * 16, code.nbElements());
+        for (int i = 2; i < code.nbElements(); i++) {
+            boolean troisIdentiques = code.iemeElement(i).equals(code.iemeElement(i - 1))
+                && code.iemeElement(i).equals(code.iemeElement(i - 2));
+            assertFalse(troisIdentiques, "trois bits identiques a partir de l'indice " + (i - 2));
+        }
+    }
+
+    @Test
+    @DisplayName("Decodeur - table de decodage des 8 paquets du TP5")
+    void testDecodeurTable() throws Exception {
+        DecodeurCanal decodeur = new DecodeurCanal();
+
+        decodeur.recevoir(bits("000" + "001" + "010" + "011" + "100" + "101" + "110" + "111"));
+
+        assertEquals(bits("01001101"), decodeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Codeur + decodeur - une erreur par paquet est corrigee")
+    void testCodageCorrigeUneErreur() throws Exception {
+        Information<Boolean> message = bits("0110");
+        CodeurCanal codeur = new CodeurCanal();
+        codeur.recevoir(message);
+
+        // une erreur sur le 1er, le 2e, le 3e bit des trois premiers paquets ; le dernier est intact
+        Information<Boolean> recu = new Information<>();
+        for (int i = 0; i < codeur.getInformationEmise().nbElements(); i++) {
+            boolean bit = codeur.getInformationEmise().iemeElement(i);
+            recu.add((i == 0 || i == 4 || i == 8) ? !bit : bit);
+        }
+        DecodeurCanal decodeur = new DecodeurCanal();
+        decodeur.recevoir(recu);
+
+        assertEquals(message, decodeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Codeur + decodeur - deux erreurs dans un paquet ne sont pas corrigees")
+    void testCodageDeuxErreurs() throws Exception {
+        DecodeurCanal decodeur = new DecodeurCanal();
+
+        // 010 (bit 0) avec deux erreurs devient 100 : le mot le plus proche est 101
+        decodeur.recevoir(bits("100"));
+
+        assertEquals(bits("1"), decodeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Codeur + decodeur - chaines, message vide et paquet incomplet")
+    void testCodageChaineEtCasLimites() throws Exception {
+        CodeurCanal codeur = new CodeurCanal();
+        DecodeurCanal decodeur = new DecodeurCanal();
+        DestinationFinale destination = new DestinationFinale();
+        codeur.connecter(decodeur);
+        decodeur.connecter(destination);
+
+        codeur.recevoir(bits("1011001"));
+        assertEquals(bits("1011001"), destination.getInformationRecue());
+
+        codeur.recevoir(new Information<>());
+        assertEquals(0, destination.getInformationRecue().nbElements());
+
+        // les deux bits en trop d'un paquet incomplet sont ignores
+        decodeur.recevoir(bits("10101"));
+        assertEquals(bits("1"), decodeur.getInformationEmise());
     }
 }

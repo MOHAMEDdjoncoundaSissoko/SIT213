@@ -361,4 +361,58 @@ public class SimulateurTest {
         assertThrows(Exception.class,
             () -> new Simulateur(new String[]{"-ti", "99999999999", "0.5"}));
     }
+
+    // Codage de canal (-codeur)
+
+    @Test
+    @DisplayName("-codeur : TEB nul en logique et sans bruit pour les trois formes d'onde")
+    void testCodeurSansBruit() throws Exception {
+        String[][] cas = {
+            {"-codeur", "-mess", "1011001"},
+            {"-codeur", "-mess", "500", "-form", "NRZ"},
+            {"-codeur", "-mess", "500", "-form", "NRZT", "-ampl", "-1", "1"},
+            {"-codeur", "-mess", "500", "-form", "RZ"},
+        };
+        for (String[] args : cas) {
+            Simulateur s = new Simulateur(args);
+            s.execute();
+            assertEquals(0.0f, s.calculTauxErreurBinaire(), String.join(" ", args));
+        }
+    }
+
+    @Test
+    @DisplayName("-codeur : TEB reduit et conforme a la theorie 3p^2 - 2p^3")
+    void testCodeurReduitLeTEB() throws Exception {
+        // NRZ antipodal a 2 dB : p = Q(sqrt(2 Eb/N0)) = 3.75e-2 par bit code,
+        // soit 3p^2 - 2p^3 = 4.1e-3 apres decodage (~250 erreurs sur 60 000 bits)
+        String[] base = {"-form", "NRZ", "-nbEch", "10", "-ampl", "-1", "1",
+            "-mess", "60000", "-snrpb", "2", "-seed", "1"};
+        String[] avecCodeur = java.util.Arrays.copyOf(base, base.length + 1);
+        avecCodeur[base.length] = "-codeur";
+        Simulateur sans = new Simulateur(base);
+        Simulateur avec = new Simulateur(avecCodeur);
+
+        sans.execute();
+        avec.execute();
+
+        assertEquals(3.75e-2, sans.calculTauxErreurBinaire(), 0.3e-2);
+        assertEquals(4.1e-3, avec.calculTauxErreurBinaire(), 1.0e-3);
+    }
+
+    @Test
+    @DisplayName("-codeur combine avec -ti et -snrpb")
+    void testCodeurAvecTrajets() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-codeur", "-form", "NRZ", "-mess", "300",
+            "-ti", "15", "0.5", "-snrpb", "6", "-seed", "1"});
+
+        s.execute();
+
+        assertTrue(Float.isFinite(s.calculTauxErreurBinaire()));
+    }
+
+    @Test
+    @DisplayName("Exception - -codeur ne prend pas de parametre")
+    void testCodeurAvecParametre() {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-codeur", "3"}));
+    }
 }
