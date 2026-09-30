@@ -281,16 +281,11 @@ public class SimulateurTest {
     }
 
     @Test
-    @DisplayName("Exception - ancienne option -ebn0 refusee")
-    void testEbn0Refusee() {
-        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ebn0", "5"}));
-    }
-
-    @Test
-    @DisplayName("-trajets active le canal avec echos")
+    @DisplayName("-ti active le canal avec echos")
     void testTrajetsActifs() throws Exception {
+        // deux echos forts (0.9) retardes d'un et deux bits font franchir le seuil
         Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-nbEch", "10",
-            "-ampl", "-1", "1", "-mess", "10000", "-trajets", "1", "0.5", "10", "-seed", "42"});
+            "-ampl", "-1", "1", "-mess", "10000", "-ti", "10", "0.9", "20", "0.9", "-seed", "42"});
 
         s.execute();
 
@@ -298,10 +293,37 @@ public class SimulateurTest {
     }
 
     @Test
-    @DisplayName("-trajets accepte le chemin sans seed")
+    @DisplayName("-ti sans -snrpb n'ajoute pas de bruit")
+    void testTrajetsSansBruit() throws Exception {
+        // un echo de 0.5 retarde d'un bit ne fait jamais franchir le seuil : TEB nul sans bruit
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-nbEch", "10",
+            "-ampl", "-1", "1", "-mess", "10000", "-ti", "10", "0.5", "-seed", "42"});
+
+        s.execute();
+
+        assertEquals(0.0f, s.calculTauxErreurBinaire());
+    }
+
+    @Test
+    @DisplayName("-ti avec un echo nul donne le meme TEB que -snrpb seul")
+    void testTrajetsEchoNulMemeBruit() throws Exception {
+        // meme puissance de bruit que le canal gaussien : la formule Eb/N0 est partagee
+        Simulateur bruite = new Simulateur(new String[]{"-form", "NRZ", "-mess", "10000",
+            "-snrpb", "0", "-seed", "1"});
+        Simulateur trajets = new Simulateur(new String[]{"-form", "NRZ", "-mess", "10000",
+            "-snrpb", "0", "-ti", "5", "0", "-seed", "1"});
+
+        bruite.execute();
+        trajets.execute();
+
+        assertEquals(bruite.calculTauxErreurBinaire(), trajets.calculTauxErreurBinaire());
+    }
+
+    @Test
+    @DisplayName("-ti suivi d'autres options et sans seed")
     void testTrajetsSansSeed() throws Exception {
-        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-mess", "100",
-            "-trajets", "1", "0.5", "30"});
+        Simulateur s = new Simulateur(new String[]{"-ti", "30", "0.5", "10", "0.2",
+            "-form", "NRZ", "-mess", "100"});
 
         s.execute();
 
@@ -309,18 +331,24 @@ public class SimulateurTest {
     }
 
     @Test
-    @DisplayName("Exception - nombre de trajets hors limites")
+    @DisplayName("Exception - nombre de couples -ti hors limites")
     void testNombreTrajetsInvalide() {
-        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-trajets", "0"}));
-        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-trajets", "6"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ti"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ti", "-mess", "20"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-ti",
+            "1", "0.1", "2", "0.1", "3", "0.1", "4", "0.1", "5", "0.1", "6", "0.1"}));
     }
 
     @Test
-    @DisplayName("Exception - valeurs de trajets mal formees ou manquantes")
+    @DisplayName("Exception - valeurs -ti mal formees ou manquantes")
     void testValeursTrajetsInvalides() {
         assertThrows(Exception.class,
-            () -> new Simulateur(new String[]{"-trajets", "1", "alpha", "10"}));
+            () -> new Simulateur(new String[]{"-ti", "10", "alpha"}));
         assertThrows(Exception.class,
-            () -> new Simulateur(new String[]{"-trajets", "1", "0.5"}));
+            () -> new Simulateur(new String[]{"-ti", "10"}));
+        assertThrows(Exception.class,
+            () -> new Simulateur(new String[]{"-ti", "-3", "0.5"}));
+        assertThrows(Exception.class,
+            () -> new Simulateur(new String[]{"-ti", "99999999999", "0.5"}));
     }
 }

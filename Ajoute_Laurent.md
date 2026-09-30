@@ -20,15 +20,21 @@ Ce document résume les nouveaux tests ajoutés dans `TransmetteurTest.java` et 
 - `testTATMEchoRetarde` : vérifie qu'un écho d'atténuation 0,5 est absent avant son retard, puis ajouté aux échantillons suivants; vérifie aussi le transfert à la destination.
 - `testTATMBruitReproductible` : vérifie qu'une même seed produit le même bruit et que la longueur du signal est conservée.
 - `testTATMSansSeedSignalVide` : vérifie le chemin sans seed avec un signal vide et sa transmission à la destination.
-- `testTATMTrajetsInvalides` : vérifie le rejet de tableaux d'atténuations et de retards de tailles différentes, ainsi que d'un nombre de trajets supérieur au maximum.
+- `testTATMTrajetsInvalides` : vérifie le rejet de tableaux d'atténuations et de retards de tailles différentes, d'un nombre de trajets supérieur au maximum et d'un retard négatif.
+- `testTATMMemeBruitQueCanalGaussien` : vérifie que, sans trajet indirect et avec la même seed, le bruit est identique à celui de `TransmetteurAnalogiqueBruite` (même formule Eb/N0).
 
-## Simulateur et options `-trajets`
+## Simulateur et option `-ti`
 
-- `testTrajetsActifs` : vérifie qu'un canal à échos est réellement activé sans option `-snrpb`, avec un TEB non nul sur un long message.
-- `testTrajetsSansSeed` : vérifie que le canal à échos fonctionne aussi sans seed et renvoie un TEB fini.
-- `testNombreTrajetsInvalide` : vérifie le rejet de zéro trajet et d'un nombre supérieur à la limite.
-- `testValeursTrajetsInvalides` : vérifie le rejet d'une atténuation non numérique et d'un retard manquant.
+- `testTrajetsActifs` : vérifie que deux échos forts (`-ti 10 0.9 20 0.9`) produisent un TEB non nul sans `-snrpb`.
+- `testTrajetsSansBruit` : vérifie qu'un écho faible sans `-snrpb` donne un TEB nul (aucun bruit ajouté implicitement).
+- `testTrajetsEchoNulMemeBruit` : vérifie qu'un écho d'amplitude nulle donne le même TEB que `-snrpb` seul.
+- `testTrajetsSansSeed` : vérifie le chemin sans seed et la lecture de plusieurs couples suivis d'autres options.
+- `testNombreTrajetsInvalide` : vérifie le rejet de `-ti` sans couple et de plus de 5 couples.
+- `testValeursTrajetsInvalides` : vérifie le rejet d'un `ar` non numérique ou manquant, d'un `dt` négatif ou trop grand.
 
-## Correction associée
+## Corrections associées
 
-Le branchement du simulateur vérifiait deux fois l'option `canalBruite`. La première condition sélectionne maintenant `canalTrajetsMultiples`, ce qui rend `-trajets` fonctionnel et laisse `-snrpb` utiliser son canal bruité classique.
+- Le branchement du simulateur vérifiait deux fois l'option `canalBruite`. La première condition sélectionne maintenant `canalTrajetsMultiples`.
+- L'option `-trajets n α τ ...` est remplacée par `-ti dt ar [dt ar ...]`, conformément à la commande unique.
+- `TransmetteurAnalogiqueTrajetsMultiples` hérite de `TransmetteurAnalogiqueBruite` : la formule du bruit (qui oubliait le facteur `nbEch`) n'est plus dupliquée.
+- Sans `-snrpb`, le canal à trajets multiples n'ajoute plus de bruit (Eb/N0 infini) au lieu d'utiliser Eb/N0 = 0 dB par défaut.

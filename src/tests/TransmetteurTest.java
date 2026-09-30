@@ -339,7 +339,7 @@ public class TransmetteurTest {
     void testTATMEchoRetarde() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
             new TransmetteurAnalogiqueTrajetsMultiples(10, Float.POSITIVE_INFINITY,
-                new float[] {0.5f}, new int[] {2}, 42);
+                new int[] {2}, new float[] {0.5f}, 42);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
         transmetteur.connecter(destination);
         Information<Float> signal = new Information<>();
@@ -357,9 +357,9 @@ public class TransmetteurTest {
     @DisplayName("TATM - bruit reproductible avec une seed")
     void testTATMBruitReproductible() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples premier =
-            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new float[0], new int[0], 42);
+            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], 42);
         TransmetteurAnalogiqueTrajetsMultiples second =
-            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new float[0], new int[0], 42);
+            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], 42);
         Information<Float> signal = new Information<>();
         signal.add(1.0f); signal.add(0.0f); signal.add(0.5f);
 
@@ -375,7 +375,7 @@ public class TransmetteurTest {
     @DisplayName("TATM - seed absente et signal vide transmis")
     void testTATMSansSeedSignalVide() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
-            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new float[0], new int[0], null);
+            new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], null);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique(1, 0f, 1f);
         transmetteur.connecter(destination);
         Information<Float> signal = new Information<>();
@@ -387,14 +387,32 @@ public class TransmetteurTest {
     }
 
     @Test
+    @DisplayName("TATM - bruit identique au canal gaussien sans trajet indirect")
+    void testTATMMemeBruitQueCanalGaussien() throws Exception {
+        TransmetteurAnalogiqueBruite bruite = new TransmetteurAnalogiqueBruite(10, 3f, 42);
+        TransmetteurAnalogiqueTrajetsMultiples trajets =
+            new TransmetteurAnalogiqueTrajetsMultiples(10, 3f, new int[0], new float[0], 42);
+        Information<Float> signal = new Information<>();
+        signal.add(1.0f); signal.add(-1.0f); signal.add(0.5f); signal.add(1.0f);
+
+        bruite.recevoir(signal);
+        trajets.recevoir(signal);
+
+        assertEquals(bruite.getInformationEmise(), trajets.getInformationEmise());
+    }
+
+    @Test
     @DisplayName("TATM - rejette des tableaux de trajets invalides")
     void testTATMTrajetsInvalides() {
         assertThrows(IllegalArgumentException.class,
             () -> new TransmetteurAnalogiqueTrajetsMultiples(10, 0f,
-                new float[] {0.5f}, new int[0], 42));
+                new int[0], new float[] {0.5f}, 42));
         assertThrows(IllegalArgumentException.class,
             () -> new TransmetteurAnalogiqueTrajetsMultiples(10, 0f,
-                new float[TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + 1],
-                new int[TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + 1], 42));
+                new int[TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + 1],
+                new float[TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + 1], 42));
+        assertThrows(IllegalArgumentException.class,
+            () -> new TransmetteurAnalogiqueTrajetsMultiples(10, 0f,
+                new int[] {-1}, new float[] {0.5f}, 42));
     }
 }

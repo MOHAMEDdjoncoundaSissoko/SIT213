@@ -9,6 +9,7 @@ import java.util.Random;
 /**
  * Canal à bruit blanc additif gaussien : r(n) = s(n) + b(n), b(n) ~ N(0, sigma_b^2).
  * sigma_b^2 est déduit de Eb/N0 = Ps * nbEch / (2 * sigma_b^2), avec Ps mesurée sur le signal reçu.
+ * Eb/N0 = +infini donne sigma_b = 0 : aucun bruit n'est ajouté.
  *
  * @author ziani
  * @author sissoko
@@ -23,6 +24,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
     private final Random rand;
 
     /**
+     * Construit un canal à bruit blanc additif gaussien.
      * @param nbEch   nombre d'échantillons par bit
      * @param ebN0Db  Eb/N0 en dB
      * @param seed    semence du générateur, ou null
@@ -52,10 +54,11 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
             return;
         }
 
+        float[] signal = signalAvantBruit();
+
         double sommeCarres = 0.0;
         for (int i = 0; i < n; i++) {
-            float valeur = this.informationRecue.iemeElement(i);
-            sommeCarres += valeur * valeur;
+            sommeCarres += signal[i] * signal[i];
         }
         double ps = sommeCarres / n;
 
@@ -64,14 +67,28 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
         double sigmaB = Math.sqrt(sigmaB2);
 
         for (int i = 0; i < n; i++) {
-            float valeur = this.informationRecue.iemeElement(i);
             double bruit = genererBruitGaussien(sigmaB);
-            this.informationEmise.add((float) (valeur + bruit));
+            this.informationEmise.add((float) (signal[i] + bruit));
         }
 
         for (DestinationInterface<Float> dest : destinationsConnectees) {
             dest.recevoir(this.informationEmise);
         }
+    }
+
+    /**
+     * Signal auquel le bruit est ajouté (et sur lequel Ps est mesurée).
+     * Ici le signal reçu tel quel ; une sous-classe peut le redéfinir pour
+     * appliquer une autre perturbation avant le bruit (trajets multiples...).
+     * @return les échantillons du signal non bruité
+     */
+    protected float[] signalAvantBruit() {
+        int n = this.informationRecue.nbElements();
+        float[] signal = new float[n];
+        for (int i = 0; i < n; i++) {
+            signal[i] = this.informationRecue.iemeElement(i);
+        }
+        return signal;
     }
 
     /**

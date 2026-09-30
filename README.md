@@ -12,6 +12,7 @@ Ce projet est un simulateur en Java permettant de modéliser, simuler et analyse
 * **Canal de transmission** : 
   * Canal idéal (sans déformation).
   * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
+  * Canal à trajets multiples (jusqu'à 5 trajets indirects, retardés et atténués), bruité ou non.
 * **Réception et Décision** : Échantillonnage du signal reçu et seuillage pour reconstituer le message logique.
 * **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
 
@@ -49,8 +50,9 @@ Depuis la racine du projet :
 * `-nbEch ne` : nombre d'échantillons par bit. Défaut : 30. **Minimum : 10**, choix de l'équipe : en dessous, le tiers central du RZ et la rampe du NRZT tiennent sur 0 ou 1 échantillon et la forme d'onde n'est plus représentée correctement.
 * `-ampl min max` : amplitudes flottantes, avec `min < max` (sinon erreur). Défaut : 0.0 et 1.0.
 * `-snrpb s` : canal bruité (bruit blanc additif gaussien), `s` est le rapport signal sur bruit par bit $E_b/N_0$ en dB (flottant). Défaut : canal non bruité.
+* `-ti dt ar [dt ar ...]` : canal à trajets multiples. Chaque couple ajoute un trajet indirect décalé de `dt` échantillons (entier ≥ 0) et d'amplitude relative `ar` (flottant) : $r(n) = s(n) + \sum_k ar_k \, s(n - dt_k)$. De 1 à 5 couples. Sans `-snrpb`, seuls les échos perturbent le signal ; avec `-snrpb`, le bruit gaussien est ajouté après les échos. Défaut : pas de trajet indirect.
 
-La présence d'au moins une des options `-form`, `-nbEch`, `-ampl` ou `-snrpb` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
+La présence d'au moins une des options `-form`, `-nbEch`, `-ampl`, `-snrpb` ou `-ti` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
 
 ---
 
@@ -65,6 +67,8 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 20 -seed 1` | ≈ 0.003 |
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 25 -seed 1` | 0.0 |
 | `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
+| `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.5 -seed 1` | 0.0 (écho trop faible pour franchir le seuil) |
+| `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |
 
 **Remarque sur les performances en présence de bruit :** le récepteur actuel décide sur l'échantillon central de chaque bit. Il n'exploite donc qu'un échantillon sur `nbEch` et perd $10\log_{10}(\text{nbEch})$ dB (≈ 14,8 dB pour 30 échantillons) par rapport au récepteur optimal. Le TEB mesuré suit $Q\big(\sqrt{2\,(E_b/N_0)/\text{nbEch}}\big)$ en NRZ antipodal ; voir le rapport de l'étape 3.
 

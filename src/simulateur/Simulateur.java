@@ -16,6 +16,9 @@ import transmetteurs.TransmetteurParfait;
 import visualisations.SondeAnalogique;
 import visualisations.SondeLogique;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /** La classe Simulateur permet de construire et simuler une chaîne de
  * transmission composée d'une Source, d'un nombre variable de
@@ -62,14 +65,14 @@ public class Simulateur {
     /** Eb/N0 en dB (option -snrpb) */
     private float ebN0 = 0.0f;
 
-    /** indique si un canal à trajets multiples doit être utilisé */
+    /** indique si un canal à trajets multiples doit être utilisé (option -ti) */
     private boolean canalTrajetsMultiples = false;
 
-    /** atténuations des trajets secondaires (max 5) */
-    private float[] trajetsAlphas = new float[0];
- 
-    /** retards des trajets secondaires, en nombre d'échantillons (max 5) */
-    private int[] trajetsTaus = new int[0];
+    /** décalages dt des trajets indirects, en nombre d'échantillons (5 au maximum) */
+    private int[] trajetsRetards = new int[0];
+
+    /** amplitudes relatives ar des trajets indirects (5 au maximum) */
+    private float[] trajetsAmplitudes = new float[0];
 
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
@@ -116,14 +119,16 @@ public class Simulateur {
             TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
             Transmetteur<Float, Float> canal;
             if (canalTrajetsMultiples) {
+                // sans -snrpb : Eb/N0 infini, les échos sont la seule perturbation
+                float ebN0Trajets = canalBruite ? ebN0 : Float.POSITIVE_INFINITY;
                 canal = aleatoireAvecGerme
-                    ? new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, seed)
-                    : new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0, trajetsAlphas, trajetsTaus, null);
-            } else if (canalBruite){
+                    ? new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0Trajets, trajetsRetards, trajetsAmplitudes, seed)
+                    : new TransmetteurAnalogiqueTrajetsMultiples(nbEch, ebN0Trajets, trajetsRetards, trajetsAmplitudes, null);
+            } else if (canalBruite) {
                 canal = aleatoireAvecGerme
                     ? new TransmetteurAnalogiqueBruite(nbEch, ebN0, seed)
                     : new TransmetteurAnalogiqueBruite(nbEch, ebN0, null);
-            }else {
+            } else {
                 canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
             }
             TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(nbEch, aMin, aMax);
@@ -220,29 +225,45 @@ public class Simulateur {
                     throw new ArgumentsException("Valeur du parametre -snrpb invalide");
                 }
 
-            } else if (args[i].matches("-trajets")) {
-                // Syntaxe : -trajets n alpha1 tau1 alpha2 tau2 ... alphaN tauN  (n <= 5)
+            } else if (args[i].matches("-ti")) {
+                // Syntaxe : -ti dt1 ar1 [dt2 ar2 ...] (5 couples au maximum)
+                // les couples sont lus tant que l'argument suivant est un entier
                 simulationAnalogique = true;
                 canalTrajetsMultiples = true;
-                try {
+                List<Integer> retards = new ArrayList<>();
+                List<Float> amplitudes = new ArrayList<>();
+                while (i + 1 < args.length && args[i + 1].matches("-?[0-9]+")) {
                     i++;
-                    int nbTrajets = Integer.parseInt(args[i]);
-                    if (nbTrajets < 1 || nbTrajets > TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX) {
-                        throw new ArgumentsException("Valeur du parametre -trajets invalide : " + nbTrajets
-                            + " (entre 1 et " + TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + ")");
+                    int dt;
+                    try {
+                        dt = Integer.parseInt(args[i]);
+                    } catch (NumberFormatException e) {
+                        throw new ArgumentsException("Valeur dt du parametre -ti invalide : " + args[i]);
                     }
-                    trajetsAlphas = new float[nbTrajets];
-                    trajetsTaus = new int[nbTrajets];
-                    for (int k = 0; k < nbTrajets; k++) {
-                        i++;
-                        trajetsAlphas[k] = Float.parseFloat(args[i]);
-                        i++;
-                        trajetsTaus[k] = Integer.parseInt(args[i]);
+                    if (dt < 0) {
+                        throw new ArgumentsException("Valeur dt du parametre -ti invalide : " + dt
+                            + " (doit etre positive ou nulle)");
                     }
-                } catch (ArgumentsException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new ArgumentsException("Valeurs du parametre -trajets invalides");
+                    i++;
+                    if (i >= args.length) {
+                        throw new ArgumentsException("Valeur ar manquante apres dt = " + dt + " (parametre -ti)");
+                    }
+                    try {
+                        amplitudes.add(Float.parseFloat(args[i]));
+                    } catch (NumberFormatException e) {
+                        throw new ArgumentsException("Valeur ar du parametre -ti invalide : " + args[i]);
+                    }
+                    retards.add(dt);
+                }
+                if (retards.isEmpty() || retards.size() > TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX) {
+                    throw new ArgumentsException("Nombre de couples du parametre -ti invalide : " + retards.size()
+                        + " (entre 1 et " + TransmetteurAnalogiqueTrajetsMultiples.NB_TRAJETS_MAX + ")");
+                }
+                trajetsRetards = new int[retards.size()];
+                trajetsAmplitudes = new float[amplitudes.size()];
+                for (int k = 0; k < retards.size(); k++) {
+                    trajetsRetards[k] = retards.get(k);
+                    trajetsAmplitudes[k] = amplitudes.get(k);
                 }
 
             } else {
