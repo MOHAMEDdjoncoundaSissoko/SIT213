@@ -514,7 +514,7 @@ Le dernier test simulateur répond à la limite relevée à l'étape 3 : les tes
 \subsection{Limites identifiées}
 \begin{itemize}
   \item \textbf{Semences liées.} Avec \texttt{-seed}, la source et le canal utilisent toujours la même semence, donc des suites pseudo-aléatoires liées. Utiliser \texttt{seed} et \texttt{seed + 1} garantirait leur indépendance. Les courbes restent conformes à la théorie, ce qui indique que l'effet est négligeable ici.
-  \item \textbf{Mémoire.} \cls{Information} stocke des \texttt{Float} (objets) : une simulation de 200\,000 bits à 30 échantillons occupe environ 400~Mo. Les balayages sont donc découpés en tranches ; un stockage en \texttt{float[]} réduirait fortement l'empreinte.
+  \item \textbf{Mémoire.} \cls{Information} stocke des \texttt{Float} (objets) : une simulation de 200\,000 bits à 30 échantillons occupe environ 400~Mo. Les balayages sont donc découpés en tranches ; un stockage en \texttt{float[]} réduirait fortement l'empreinte. \emph{Ce stockage a été réalisé à l'étape 5 (section~\ref{sec:perf}).}
   \item \textbf{Pas de compensation des échos.} Le filtre adapté est optimal contre le bruit, pas contre l'IES. Un égaliseur est nécessaire pour annuler les trajets multiples.
   \item Le rapport de l'étape 3 prévoyait une option pour conserver la décision sur l'échantillon central. La commande unique n'en prévoyant pas, la comparaison est faite en recompilant la version de l'étape 3 depuis git (script de courbes).
 \end{itemize}
@@ -560,13 +560,15 @@ Sans \texttt{-codeur}, la chaîne est celle de l'étape 4. En simulation logique
 \texttt{CodeurCanal} & \textbf{Nouvelle classe} (\texttt{Transmetteur<Boolean, Boolean>}) : chaque bit reçu est émis sur trois bits, $0 \to 010$ et $1 \to 101$.\\
 \texttt{DecodeurCanal} & \textbf{Nouvelle classe} : chaque paquet de trois bits redonne un bit, par choix du mot de code le plus proche. Une erreur par paquet est corrigée.\\
 \texttt{Simulateur} & Option \texttt{-codeur} ; la chaîne se branche sur deux extrémités logiques (source et destination, ou codeur et décodeur) ; sondes logiques du message émis et du message décodé avec \texttt{-s}.\\
-Tests JUnit & 10 tests ajoutés : 106 tests, tous réussis.\\
-\texttt{runTests} & Section « Étape 5 » : 3 exécutions nominales et 1 test d'erreur (32 tests).\\
+\texttt{InformationFlottante} & \textbf{Nouvelle classe} (sous-classe d'\texttt{Information<Float>}) : le signal analogique est rangé dans un tableau de \texttt{float} au lieu d'objets \texttt{Float}, pour réduire la mémoire (section~\ref{sec:perf}).\\
+\texttt{TransmetteurLogique}\newline\texttt{Analogique},\newline\texttt{TransmetteurAnalogique}\newline\texttt{Bruite} & L'émetteur et le canal bruité (donc aussi le canal à trajets multiples) produisent une \texttt{InformationFlottante}. Leurs calculs sont inchangés.\\
+Tests JUnit & 15 tests ajoutés : 111 tests, tous réussis.\\
+\texttt{runTests} & Section « Étape 5 » : 4 exécutions nominales, dont un test de mémoire, et 1 test d'erreur (33 tests).\\
 \texttt{.gitignore} & Les fichiers générés (\texttt{bin/}, \texttt{docs/}) ne sont plus versionnés.\\
 \texttt{genDeliverable}, \texttt{README} & Archive \texttt{etape5} ; description du contenu de l'archive et de l'option \texttt{-codeur}.\\
 \texttt{rapport/etape5/} & Script \texttt{courbesCodage.py} : simulations avec et sans codeur et théorie exacte après décodage.\\\bottomrule
 \end{tabularx}\end{center}
-Aucune classe existante de la chaîne analogique n'a été modifiée.
+Pour le codage de canal, aucune classe existante de la chaîne analogique n'a été modifiée. L'émetteur et le canal l'ont été ensuite, uniquement pour la façon de ranger le signal en mémoire : les TEB obtenus sont identiques au bit près.
 
 \section{Prévisions avant simulation}
 \subsection{Paramètres pertinents}
@@ -724,46 +726,84 @@ Ce que le simulateur permet de vérifier, c'est la propriété qui rend cette r�
 
 \section{Tests}
 \subsection{Tests automatiques (\texttt{runTests})}
-Quatre tests concernent l'étape 5 ; les tests d'erreur ont été renumérotés.
+Cinq tests concernent l'étape 5 ; les tests d'erreur ont été renumérotés.
 \begin{lstlisting}[language={}]
 Test 18 : Codage de canal (logique) ... OK
 Test 19 : Codage de canal (analogique bruité) ... OK
 Test 20 : Codage de canal (trajets indirects, bruité) ... OK
-Test 32 : Erreur (codeur avec paramètre) ... OK
+Test 21 : Mémoire (100 000 bits codés, tas Java de 256 Mo) ... OK
+Test 33 : Erreur (codeur avec paramètre) ... OK
 ------------------------------------------
-  RÉSULTAT : 32/32 OK
+  RÉSULTAT : 33/33 OK
 \end{lstlisting}
+Le test 21 vérifie le gain de mémoire de la section~\ref{sec:perf} : il simule 100\,000 bits codés (9 millions d'échantillons) en limitant la mémoire de la machine virtuelle Java à 256~Mo (variable d'environnement \texttt{JAVA\_TOOL\_OPTIONS=-Xmx256m}). Avec l'ancien stockage, cette simulation s'arrête sur une \texttt{OutOfMemoryError} ; avec le nouveau, elle réussit, et réussit encore avec 128~Mo.
 
 \subsection{Tests unitaires JUnit}
-La suite passe de 96 à \textbf{106 tests}, tous réussis. Tests ajoutés :
+La suite passe de 96 à \textbf{111 tests}, tous réussis. Tests ajoutés :
 \begin{itemize}
   \item \textbf{codeur} : $0 \to 010$ et $1 \to 101$ ; jamais trois bits consécutifs identiques dans le signal codé ;
   \item \textbf{décodeur} : les huit lignes de la table du TP5 ; une erreur sur le premier, le deuxième ou le troisième bit d'un paquet est corrigée ; deux erreurs dans un paquet donnent le mauvais bit (limite du code) ; message vide et paquet incomplet en fin de message ;
-  \item \textbf{simulateur} : TEB nul avec \texttt{-codeur} en logique et sans bruit pour les trois formes d'onde ; \emph{TEB conforme à la théorie} avec et sans codeur ($3{,}75\cdot10^{-2}$ et $4{,}1\cdot10^{-3}$ à 2~dB sur 60\,000 bits) ; combinaison avec \texttt{-ti} et \texttt{-snrpb} ; refus de \texttt{-codeur 3}.
+  \item \textbf{simulateur} : TEB nul avec \texttt{-codeur} en logique et sans bruit pour les trois formes d'onde ; \emph{TEB conforme à la théorie} avec et sans codeur ($3{,}75\cdot10^{-2}$ et $4{,}1\cdot10^{-3}$ à 2~dB sur 60\,000 bits) ; combinaison avec \texttt{-ti} et \texttt{-snrpb} ; refus de \texttt{-codeur 3} ;
+  \item \textbf{stockage en \texttt{float[]}} (\texttt{InformationTest}) : ajout de valeurs et agrandissement du tableau ; égalité avec une \cls{Information<Float>} classique, dans les deux sens ; parcours « for each » (utilisé par les sondes), affichage et modification identiques ; refus d'un rang hors des valeurs rangées et de la valeur \texttt{null} ; utilisation effective par l'émetteur et le canal.
 \end{itemize}
 
 \section{Performances du simulateur}\label{sec:perf}
-Avec le codeur, le signal est trois fois plus long, et les simulations longues atteignent les limites de mémoire d'un ordinateur portable.
+Avec le codeur, le signal est trois fois plus long, et les simulations longues atteignaient les limites de mémoire d'un ordinateur portable. Nous avons donc modifié la façon dont le signal analogique est rangé en mémoire.
+
 \subsection{Constat}
 \begin{center}\begin{tabular}{lcc}\toprule
-Simulation de 200\,000 bits, $N = 30$ & mémoire & durée\\\midrule
-NRZ bruité, sans codeur & 396 Mo & 1,8 s\\
-NRZ bruité, avec \texttt{-codeur} & 1\,058 Mo & 5,0 s\\\bottomrule
+Simulation de 200\,000 bits, $N = 30$, avant modification & mémoire & durée\\\midrule
+NRZ bruité, sans codeur & 414 Mo & 0,82 s\\
+NRZ bruité, avec \texttt{-codeur} & 1\,074 Mo & 2,07 s\\\bottomrule
 \end{tabular}\end{center}
-La cause est le stockage du signal analogique. La classe \cls{Information} range ses éléments dans une \texttt{ArrayList<Float>} : chaque échantillon est un \emph{objet} \texttt{Float} (16 octets) plus une référence (4 octets), soit 20 octets au lieu de 4. Le signal existe de plus en deux exemplaires (sortie de l'émetteur, sortie du canal). Pour 200\,000 bits codés, cela représente 18 millions d'échantillons par exemplaire. La création de ces objets explique aussi l'essentiel du temps de calcul.
+(Mémoire maximale occupée par le processus et durée totale ; médiane de trois exécutions, machine virtuelle limitée à 1,1~Go.)
 
-Dans ce rapport, la difficulté est contournée par les scripts de courbes : les points longs sont découpés en tranches (200\,000 bits sans codeur, 60\,000 avec), simulées avec des semences différentes, et au plus deux simulations tournent en parallèle.
+La cause est le stockage du signal analogique. La classe \cls{Information} range ses éléments dans une \texttt{ArrayList<Float>} : chaque échantillon est un \emph{objet} \texttt{Float} (16 octets) plus une référence (4 octets), soit 20 octets au lieu des 4 d'un \texttt{float}. Le signal existe de plus en deux exemplaires (sortie de l'émetteur, sortie du canal). Pour 200\,000 bits codés, cela représente 18 millions d'échantillons, soit environ 360~Mo par exemplaire. La création de ces millions d'objets explique aussi l'essentiel du temps de calcul.
 
-\subsection{Pistes d'amélioration}
+\subsection{Modification réalisée : le signal rangé dans des tableaux de \texttt{float}}
+Nous avons ajouté au paquetage \texttt{information} une sous-classe \cls{InformationFlottante} d'\cls{Information<Float>}, qui range ses valeurs dans un tableau de \texttt{float} :
+\begin{lstlisting}
+public class InformationFlottante extends Information<Float> {
+    private float[] valeurs;   // seules les cases 0 .. taille-1 servent
+    private int taille;
+
+    public float valeur(int i) {
+        return valeurs[Objects.checkIndex(i, taille)];
+    }
+    public void ajouter(float valeur) {
+        // (le tableau est agrandi si besoin)
+        valeurs[taille++] = valeur;
+    }
+    @Override public int nbElements()         { return taille; }
+    @Override public Float iemeElement(int i) { return valeur(i); }
+    // setIemeElement, add et iterator : redéfinies de la même façon
+}
+
+// TransmetteurLogiqueAnalogique.emettre() : taille du signal connue d'avance
+InformationFlottante signal = new InformationFlottante(nbBits * nbEch);
+signal.ajouter(formeBit(forme, nbEch, aMin, aMax, bit, bitPrecedent));
+\end{lstlisting}
 \begin{itemize}
-  \item \textbf{Stocker le signal analogique dans un \texttt{float[]}.} Nous avons testé, hors du livrable, une sous-classe d'\cls{Information<Float>} qui range ses valeurs dans un tableau de \texttt{float}, utilisée par l'émetteur et par le canal. Le reste du code, qui passe par \texttt{iemeElement} et \texttt{nbElements}, n'est pas modifié, et les TEB obtenus sont identiques :
-  \begin{center}\begin{tabular}{lcc}\toprule
-  200\,000 bits, $N = 30$ & actuel & avec \texttt{float[]}\\\midrule
-  NRZ bruité, sans codeur & 396 Mo, 1,8 s & 152 Mo, 0,8 s\\
-  NRZ bruité, avec \texttt{-codeur} & 1\,058 Mo, 5,0 s & 313 Mo, 1,9 s\\\bottomrule
-  \end{tabular}\end{center}
-  La mémoire est divisée par 2,6 à 3,4 et le temps par 2,3 à 2,6. C'est l'amélioration la plus rentable ; elle n'est pas encore intégrée au livrable.
-  \item \textbf{Éviter la copie du signal dans le canal.} \texttt{signalAvantBruit()} recopie le signal reçu avant d'ajouter le bruit ; le canal gaussien seul pourrait lire directement l'information reçue.
+  \item \textbf{Où} : l'émetteur (\cls{TransmetteurLogiqueAnalogique}) et le canal bruité (\cls{TransmetteurAnalogiqueBruite}) créent désormais une \cls{InformationFlottante}, dimensionnée d'avance. Le canal à trajets multiples, qui hérite du canal bruité, en profite sans modification. Le canal parfait transmet le même objet.
+  \item \textbf{Pourquoi une sous-classe} : le reste du code (récepteur, sondes, simulateur, tests) manipule une \cls{Information<Float>} uniquement par ses méthodes \texttt{nbElements}, \texttt{iemeElement} et le parcours « for each ». En les redéfinissant, la nouvelle classe s'utilise partout sans autre changement. L'itérateur doit lui aussi être redéfini, car celui d'\cls{Information} lit directement sa liste interne ; or les sondes parcourent le signal avec « for each ».
+  \item \textbf{Seule différence} : la valeur \texttt{null}, qu'un \texttt{float} ne peut pas représenter, est refusée. Le simulateur n'en produit jamais.
+\end{itemize}
+
+\textbf{Vérification.} Les calculs sont inchangés : seule la façon de ranger les valeurs change. Nous avons comparé l'ancienne et la nouvelle version sur 89 configurations (trois formes d'onde, deux jeux d'amplitudes, avec et sans bruit, échos, codeur, deux semences, messages fixes) : les TEB sont \textbf{identiques au bit près}. Les 111 tests JUnit et les 33 tests de \texttt{runTests} passent. Les courbes de ce rapport, calculées avant la modification, restent donc valables.
+
+\begin{center}\begin{tabular}{lccc}\toprule
+200\,000 bits, $N = 30$ & avant & après & gain\\\midrule
+NRZ bruité, sans codeur & 414 Mo, 0,82 s & 152 Mo, 0,40 s & mémoire $\div 2{,}7$, durée $\div 2{,}0$\\
+NRZ bruité, avec \texttt{-codeur} & 1\,074 Mo, 2,07 s & 294 Mo, 1,01 s & mémoire $\div 3{,}7$, durée $\div 2{,}0$\\
+NRZT, écho, avec \texttt{-codeur} & 1\,076 Mo, 2,12 s & 298 Mo, 1,08 s & mémoire $\div 3{,}6$, durée $\div 2{,}0$\\\bottomrule
+\end{tabular}\end{center}
+Le gain de mémoire est le plus fort pour les signaux longs, où le signal pèse davantage que la mémoire fixe de la machine virtuelle. Il reste environ 12 octets par échantillon : la sortie de l'émetteur, la copie faite par \texttt{signalAvantBruit()} et la sortie du canal. Le test 21 de \texttt{runTests} vérifie ce gain de manière automatique.
+
+Les courbes de ce rapport avaient été calculées en tranches (200\,000 bits sans codeur, 60\,000 avec) pour tenir en mémoire ; avec le nouveau stockage, des tranches trois fois plus grandes tiennent dans la même mémoire.
+
+\subsection{Autres pistes}
+\begin{itemize}
+  \item \textbf{Éviter la copie du signal dans le canal.} \texttt{signalAvantBruit()} recopie le signal reçu avant d'ajouter le bruit ; sans écho, le canal pourrait lire directement le tableau de l'émetteur, ce qui économiserait encore 4 octets par échantillon.
   \item \textbf{Bruit gaussien.} La méthode de Box--Muller donnée en cours fournit deux échantillons indépendants (cosinus et sinus) pour deux tirages uniformes ; nous n'utilisons que le cosinus. Utiliser les deux diviserait par deux les appels au générateur et aux fonctions logarithme et racine carrée.
   \item \textbf{Semences.} Dériver deux semences (\texttt{seed} et \texttt{seed + 1}) pour la source et le canal, limite déjà relevée aux étapes 3 et 4.
   \item \textbf{Sondes.} L'affichage (\texttt{-s}) d'un signal de plusieurs millions d'échantillons est lent et peu lisible ; il est à réserver aux messages courts.
@@ -774,9 +814,9 @@ Dans ce rapport, la difficulté est contournée par les scripts de courbes : les
 
 \textbf{Étape 4.} Le récepteur à filtre adapté supprime cette perte : le TEB mesuré atteint la borne théorique pour les trois formes d'onde (gain de 14,8~dB en NRZ, 10~dB en RZ). Le canal à trajets multiples est intégré avec l'option \texttt{-ti} ; ses effets, avec et sans bruit, sont prédits par une théorie exacte de la chaîne.
 
-\textbf{Étape 5.} Le codage de canal ($0 \to 010$, $1 \to 101$) est intégré avec l'option \texttt{-codeur}. Il divise le TEB par 9 à 2~dB et par 27 à 4~dB, soit un gain de 3,4~dB à rapport signal à bruit par bit émis constant, pour les trois formes d'onde. Ce gain se paie par un débit utile divisé par trois : à énergie égale par bit d'information, le code perd 1,4~dB. Il reste efficace avec un écho en présence de bruit, mais ne corrige pas les erreurs systématiques dues à un écho fort. Enfin, le simulateur, dont la synchronisation est parfaite par construction, ne peut pas montrer l'amélioration de synchronisation apportée par le code ; il permet seulement de vérifier l'absence de longues suites de bits identiques.
+\textbf{Étape 5.} Le codage de canal ($0 \to 010$, $1 \to 101$) est intégré avec l'option \texttt{-codeur}. Il divise le TEB par 9 à 2~dB et par 27 à 4~dB, soit un gain de 3,4~dB à rapport signal à bruit par bit émis constant, pour les trois formes d'onde. Ce gain se paie par un débit utile divisé par trois : à énergie égale par bit d'information, le code perd 1,4~dB. Il reste efficace avec un écho en présence de bruit, mais ne corrige pas les erreurs systématiques dues à un écho fort. Enfin, le simulateur, dont la synchronisation est parfaite par construction, ne peut pas montrer l'amélioration de synchronisation apportée par le code ; il permet seulement de vérifier l'absence de longues suites de bits identiques. Enfin, le signal analogique est désormais rangé dans des tableaux de \texttt{float} : une simulation de 200\,000 bits avec codeur passe de 1\,074 à 294~Mo de mémoire et deux fois moins de temps, pour des résultats identiques.
 
-Aux étapes 4 et 5, les 430 points de TEB simulés concordent tous avec la théorie à moins de 2,5 écarts-types statistiques, et des tests automatiques vérifient désormais la \emph{valeur} du TEB, et plus seulement le bon déroulement d'une simulation. Les suites naturelles sont un égaliseur contre les trajets multiples, un décodage souple ou un code de meilleur rendement, et le passage du signal analogique en tableaux de \texttt{float} pour simuler des messages plus longs.
+Aux étapes 4 et 5, les 430 points de TEB simulés concordent tous avec la théorie à moins de 2,5 écarts-types statistiques, et des tests automatiques vérifient désormais la \emph{valeur} du TEB, et plus seulement le bon déroulement d'une simulation. Les suites naturelles sont un égaliseur contre les trajets multiples, et un décodage souple ou un code de meilleur rendement pour obtenir un véritable gain de codage.
 
 \section*{Annexe -- Reproduire les figures}
 \begin{lstlisting}[language={}]
