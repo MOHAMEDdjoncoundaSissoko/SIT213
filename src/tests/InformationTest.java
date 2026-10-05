@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import information.Information;
+import information.InformationFlottante;
+import transmetteurs.TransmetteurAnalogiqueBruite;
+import transmetteurs.TransmetteurLogiqueAnalogique;
 
 /**
  * Tests JUnit pour la classe Information.
@@ -140,5 +143,88 @@ public class InformationTest {
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(false);
         assertTrue(info.equals(info));
+    }
+
+    // InformationFlottante (signal analogique range dans un float[])
+
+    /** Information de Float classique, pour comparaison. */
+    private static Information<Float> classique(float... valeurs) {
+        Information<Float> info = new Information<>();
+        for (float v : valeurs) info.add(v);
+        return info;
+    }
+
+    @Test
+    @DisplayName("InformationFlottante - ajout, lecture et agrandissement du tableau")
+    void testFlottanteAjoutEtLecture() {
+        InformationFlottante info = new InformationFlottante(0);
+        for (int i = 0; i < 100; i++) info.ajouter(i * 0.5f);
+        info.add(-1.5f);
+        info.ajouter(new float[] {2f, 3f});
+
+        assertEquals(103, info.nbElements());
+        assertEquals(49.5f, info.valeur(99));
+        assertEquals(Float.valueOf(-1.5f), info.iemeElement(100));
+        assertEquals(3f, info.valeur(102));
+    }
+
+    @Test
+    @DisplayName("InformationFlottante - egale a une Information de Float classique, dans les deux sens")
+    void testFlottanteEqualsClassique() {
+        InformationFlottante info = new InformationFlottante(4);
+        info.ajouter(new float[] {0.5f, -1f, 2f});
+
+        assertEquals(classique(0.5f, -1f, 2f), info);
+        assertEquals(info, classique(0.5f, -1f, 2f));
+        assertNotEquals(classique(0.5f, -1f, 2.5f), info);
+        assertNotEquals(classique(0.5f, -1f), info);
+    }
+
+    @Test
+    @DisplayName("InformationFlottante - for each, toString et modification comme Information")
+    void testFlottanteParcoursEtAffichage() {
+        InformationFlottante info = new InformationFlottante(8);
+        info.ajouter(new float[] {1f, 2f, 3f});
+        info.setIemeElement(1, 5f);
+
+        float somme = 0;
+        for (float v : info) somme += v;
+        assertEquals(9f, somme);
+        assertEquals(classique(1f, 5f, 3f).toString(), info.toString());
+
+        java.util.Iterator<Float> it = info.iterator();
+        it.next(); it.next(); it.next();
+        assertFalse(it.hasNext());
+        assertThrows(java.util.NoSuchElementException.class, it::next);
+    }
+
+    @Test
+    @DisplayName("InformationFlottante - rang hors des valeurs rangees et valeur null refuses")
+    void testFlottanteErreurs() {
+        // capacite 10 mais 2 valeurs : les rangs 2 a 9 n'existent pas
+        InformationFlottante info = new InformationFlottante(10);
+        info.ajouter(new float[] {1f, 2f});
+
+        assertThrows(IndexOutOfBoundsException.class, () -> info.valeur(2));
+        assertThrows(IndexOutOfBoundsException.class, () -> info.iemeElement(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> info.setIemeElement(5, 1f));
+        assertThrows(NullPointerException.class, () -> info.add(null));
+        assertEquals(2, info.nbElements());
+    }
+
+    @Test
+    @DisplayName("InformationFlottante - utilisee par l'emetteur et le canal bruite")
+    void testFlottanteDansLaChaine() throws Exception {
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", 10, -1f, 1f);
+        TransmetteurAnalogiqueBruite canal = new TransmetteurAnalogiqueBruite(10, 5f, 1);
+        emetteur.connecter(canal);
+        Information<Boolean> bits = new Information<>();
+        bits.add(true); bits.add(false); bits.add(true);
+
+        emetteur.recevoir(bits);
+
+        assertInstanceOf(InformationFlottante.class, emetteur.getInformationEmise());
+        assertInstanceOf(InformationFlottante.class, canal.getInformationEmise());
+        assertEquals(30, canal.getInformationEmise().nbElements());
     }
 }

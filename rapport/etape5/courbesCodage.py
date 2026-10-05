@@ -50,8 +50,10 @@ N = e4.N
 SEED = e4.SEED
 LONGUEUR_MOT = 3
 
-# Limites mémoire (cf. étape 4) : avec le codeur le signal est 3 fois plus long,
-# une tranche de 60 000 bits codée occupe autant qu'une tranche de 200 000 bits non codée (~400 Mo).
+# Limites mémoire (cf. étape 4) : avec le codeur le signal est 3 fois plus long. Avant le stockage
+# en float[] (InformationFlottante), une tranche de 60 000 bits codée occupait autant qu'une tranche
+# de 200 000 bits non codée (~400 Mo). Les mesures du rapport ont été faites avec ces tranches ;
+# depuis, une tranche de 200 000 bits codée n'occupe plus que ~300 Mo.
 BITS_PAR_RUN = {False: 200000, True: 60000}
 NB_RUNS_MAX = {False: 5, True: 10}
 GAIN_DEBIT_DB = 10 * math.log10(LONGUEUR_MOT)   # énergie par bit utile = 3 x énergie par bit codé

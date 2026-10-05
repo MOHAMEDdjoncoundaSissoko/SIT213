@@ -139,42 +139,47 @@ run_test "Codage de canal (analogique bruité)" "./simulateur -mess 1000 -form N
 # Test 20 : codage avec trajets indirects et bruit
 run_test "Codage de canal (trajets indirects, bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -ti 15 0.5 -codeur"
 
+# Test 21 : mémoire - 100 000 bits codés (9 millions d'échantillons) avec un tas Java limité à 256 Mo.
+# Le signal analogique est rangé dans des float[] (InformationFlottante) : ~110 Mo suffisent.
+# Avec des objets Float, la même simulation dépassait 256 Mo (OutOfMemoryError).
+run_test "Mémoire (100 000 bits codés, tas Java de 256 Mo)" "JAVA_TOOL_OPTIONS=-Xmx256m ./simulateur -mess 100000 -form NRZ -ampl -1 1 -snrpb 4 -codeur"
+
 # --- TESTS D'ERREURS (le simulateur doit échouer) ---
 
-# Test 21 : option inconnue
+# Test 22 : option inconnue
 run_error_test "Erreur (option inconnue)" "./simulateur -foobar"
 
-# Test 22 : amplitude non numérique
+# Test 23 : amplitude non numérique
 run_error_test "Erreur (amplitude invalide)" "./simulateur -ampl abc"
 
-# Test 23 : nombre d'échantillons négatif
+# Test 24 : nombre d'échantillons négatif
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 
-# Test 24 : nombre d'échantillons sous le minimum
+# Test 25 : nombre d'échantillons sous le minimum
 run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
 
-# Test 25 : amplitude min > max
+# Test 26 : amplitude min > max
 run_error_test "Erreur (ampl min > max)" "./simulateur -ampl 1 0"
 
-# Test 26 : amplitude min = max
+# Test 27 : amplitude min = max
 run_error_test "Erreur (ampl min = max)" "./simulateur -ampl 1 1"
 
-# Test 27 : Eb/N0 non numérique
+# Test 28 : Eb/N0 non numérique
 run_error_test "Erreur (snrpb non flottant)" "./simulateur -snrpb abc"
 
-# Test 28 : Eb/N0 manquant
+# Test 29 : Eb/N0 manquant
 run_error_test "Erreur (snrpb sans valeur)" "./simulateur -snrpb"
 
-# Test 29 : -ti sans couple dt ar
+# Test 30 : -ti sans couple dt ar
 run_error_test "Erreur (ti sans couple)" "./simulateur -ti"
 
-# Test 30 : -ti avec dt mais sans ar
+# Test 31 : -ti avec dt mais sans ar
 run_error_test "Erreur (ti sans valeur ar)" "./simulateur -ti 10"
 
-# Test 31 : -ti avec plus de 5 couples
+# Test 32 : -ti avec plus de 5 couples
 run_error_test "Erreur (ti plus de 5 couples)" "./simulateur -ti 1 0.1 2 0.1 3 0.1 4 0.1 5 0.1 6 0.1"
 
-# Test 32 : -codeur ne prend pas de paramètre
+# Test 33 : -codeur ne prend pas de paramètre
 run_error_test "Erreur (codeur avec paramètre)" "./simulateur -codeur 3"
 
 echo "------------------------------------------"

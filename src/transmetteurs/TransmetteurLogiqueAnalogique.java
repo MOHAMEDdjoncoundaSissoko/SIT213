@@ -2,6 +2,7 @@ package transmetteurs;
 
 import destinations.DestinationInterface;
 import information.Information;
+import information.InformationFlottante;
 import information.InformationNonConformeException;
 
 /**
@@ -24,6 +25,7 @@ public class TransmetteurLogiqueAnalogique extends Transmetteur<Boolean, Float> 
     private float aMin, aMax;
 
     /**
+     * Construit un émetteur qui convertit les bits en signal analogique.
      * @param forme  forme d'onde ("NRZ", "NRZT" ou "RZ")
      * @param nbEch  nombre d'échantillons par bit (doit être >= {@value #NB_ECH_MIN})
      * @param aMin   amplitude pour le niveau bas (bit 0)
@@ -50,16 +52,17 @@ public class TransmetteurLogiqueAnalogique extends Transmetteur<Boolean, Float> 
 
     @Override
     public void emettre() throws InformationNonConformeException {
-        informationEmise = new Information<Float>();
         int nbBits = informationRecue.nbElements();
+        // signal rangé dans un float[] (mémoire), de taille connue d'avance
+        InformationFlottante signal =
+            new InformationFlottante((int) Math.min((long) nbBits * nbEch, Integer.MAX_VALUE - 8));
+        informationEmise = signal;
 
         for (int i = 0; i < nbBits; i++) {
             boolean bit = informationRecue.iemeElement(i);
             // NRZT : la rampe part du niveau du bit précédent (aMin avant le premier bit)
             boolean bitPrecedent = (i > 0) && informationRecue.iemeElement(i - 1);
-            for (float valeur : formeBit(forme, nbEch, aMin, aMax, bit, bitPrecedent)) {
-                informationEmise.add(valeur);
-            }
+            signal.ajouter(formeBit(forme, nbEch, aMin, aMax, bit, bitPrecedent));
         }
 
         for (DestinationInterface<Float> dest : destinationsConnectees) {

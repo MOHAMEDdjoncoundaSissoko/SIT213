@@ -2,6 +2,7 @@ package transmetteurs;
 
 import destinations.DestinationInterface;
 import information.Information;
+import information.InformationFlottante;
 import information.InformationNonConformeException;
 
 import java.util.Random;
@@ -45,7 +46,9 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
     @Override
     public void emettre() throws InformationNonConformeException {
         int n = this.informationRecue.nbElements();
-        this.informationEmise = new Information<Float>();
+        // signal bruité rangé dans un float[] (mémoire), de même taille que le signal reçu
+        InformationFlottante sortie = new InformationFlottante(n);
+        this.informationEmise = sortie;
 
         if (n == 0) {
             for (DestinationInterface<Float> dest : destinationsConnectees) {
@@ -68,7 +71,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 
         for (int i = 0; i < n; i++) {
             double bruit = genererBruitGaussien(sigmaB);
-            this.informationEmise.add((float) (signal[i] + bruit));
+            sortie.ajouter((float) (signal[i] + bruit));
         }
 
         for (DestinationInterface<Float> dest : destinationsConnectees) {

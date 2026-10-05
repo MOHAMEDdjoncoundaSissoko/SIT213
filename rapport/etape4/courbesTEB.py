@@ -50,7 +50,8 @@ REF_ETAPE3 = "82e4660"
 N = 30          # nombre d'échantillons par bit
 SEED = 1
 
-# Limites mémoire : une simulation de 200 000 bits occupe ~400 Mo (Information stocke des Float).
+# Limites mémoire : à l'étape 4, une simulation de 200 000 bits occupait ~400 Mo (signal en objets Float) ;
+# depuis le stockage en float[] de l'étape 5 (InformationFlottante), elle n'occupe plus que ~150 Mo.
 # Les points à faible TEB sont découpés en plusieurs simulations de BITS_PAR_RUN bits
 # (semences SEED, SEED+1, ...) dont on cumule les erreurs, plutôt qu'un seul run géant.
 BITS_PAR_RUN = 200000

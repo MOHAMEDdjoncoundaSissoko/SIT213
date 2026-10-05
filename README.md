@@ -32,7 +32,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 
 | Élément | Contenu |
 |---|---|
-| `src/` | sources Java du simulateur, par paquetage :<br>`sources` (source fixe ou aléatoire), `transmetteurs` (codeur et décodeur de canal, émetteur, canaux parfait, bruité et à trajets multiples, récepteur à filtre adapté), `destinations`, `information`, `visualisations` (sondes et vues graphiques), `simulateur` (programme principal et analyse des options) et `tests` (tests unitaires JUnit) |
+| `src/` | sources Java du simulateur, par paquetage :<br>`sources` (source fixe ou aléatoire), `transmetteurs` (codeur et décodeur de canal, émetteur, canaux parfait, bruité et à trajets multiples, récepteur à filtre adapté), `destinations`, `information` (dont `InformationFlottante`, qui range le signal analogique dans un tableau de `float`), `visualisations` (sondes et vues graphiques), `simulateur` (programme principal et analyse des options) et `tests` (tests unitaires JUnit) |
 | `bin/` | classes compilées ; **vide dans l'archive**, rempli par `./compile` |
 | `docs/` | documentation Javadoc ; **vide dans l'archive**, remplie par `./genDoc` |
 | `lib/` | bibliothèques de test : JUnit 4, Hamcrest et JUnit Platform Console Standalone (utilisées pour compiler et lancer les tests de `src/tests`) |
@@ -40,7 +40,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 | `genDoc` | génère la Javadoc des sources (hors tests) dans `docs/` |
 | `cleanAll` | vide `bin/` et `docs/` |
 | `simulateur` | lance une simulation ; options conformes à la commande unique (voir ci-dessous) |
-| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : 20 exécutions nominales et 12 cas d'erreur |
+| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : 21 exécutions nominales (dont un test de mémoire) et 12 cas d'erreur |
 | `README.md` | ce fichier |
 
 Les tests unitaires JUnit se lancent, après `./compile`, avec :
@@ -95,6 +95,8 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |
 
 **Performances en présence de bruit :** le récepteur utilise un filtre adapté. Pour chaque bit, il corrèle les `nbEch` échantillons reçus avec $g = s_1 - s_0$ (différence des formes d'un bit 1 et d'un bit 0, générées par l'émetteur) et compare le résultat au seuil $(\lVert s_1\rVert^2 - \lVert s_0\rVert^2)/2$. La même formule sert pour NRZ, NRZT et RZ. Le TEB mesuré suit la théorie : $Q\big(\sqrt{2E_b/N_0}\big)$ en NRZ antipodal ($1{,}25\cdot10^{-2}$ à 4 dB), $Q\big(\sqrt{E_b/N_0}\big)$ en NRZ unipolaire. À l'étape 3, le récepteur décidait sur le seul échantillon central et perdait $10\log_{10}(\text{nbEch})$ dB (≈ 14,8 dB pour 30 échantillons).
+
+**Mémoire :** le signal analogique est rangé dans des tableaux de `float` (classe `InformationFlottante`) plutôt que dans des objets `Float`. Une simulation de 200 000 bits avec `-codeur` (18 millions d'échantillons) occupe environ 300 Mo, contre plus de 1 Go auparavant ; le TEB obtenu est identique.
 
 ## Auteurs
 Groupe B4 – FIP2A : BLOMBOU Ethan, BOUABOUD Anis-Melwan, NANDA Laurent, SISSOKO Mohamed Djoncounda, ZIANI Mohamed Amine.
