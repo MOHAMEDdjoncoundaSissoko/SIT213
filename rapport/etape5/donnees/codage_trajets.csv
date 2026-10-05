@@ -1,0 +1,28 @@
+serie;x;teb;teb_th;nb_bits;commande
+echo sans;-4;0.202535;0.20290540740318036;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4 -ti 15 0.5
+echo sans;-3;0.175885;0.17635736408072603;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -3 -ti 15 0.5
+echo sans;-2;0.149085;0.14963353258014683;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2 -ti 15 0.5
+echo sans;-1;0.12358;0.12341251335349152;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -1 -ti 15 0.5
+echo sans;0;0.09885;0.0984647093607896;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0 -ti 15 0.5
+echo sans;1;0.07585;0.07558003089044071;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 1 -ti 15 0.5
+echo sans;2;0.055535;0.05546563089366839;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2 -ti 15 0.5
+echo sans;3;0.038615;0.038633283924900494;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 3 -ti 15 0.5
+echo sans;4;0.02521;0.02531060548157226;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4 -ti 15 0.5
+echo sans;5;0.015545;0.0154110429869588;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 5 -ti 15 0.5
+echo sans;6;0.00851;0.008574786502209704;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 6 -ti 15 0.5
+echo sans;7;0.004345;0.004257157097943535;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 7 -ti 15 0.5
+echo sans;8;0.001885;0.0018255768503529527;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 8 -ti 15 0.5
+echo sans;9;0.000695;0.0006482938731181112;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 9 -ti 15 0.5
+echo sans;10;0.00017333333333333334;0.00018090715052669742;600000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 10 -ti 15 0.5
+echo sans;11;3.6e-05;3.719553354947497e-05;1000000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 11 -ti 15 0.5
+echo avec;-4;0.112833336;0.1140112040967866;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4 -ti 15 0.5 -codeur
+echo avec;-3;0.08848333;0.08865801693646022;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -3 -ti 15 0.5 -codeur
+echo avec;-2;0.065916665;0.06566333437935003;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2 -ti 15 0.5 -codeur
+echo avec;-1;0.04555;0.04584869628559344;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -1 -ti 15 0.5 -codeur
+echo avec;0;0.029933333;0.02980953578661487;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0 -ti 15 0.5 -codeur
+echo avec;1;0.0181;0.017777522783789298;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 1 -ti 15 0.5 -codeur
+echo avec;2;0.009716666;0.009546838954441753;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2 -ti 15 0.5 -codeur
+echo avec;3;0.004466667;0.0045118613492850235;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 3 -ti 15 0.5 -codeur
+echo avec;4;0.0018166667;0.0018229162534178027;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4 -ti 15 0.5 -codeur
+echo avec;5;0.0005166666766666666;0.0006066785828900123;180000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 5 -ti 15 0.5 -codeur
+echo avec;6;0.000161666667;0.00015854516636610064;600000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 6 -ti 15 0.5 -codeur

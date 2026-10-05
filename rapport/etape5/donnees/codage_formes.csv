@@ -1,0 +1,81 @@
+serie;x;teb;teb_th;nb_bits;commande
+NRZ sans;-4;0.186125;0.1861138174833891;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4
+NRZ sans;-3;0.15849;0.15836831880959792;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -3
+NRZ sans;-2;0.1305;0.13064448852282923;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2
+NRZ sans;-1;0.1033;0.10375909595340635;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -1
+NRZ sans;0;0.077875;0.0786496035251426;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0
+NRZ sans;1;0.05571;0.0562819519765415;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 1
+NRZ sans;2;0.037055;0.037506128358925986;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2
+NRZ sans;3;0.02288;0.022878407561085338;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 3
+NRZ sans;4;0.01252;0.012500818040737565;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4
+NRZ sans;5;0.006;0.005953867147778661;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 5
+NRZ sans;6;0.002475;0.0023882907809328097;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 6
+NRZ sans;7;0.000865;0.0007726748153784443;200000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 7
+NRZ sans;8;0.00017833333333333332;0.00019090777407599314;600000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 8
+NRZ sans;9;2.7e-05;3.362722841961767e-05;1000000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 9
+NRZ avec;-4;0.09133333;0.09102170693670776;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -4 -codeur
+NRZ avec;-3;0.06803333;0.06729765223873645;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -3 -codeur
+NRZ avec;-2;0.04628333400000001;0.04674427148750782;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -2 -codeur
+NRZ avec;-1;0.03065;0.03006371950248388;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb -1 -codeur
+NRZ avec;0;0.0177;0.01758426523980075;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 0 -codeur
+NRZ avec;1;0.009316667;0.009146410390685802;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 1 -codeur
+NRZ avec;2;0.00405;0.004114608526949522;60000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 2 -codeur
+NRZ avec;3;0.0013999999500000002;0.0015463144952983904;120000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 3 -codeur
+NRZ avec;4;0.00047500001249999995;0.00046490433809950746;240000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 4 -codeur
+NRZ avec;5;0.00013333333200000002;0.00010592349031599546;600000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -snrpb 5 -codeur
+NRZT sans;-4;0.20427;0.204967603977823;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -4
+NRZT sans;-3;0.176985;0.1777100283771948;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -3
+NRZT sans;-2;0.149715;0.1500336580946903;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -2
+NRZT sans;-1;0.12213;0.12263980053532747;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -1
+NRZT sans;0;0.09585;0.09637704545851208;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 0
+NRZT sans;1;0.07193;0.07218220291757471;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 1
+NRZT sans;2;0.05071;0.05097223775404977;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 2
+NRZT sans;3;0.033325;0.03349188968341622;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 3
+NRZT sans;4;0.02012;0.020146246868406145;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 4
+NRZT sans;5;0.011095;0.010875664880709339;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 5
+NRZT sans;6;0.00538;0.005142195539016074;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 6
+NRZT sans;7;0.002185;0.0020667913404446266;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 7
+NRZT sans;8;0.0007;0.0006805277428572322;200000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 8
+NRZT sans;9;0.00014833333333333332;0.00017523623664565254;600000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 9
+NRZT sans;10;3.4e-05;3.324969050573689e-05;1000000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 10
+NRZT avec;-4;0.11055;0.11005201412847099;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -4 -codeur
+NRZT avec;-3;0.08538333;0.08460927194192376;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -3 -codeur
+NRZT avec;-2;0.063266665;0.06167639654539879;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -2 -codeur
+NRZT avec;-1;0.04276666800000001;0.04211607681239395;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb -1 -codeur
+NRZT avec;0;0.02645;0.02654014661089162;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 0 -codeur
+NRZT avec;1;0.0156166665;0.01515120021352995;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 1 -codeur
+NRZT avec;2;0.007983333;0.007658618617055827;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 2 -codeur
+NRZT avec;3;0.00345;0.003332385334419741;60000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 3 -codeur
+NRZT avec;4;0.00106666665;0.00120535704652424;120000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 4 -codeur
+NRZT avec;5;0.000313333332;0.0003471140931091311;300000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 5 -codeur
+NRZT avec;6;9.16666658e-05;7.54193711797379e-05;600000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -snrpb 6 -codeur
+RZ sans;-4;0.261615;0.264034207638018;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -4
+RZ sans;-3;0.23722;0.23948946302589857;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -3
+RZ sans;-2;0.21117;0.21350218550400615;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -2
+RZ sans;-1;0.18429;0.18639728139137376;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -1
+RZ sans;0;0.15704;0.1586552539314571;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 0
+RZ sans;1;0.129415;0.13092729675552453;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 1
+RZ sans;2;0.103125;0.10402863708538869;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 2
+RZ sans;3;0.078305;0.07889587198172442;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 3
+RZ sans;4;0.056285;0.0564953017493617;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 4
+RZ sans;5;0.03783;0.03767898814746341;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 5
+RZ sans;6;0.02298;0.02300713887786605;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 6
+RZ sans;7;0.012485;0.012587033122144622;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 7
+RZ sans;8;0.00603;0.006004386400163567;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 8
+RZ sans;9;0.002455;0.0024133104196338664;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 9
+RZ sans;10;0.00079;0.0007827011290012761;200000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 10
+RZ sans;11;0.000215;0.00019398547205786112;600000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 11
+RZ sans;12;3.8e-05;3.4302623866415476e-05;1000000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 12
+RZ avec;-4;0.17043333;0.17232839374225473;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -4 -codeur
+RZ avec;-3;0.1423;0.14459367521256727;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -3 -codeur
+RZ avec;-2;0.11531667;0.11728533116770265;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -2 -codeur
+RZ avec;-1;0.090616666;0.09127948518170691;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb -1 -codeur
+RZ avec;0;0.067033336;0.06752729065150585;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 0 -codeur
+RZ avec;1;0.0468;0.04693717091555805;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 1 -codeur
+RZ avec;2;0.029366666;0.030214285057458594;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 2 -codeur
+RZ avec;3;0.01755;0.01769149188788699;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 3 -codeur
+RZ avec;4;0.00895;0.009214523089715166;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 4 -codeur
+RZ avec;5;0.0041333335;0.004152132261217133;60000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 5 -codeur
+RZ avec;6;0.00155;0.0015636286522041983;120000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 6 -codeur
+RZ avec;7;0.000454166665;0.0004713117954760498;240000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 7 -codeur
+RZ avec;8;0.00010999999900000001;0.00010772501997214525;600000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -snrpb 8 -codeur

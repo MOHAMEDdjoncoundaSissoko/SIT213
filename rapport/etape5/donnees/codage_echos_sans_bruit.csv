@@ -1,0 +1,11 @@
+serie;x;teb;teb_th;nb_bits;commande
+dt=30 ar=0.4 sans;0.4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 30 0.4
+dt=30 ar=0.4 avec;0.4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 30 0.4 -codeur
+dt=30 ar=0.6 sans;0.6;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 30 0.6
+dt=30 ar=0.6 avec;0.6;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 30 0.6 -codeur
+dt=20 ar=0.6 sans;0.6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 20 0.6
+dt=20 ar=0.6 avec;0.6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 20 0.6 -codeur
+dt=20 ar=0.9 sans;0.9;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 20 0.9
+dt=20 ar=0.9 avec;0.9;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 20 0.9 -codeur
+dt=10 ar=0.9 sans;0.9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 10 0.9
+dt=10 ar=0.9 avec;0.9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl 0 1 -ti 10 0.9 -codeur
