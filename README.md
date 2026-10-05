@@ -9,12 +9,14 @@ Ce projet est un simulateur en Java permettant de modéliser, simuler et analyse
   * `NRZ` (Non-Return to Zero)
   * `NRZT` (Non-Return to Zero Trapezoidal)
   * `RZ` (Return to Zero)
+* **Codage de canal optionnel** : avec `-codeur`, chaque bit source est transforme en trois bits (`0 -> 010`, `1 -> 101`) puis decode en reception pour corriger une erreur isolee par paquet.
 * **Canal de transmission** : 
   * Canal idéal (sans déformation).
   * Canal avec bruit blanc gaussien additif paramétré par le rapport signal sur bruit $E_b/N_0$.
   * Canal à trajets multiples (jusqu'à 5 trajets indirects, retardés et atténués), bruité ou non.
 * **Réception et Décision** : filtre adapté à la forme d'onde (corrélation de chaque temps bit avec $s_1 - s_0$) puis seuillage pour reconstituer le message logique.
 * **Sondes (Visualisation)** : Affichage graphique des signaux temporels à chaque nœud de la chaîne.
+* **Désynchronisation** : avec `-s`, une fenêtre à curseur/molette apparaît automatiquement pour faire varier le décalage de la fenêtre de décision. Elle recalcule le TEB et redessine les bits reçus ; avec `-codeur`, une seule fenêtre TP5 s'ouvre et montre les bits avant et après décodage canal.
 
 ## 🛠️ Architecture du projet
 
@@ -39,7 +41,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 | `genDoc` | génère la Javadoc des sources (hors tests) dans `docs/` |
 | `cleanAll` | vide `bin/` et `docs/` |
 | `simulateur` | lance une simulation ; options conformes à la commande unique (voir ci-dessous) |
-| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 4) : 17 exécutions nominales et 11 cas d'erreur |
+| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : exécutions nominales, cas `-codeur` et cas d'erreur, sans affichage graphique |
 | `README.md` | ce fichier |
 
 Les tests unitaires JUnit se lancent, après `./compile`, avec :
@@ -71,6 +73,7 @@ Depuis la racine du projet :
 * `-ampl min max` : amplitudes flottantes, avec `min < max` (sinon erreur). Défaut : 0.0 et 1.0.
 * `-snrpb s` : canal bruité (bruit blanc additif gaussien), `s` est le rapport signal sur bruit par bit $E_b/N_0$ en dB (flottant). Défaut : canal non bruité.
 * `-ti dt ar [dt ar ...]` : canal à trajets multiples. Chaque couple ajoute un trajet indirect décalé de `dt` échantillons (entier ≥ 0) et d'amplitude relative `ar` (flottant) : $r(n) = s(n) + \sum_k ar_k \, s(n - dt_k)$. De 1 à 5 couples. Sans `-snrpb`, seuls les échos perturbent le signal ; avec `-snrpb`, le bruit gaussien est ajouté après les échos. Défaut : pas de trajet indirect.
+* `-codeur` : active le codage de canal du TP5. Par défaut, le codage de canal n'est pas utilisé.
 
 La présence d'au moins une des options `-form`, `-nbEch`, `-ampl`, `-snrpb` ou `-ti` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
 
@@ -86,6 +89,7 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 0 -seed 1` | ≈ 0.095 |
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 4 -seed 1` | ≈ 0.021 |
 | `./simulateur -mess 10000 -form NRZT -ampl -1 1 -snrpb 8 -seed 1` | ≈ 0.0007 |
+| `./simulateur -codeur -mess 10000 -form NRZ -ampl -1 1 -snrpb 0 -seed 4` | ≈ 0.018 |
 | `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.5 -seed 1` | 0.0 (écho trop faible pour franchir le seuil) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |

@@ -36,6 +36,9 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
     /** seuil de décision appliqué à la sortie du filtre */
     private double seuil;
 
+    /** decalage de la fenetre de decision, en nombre d'echantillons */
+    private int decalageFenetre;
+
     /**
      * Construit un récepteur à filtre adapté à la forme d'onde de l'émetteur.
      * @param forme  forme d'onde ("NRZ", "NRZT" ou "RZ"), la même qu'à l'émission
@@ -44,8 +47,21 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
      * @param aMax   amplitude du bit 1
      */
     public TransmetteurAnalogiqueLogique(String forme, int nbEch, float aMin, float aMax) {
+        this(forme, nbEch, aMin, aMax, 0);
+    }
+
+    /**
+     * Construit un recepteur avec un decalage de fenetre de decision.
+     * @param forme             forme d'onde ("NRZ", "NRZT" ou "RZ")
+     * @param nbEch             nombre d'echantillons par bit
+     * @param aMin              amplitude du bit 0
+     * @param aMax              amplitude du bit 1
+     * @param decalageFenetre   decalage de la fenetre, en echantillons
+     */
+    public TransmetteurAnalogiqueLogique(String forme, int nbEch, float aMin, float aMax, int decalageFenetre) {
         super();
         this.nbEch = nbEch;
+        setDecalageFenetre(decalageFenetre);
 
         // formes de référence moyennées sur le bit précédent (seule la rampe NRZT en dépend)
         float[] s1 = new float[nbEch];
@@ -67,6 +83,25 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         }
     }
 
+    /**
+     * Modifie le decalage de la fenetre de decision.
+     * @param decalageFenetre decalage en echantillons, strictement inferieur a nbEch en valeur absolue
+     */
+    public void setDecalageFenetre(int decalageFenetre) {
+        if (Math.abs(decalageFenetre) >= nbEch) {
+            throw new IllegalArgumentException("Decalage de fenetre invalide : " + decalageFenetre
+                + " (doit etre strictement inferieur a nbEch en valeur absolue)");
+        }
+        this.decalageFenetre = decalageFenetre;
+    }
+
+    /**
+     * @return le decalage courant de la fenetre de decision
+     */
+    public int getDecalageFenetre() {
+        return decalageFenetre;
+    }
+
     @Override
     public void recevoir(Information<Float> information) throws InformationNonConformeException {
         this.informationRecue = information;
@@ -81,7 +116,7 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         for (int i = 0; i < nbBits; i++) {
             double y = 0.0;
             for (int k = 0; k < nbEch; k++) {
-                y += informationRecue.iemeElement(i * nbEch + k) * filtre[k];
+                y += echantillonFenetre(i * nbEch + k + decalageFenetre) * filtre[k];
             }
             informationEmise.add(y > seuil);
         }
@@ -89,5 +124,12 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         for (DestinationInterface<Boolean> dest : destinationsConnectees) {
             dest.recevoir(informationEmise);
         }
+    }
+
+    private float echantillonFenetre(int index) {
+        if (index < 0 || index >= informationRecue.nbElements()) {
+            return 0.0f;
+        }
+        return informationRecue.iemeElement(index);
     }
 }

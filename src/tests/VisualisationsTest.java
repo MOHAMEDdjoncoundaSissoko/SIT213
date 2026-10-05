@@ -11,6 +11,9 @@ import visualisations.SondeAnalogique;
 import visualisations.SondeTextuelle;
 import visualisations.SondePuissance;
 import visualisations.Vue;
+import visualisations.VueDesynchronisation;
+import transmetteurs.TransmetteurEncodeurCanal;
+import transmetteurs.TransmetteurLogiqueAnalogique;
 
 /**
  * Tests JUnit pour les classes de visualisation.
@@ -144,5 +147,77 @@ public class VisualisationsTest {
             // VueCourbe peut echouer en headless
         }
         assertEquals(info, sonde.getInformationRecue());
+    }
+
+    @Test
+    @DisplayName("VueDesynchronisation - TEB nul sans decalage")
+    void testVueDesynchronisationTebNul() throws Exception {
+        int nbEch = 10;
+        Information<Boolean> reference = informationDepuisChaine("1010101");
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+
+        emetteur.recevoir(reference);
+
+        float teb = VueDesynchronisation.calculerTebAvecDecalage(
+            emetteur.getInformationEmise(), reference, "NRZ", nbEch, -1f, 1f, false, 0);
+        assertEquals(0.0f, teb, 0.0f);
+    }
+
+    @Test
+    @DisplayName("VueDesynchronisation - decalage cree des erreurs")
+    void testVueDesynchronisationTebDesynchronise() throws Exception {
+        int nbEch = 10;
+        Information<Boolean> reference = informationDepuisChaine("1010101");
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+
+        emetteur.recevoir(reference);
+
+        float teb = VueDesynchronisation.calculerTebAvecDecalage(
+            emetteur.getInformationEmise(), reference, "NRZ", nbEch, -1f, 1f, false, 5);
+        assertTrue(teb > 0.0f);
+    }
+
+    @Test
+    @DisplayName("VueDesynchronisation - TEB nul avec codage canal")
+    void testVueDesynchronisationTebCodeur() throws Exception {
+        int nbEch = 10;
+        Information<Boolean> reference = informationDepuisChaine("1011001");
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+
+        encodeur.recevoir(reference);
+        emetteur.recevoir(encodeur.getInformationEmise());
+
+        float teb = VueDesynchronisation.calculerTebAvecDecalage(
+            emetteur.getInformationEmise(), reference, "NRZ", nbEch, -1f, 1f, true, 0);
+        assertEquals(0.0f, teb, 0.0f);
+    }
+
+    @Test
+    @DisplayName("VueDesynchronisation - le decalage modifie les bits avant decodage canal")
+    void testVueDesynchronisationBitsBrutsCodeur() throws Exception {
+        int nbEch = 10;
+        Information<Boolean> reference = informationDepuisChaine("1011001");
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+
+        encodeur.recevoir(reference);
+        emetteur.recevoir(encodeur.getInformationEmise());
+
+        Information<Boolean> bitsBrutsDecales = VueDesynchronisation.recevoirBrutAvecDecalage(
+            emetteur.getInformationEmise(), "NRZ", nbEch, -1f, 1f, 7);
+        Information<Boolean> bitsDecodes = VueDesynchronisation.recevoirAvecDecalage(
+            emetteur.getInformationEmise(), "NRZ", nbEch, -1f, 1f, true, 7);
+
+        assertNotEquals(encodeur.getInformationEmise(), bitsBrutsDecales);
+        assertEquals(reference.nbElements(), bitsDecodes.nbElements());
+    }
+
+    private Information<Boolean> informationDepuisChaine(String bits) {
+        Information<Boolean> information = new Information<>();
+        for (int i = 0; i < bits.length(); i++) {
+            information.add(bits.charAt(i) == '1');
+        }
+        return information;
     }
 }

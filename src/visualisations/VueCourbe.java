@@ -15,6 +15,8 @@ public class VueCourbe  extends Vue {
     private Point2D.Float [] coordonnees;
     private float yMax = 0;
     private float yMin = 0;
+    private float pixelsParUniteX = 1.0f;
+    private float decalageX = 0.0f;
 
 
     public  VueCourbe (boolean [] valeurs, int nbPixels, String nom) {
@@ -26,6 +28,8 @@ public class VueCourbe  extends Vue {
 	setLocation(xPosition, yPosition);
 
 	this.coordonnees = new Point2D.Float [(2 * valeurs.length) + 1];
+	this.pixelsParUniteX = nbPixels;
+	this.decalageX = 0.0f;
 	yMax = 1;
 	yMin = 0;
 
@@ -47,6 +51,7 @@ public class VueCourbe  extends Vue {
 	if (largeur > 1000)
             largeur = 1000;
 	setSize(largeur, 200);
+	activerMolette();
 	setVisible(true);
 	repaint();
     }
@@ -61,6 +66,8 @@ public class VueCourbe  extends Vue {
 	setLocation(xPosition, yPosition);
 
 	this.coordonnees = new Point2D.Float [valeurs.length];
+	this.pixelsParUniteX = 8.0f;
+	this.decalageX = 0.0f;
 	yMax = 0;
 	yMin = 0;
 
@@ -73,10 +80,11 @@ public class VueCourbe  extends Vue {
 	}
 
 	setDefaultCloseOperation(EXIT_ON_CLOSE);
-	int largeur = valeurs.length  + 10;
+	int largeur = (int) (valeurs.length * pixelsParUniteX) + 10;
 	if (largeur > 1000)
             largeur = 1000;
 	setSize(largeur, 200);
+	activerMolette();
 	setVisible(true);
 	repaint();
     }
@@ -101,6 +109,7 @@ public class VueCourbe  extends Vue {
             }
 	}
 
+	this.decalageX = limiterDecalage(decalageX);
 	paint();
     }
 
@@ -118,6 +127,7 @@ public class VueCourbe  extends Vue {
             coordonnees[i] = new Point2D.Float(i, valeurs[i]);
 	}
 
+	this.decalageX = limiterDecalage(decalageX);
 	paint();
     }
 
@@ -129,6 +139,9 @@ public class VueCourbe  extends Vue {
 
     public void paint(Graphics g) {
 	if (g == null) {
+            return;
+	}
+	if ((coordonnees == null) || (coordonnees.length == 0)) {
             return;
 	}
 	g.setColor(Color.white);
@@ -164,7 +177,8 @@ public class VueCourbe  extends Vue {
 	gc.drawLine(x0Axe + 5, 5, x0Axe, 0);
 	gc.drawLine(x0Axe - 5, 5, x0Axe, 0);
 
-	float dx =  deltaX / (float) coordonnees[coordonnees.length - 1].getX();
+	decalageX = limiterDecalage(decalageX);
+	float dx = pixelsParUniteX;
 	float dy = 0.0f;
 	if ((yMax >= 0) && (yMin <= 0)) {
             dy =  deltaY / (yMax-yMin);
@@ -177,11 +191,38 @@ public class VueCourbe  extends Vue {
 	}
 
 	for (int i = 1; i < coordonnees.length; i++) {
-            int x1 = (int) (coordonnees[i-1].getX() * dx);
-            int x2 = (int) (coordonnees[i].getX() * dx);
+            int x1 = (int) ((coordonnees[i-1].getX() - decalageX) * dx);
+            int x2 = (int) ((coordonnees[i].getX() - decalageX) * dx);
             int y1 = (int) (coordonnees[i-1].getY() * dy);
             int y2 = (int) (coordonnees[i].getY() * dy);
             gc.drawLine( x0Axe + x1, y0Axe - y1, x0Axe + x2, y0Axe - y2);
 	}
+    }
+
+    private void activerMolette() {
+	java.awt.event.MouseWheelListener listener = event -> {
+	    float pas = Math.max(1.0f, largeurVisibleUnites() / 10.0f);
+	    decalageX = limiterDecalage(decalageX + event.getWheelRotation() * pas);
+	    repaint();
+	};
+	addMouseWheelListener(listener);
+	getContentPane().addMouseWheelListener(listener);
+    }
+
+    private float largeurVisibleUnites() {
+	float largeurPixels = getContentPane().getWidth() - 20;
+	if (largeurPixels <= 0) {
+            largeurPixels = getWidth() - 20;
+	}
+	return Math.max(1.0f, largeurPixels / pixelsParUniteX);
+    }
+
+    private float limiterDecalage(float decalage) {
+	if ((coordonnees == null) || (coordonnees.length == 0)) {
+            return 0.0f;
+	}
+	float xMax = (float) coordonnees[coordonnees.length - 1].getX();
+	float decalageMax = Math.max(0.0f, xMax - 1.0f);
+	return Math.max(0.0f, Math.min(decalage, decalageMax));
     }
 }

@@ -65,10 +65,10 @@ public  abstract class Source <T> implements  SourceInterface <T> {
      * @throws InformationNonConformeException si l'Information comporte une anomalie
      */
     public   void emettre() throws InformationNonConformeException {
+        this.informationEmise = informationGeneree;
        	// émission vers les composants connectés
 	for (DestinationInterface <T> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(informationGeneree);
 	}
-	this.informationEmise = informationGeneree;
     }
 }

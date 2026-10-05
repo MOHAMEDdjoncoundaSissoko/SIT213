@@ -7,6 +7,8 @@ import sources.Source;
 import sources.SourceAleatoire;
 import sources.SourceFixe;
 import transmetteurs.Transmetteur;
+import transmetteurs.TransmetteurDecodeurCanal;
+import transmetteurs.TransmetteurEncodeurCanal;
 import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueLogique;
 import transmetteurs.TransmetteurAnalogiqueParfait;
@@ -14,6 +16,7 @@ import transmetteurs.TransmetteurAnalogiqueTrajetsMultiples;
 import transmetteurs.TransmetteurLogiqueAnalogique;
 import transmetteurs.TransmetteurParfait;
 import visualisations.SondeAnalogique;
+import visualisations.SondeDesynchronisation;
 import visualisations.SondeLogique;
 
 import java.util.ArrayList;
@@ -48,6 +51,9 @@ public class Simulateur {
 
     /** indique si la simulation est analogique (true) ou logique (false) */
     private boolean simulationAnalogique = false;
+
+    /** indique si le codage de canal du TP5 est utilise */
+    private boolean codageCanal = false;
 
     /** la forme d'onde utilisée pour la transmission analogique */
     private String forme = "RZ";
@@ -108,12 +114,27 @@ public class Simulateur {
 
         if (!simulationAnalogique) {
             transmetteurLogique = new TransmetteurParfait();
-            source.connecter(transmetteurLogique);
-            transmetteurLogique.connecter(destination);
+            TransmetteurDecodeurCanal decodeurCanalLogique = null;
+            if (codageCanal) {
+                TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+                decodeurCanalLogique = new TransmetteurDecodeurCanal();
+                source.connecter(encodeur);
+                encodeur.connecter(transmetteurLogique);
+                transmetteurLogique.connecter(decodeurCanalLogique);
+                decodeurCanalLogique.connecter(destination);
+            } else {
+                source.connecter(transmetteurLogique);
+                transmetteurLogique.connecter(destination);
+            }
 
             if (affichage) {
                 source.connecter(new SondeLogique("Emetteur", 10));
-                transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
+                if (codageCanal) {
+                    transmetteurLogique.connecter(new SondeLogique("Canal code", 10));
+                    decodeurCanalLogique.connecter(new SondeLogique("Recepteur", 10));
+                } else {
+                    transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
+                }
             }
         } else {
             TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
@@ -131,16 +152,33 @@ public class Simulateur {
             } else {
                 canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
             }
-            TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax);
+            TransmetteurAnalogiqueLogique recepteur =
+                new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax);
 
-            source.connecter(emetteur);
+            if (codageCanal) {
+                TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+                TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+                source.connecter(encodeur);
+                encodeur.connecter(emetteur);
+                recepteur.connecter(decodeur);
+                decodeur.connecter(destination);
+            } else {
+                source.connecter(emetteur);
+                recepteur.connecter(destination);
+            }
             emetteur.connecter(canal);
             canal.connecter(recepteur);
-            recepteur.connecter(destination);
 
             if (affichage) {
-                emetteur.connecter(new SondeAnalogique("Signal emis"));
-                canal.connecter(new SondeAnalogique("Signal recu"));
+                if (codageCanal) {
+                    canal.connecter(new SondeDesynchronisation("Desynchronisation",
+                        source, forme, nbEch, aMin, aMax, true));
+                } else {
+                    emetteur.connecter(new SondeAnalogique("Signal emis"));
+                    canal.connecter(new SondeAnalogique("Signal recu"));
+                    canal.connecter(new SondeDesynchronisation("Desynchronisation",
+                        source, forme, nbEch, aMin, aMax, false));
+                }
             }
         }
     }
@@ -157,6 +195,9 @@ public class Simulateur {
 
             if (args[i].matches("-s")) {
                 affichage = true;
+
+            } else if (args[i].matches("-codeur")) {
+                codageCanal = true;
 
             } else if (args[i].matches("-seed")) {
                 aleatoireAvecGerme = true;
@@ -200,6 +241,7 @@ public class Simulateur {
                     throw new ArgumentsException("Valeur du parametre -nbEch invalide : " + nbEch
                         + " (minimum " + TransmetteurLogiqueAnalogique.NB_ECH_MIN + " pour la lisibilité)");
                 }
+
             } else if (args[i].matches("-ampl")) {
                 simulationAnalogique = true;
                 try {

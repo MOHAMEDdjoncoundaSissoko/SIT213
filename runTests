@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------------------------
-# Script de test pour le Simulateur - Etapes 1 a 4
+# Script de test pour le Simulateur - Etapes 1 a 5
 # -----------------------------------------------------------
 
 # Couleurs pour l'affichage
@@ -35,6 +35,27 @@ run_test() {
     fi
 }
 
+# Fonction pour les tests sans bruit qui doivent obtenir un TEB nul
+# $1 = Description, $2 = Commande
+run_zero_teb_test() {
+    NB_TESTS=$((NB_TESTS + 1))
+    local description="$1"
+    local commande="$2"
+
+    echo -n "Test $NB_TESTS : $description ... "
+
+    output=$(eval "$commande" 2>/dev/null)
+    exit_code=$?
+
+    if [ $exit_code -eq 0 ] && [[ "$output" == *"TEB : 0.0"* ]]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
+    else
+        echo -e "${ROUGE}KO (exit=$exit_code, sortie: $output)${NEUTRE}"
+        NB_KO=$((NB_KO + 1))
+    fi
+}
+
 # Fonction pour les tests d'erreur (doit echouer avec code non-zero)
 # $1 = Description, $2 = Commande
 run_error_test() {
@@ -57,7 +78,7 @@ run_error_test() {
 }
 
 echo "------------------------------------------"
-echo "  LANCEMENT DES TESTS (Étapes 1 à 4)"
+echo "  LANCEMENT DES TESTS (Étapes 1 à 5)"
 echo "------------------------------------------"
 
 # --- ÉTAPE 1 : transmission logique ---
@@ -88,24 +109,21 @@ run_test "Analogique (-ampl)" "./simulateur -mess 1100 -ampl -2.0 2.0"
 # Test 8 : chaîne analogique complète (toutes les options)
 run_test "Analogique complet" "./simulateur -mess 101 -form NRZ -nbEch 30 -ampl 0 5"
 
-# Test 9 : sondes analogiques (vérifie l'absence de plantage graphique)
-run_test "Analogique + Sonde" "./simulateur -mess 101 -form RZ -s"
-
 # --- ÉTAPE 3 : canal bruité gaussien (-snrpb) ---
 
-# Test 10 : Eb/N0 élevé
+# Test 9 : Eb/N0 élevé
 run_test "Bruit (Eb/N0 élevé, peu d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 20"
 
-# Test 11 : Eb/N0 faible
+# Test 10 : Eb/N0 faible
 run_test "Bruit (Eb/N0 faible, beaucoup d'erreurs)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb -5"
 
-# Test 12 : bruit avec NRZT et amplitudes
+# Test 11 : bruit avec NRZT et amplitudes
 run_test "Bruit complet (NRZT + ampl + snrpb)" "./simulateur -mess 100 -form NRZT -nbEch 30 -ampl -1 1 -snrpb 5"
 
-# Test 13 : -snrpb seul active le mode analogique
+# Test 12 : -snrpb seul active le mode analogique
 run_test "Bruit seul (-snrpb active le mode analogique)" "./simulateur -mess 100 -snrpb 10 -seed 1"
 
-# Test 14 : message long (performance) - doit se terminer rapidement (10s max), sans sonde graphique
+# Test 13 : message long (performance) - doit se terminer rapidement (10s max), sans sonde graphique
 # timeout (GNU coreutils) n'existe pas sur macOS par défaut ; on utilise gtimeout
 # si disponible (brew install coreutils), sinon on lance sans limite de temps.
 if command -v timeout >/dev/null 2>&1; then
@@ -119,48 +137,59 @@ run_test "Performance (message aléatoire de 10000 bits)" "$TIMEOUT_CMD ./simula
 
 # --- ÉTAPE 4 : canal à trajets multiples (-ti dt ar ...) ---
 
-# Test 15 : un trajet indirect seul (étape 4a)
+# Test 14 : un trajet indirect seul (étape 4a)
 run_test "Trajets indirects (1 trajet, sans bruit)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -ti 10 0.5"
 
-# Test 16 : un trajet indirect et bruit gaussien (étape 4b)
+# Test 15 : un trajet indirect et bruit gaussien (étape 4b)
 run_test "Trajets indirects (1 trajet, bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -ti 10 0.5"
 
-# Test 17 : trois trajets indirects et bruit gaussien (étape 4b)
+# Test 16 : trois trajets indirects et bruit gaussien (étape 4b)
 run_test "Trajets indirects (3 trajets, bruité)" "./simulateur -mess 1000 -form NRZ -nbEch 30 -snrpb 10 -ti 10 0.5 20 0.3 30 0.1"
+
+# --- ÉTAPE 5 : codage de canal (-codeur) ---
+
+# Test 17 : codeur avec signal NRZ sans bruit
+run_zero_teb_test "Codeur canal (NRZ, sans bruit)" "./simulateur -codeur -mess 1011001 -form NRZ -nbEch 30 -ampl -1 1"
+
+# Test 18 : codeur avec signal RZ sans bruit
+run_zero_teb_test "Codeur canal (RZ, sans bruit)" "./simulateur -codeur -mess 1011001 -form RZ -nbEch 30 -ampl -1 1"
+
+# Test 19 : codeur avec signal NRZT sans bruit
+run_zero_teb_test "Codeur canal (NRZT, sans bruit)" "./simulateur -codeur -mess 1011001 -form NRZT -nbEch 30 -ampl -1 1"
 
 # --- TESTS D'ERREURS (le simulateur doit échouer) ---
 
-# Test 18 : option inconnue
+# Test 20 : option inconnue
 run_error_test "Erreur (option inconnue)" "./simulateur -foobar"
 
-# Test 19 : amplitude non numérique
+# Test 21 : amplitude non numérique
 run_error_test "Erreur (amplitude invalide)" "./simulateur -ampl abc"
 
-# Test 20 : nombre d'échantillons négatif
+# Test 22 : nombre d'échantillons négatif
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 
-# Test 21 : nombre d'échantillons sous le minimum
+# Test 23 : nombre d'échantillons sous le minimum
 run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
 
-# Test 22 : amplitude min > max
+# Test 24 : amplitude min > max
 run_error_test "Erreur (ampl min > max)" "./simulateur -ampl 1 0"
 
-# Test 23 : amplitude min = max
+# Test 25 : amplitude min = max
 run_error_test "Erreur (ampl min = max)" "./simulateur -ampl 1 1"
 
-# Test 24 : Eb/N0 non numérique
+# Test 26 : Eb/N0 non numérique
 run_error_test "Erreur (snrpb non flottant)" "./simulateur -snrpb abc"
 
-# Test 25 : Eb/N0 manquant
+# Test 27 : Eb/N0 manquant
 run_error_test "Erreur (snrpb sans valeur)" "./simulateur -snrpb"
 
-# Test 26 : -ti sans couple dt ar
+# Test 28 : -ti sans couple dt ar
 run_error_test "Erreur (ti sans couple)" "./simulateur -ti"
 
-# Test 27 : -ti avec dt mais sans ar
+# Test 29 : -ti avec dt mais sans ar
 run_error_test "Erreur (ti sans valeur ar)" "./simulateur -ti 10"
 
-# Test 28 : -ti avec plus de 5 couples
+# Test 30 : -ti avec plus de 5 couples
 run_error_test "Erreur (ti plus de 5 couples)" "./simulateur -ti 1 0.1 2 0.1 3 0.1 4 0.1 5 0.1 6 0.1"
 
 echo "------------------------------------------"

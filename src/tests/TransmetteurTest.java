@@ -11,6 +11,8 @@ import transmetteurs.TransmetteurAnalogiqueParfait;
 import transmetteurs.TransmetteurAnalogiqueLogique;
 import transmetteurs.TransmetteurAnalogiqueBruite;
 import transmetteurs.TransmetteurAnalogiqueTrajetsMultiples;
+import transmetteurs.TransmetteurDecodeurCanal;
+import transmetteurs.TransmetteurEncodeurCanal;
 import destinations.DestinationFinale;
 
 /**
@@ -90,6 +92,137 @@ public class TransmetteurTest {
 
         assertEquals(info, d1.getInformationRecue());
         assertEquals(info, d2.getInformationRecue());
+    }
+
+    // Codage de canal TP5
+
+    @Test
+    @DisplayName("Encodeur canal - applique 0 -> 010 et 1 -> 101")
+    void testEncodeurCanal() throws Exception {
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+        Information<Boolean> entree = new Information<>();
+        entree.add(false); entree.add(true); entree.add(false);
+
+        encodeur.recevoir(entree);
+
+        Information<Boolean> attendu = new Information<>();
+        attendu.add(false); attendu.add(true); attendu.add(false);
+        attendu.add(true); attendu.add(false); attendu.add(true);
+        attendu.add(false); attendu.add(true); attendu.add(false);
+        assertEquals(attendu, encodeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Encodeur canal - information vide reste vide")
+    void testEncodeurCanalVide() throws Exception {
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+
+        encodeur.recevoir(new Information<>());
+
+        assertEquals(0, encodeur.getInformationEmise().nbElements());
+    }
+
+    @Test
+    @DisplayName("Encodeur canal - transmet l information codee a une destination")
+    void testEncodeurCanalDestination() throws Exception {
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+        DestinationFinale destination = new DestinationFinale();
+        encodeur.connecter(destination);
+        Information<Boolean> entree = new Information<>();
+        entree.add(true);
+
+        encodeur.recevoir(entree);
+
+        Information<Boolean> attendu = new Information<>();
+        attendu.add(true);
+        attendu.add(false);
+        attendu.add(true);
+        assertEquals(attendu, destination.getInformationRecue());
+    }
+
+    @Test
+    @DisplayName("Decodeur canal - corrige tous les triplets de la table TP5")
+    void testDecodeurCanalTableComplete() throws Exception {
+        TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+        Information<Boolean> entree = new Information<>();
+        boolean[][] triplets = {
+            {false, false, false}, {false, false, true},
+            {false, true, false}, {false, true, true},
+            {true, false, false}, {true, false, true},
+            {true, true, false}, {true, true, true}
+        };
+        for (boolean[] triplet : triplets) {
+            entree.add(triplet[0]);
+            entree.add(triplet[1]);
+            entree.add(triplet[2]);
+        }
+
+        decodeur.recevoir(entree);
+
+        Information<Boolean> attendu = new Information<>();
+        attendu.add(false);
+        attendu.add(true);
+        attendu.add(false);
+        attendu.add(false);
+        attendu.add(true);
+        attendu.add(true);
+        attendu.add(false);
+        attendu.add(true);
+        assertEquals(attendu, decodeur.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("Decodeur canal - information vide reste vide")
+    void testDecodeurCanalVide() throws Exception {
+        TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+
+        decodeur.recevoir(new Information<>());
+
+        assertEquals(0, decodeur.getInformationEmise().nbElements());
+    }
+
+    @Test
+    @DisplayName("Decodeur canal - transmet l information decodee a une destination")
+    void testDecodeurCanalDestination() throws Exception {
+        TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+        DestinationFinale destination = new DestinationFinale();
+        decodeur.connecter(destination);
+        Information<Boolean> entree = new Information<>();
+        entree.add(false);
+        entree.add(false);
+        entree.add(true);
+
+        decodeur.recevoir(entree);
+
+        Information<Boolean> attendu = new Information<>();
+        attendu.add(true);
+        assertEquals(attendu, destination.getInformationRecue());
+    }
+
+    @Test
+    @DisplayName("Decodeur canal - refuse un paquet incomplet")
+    void testDecodeurCanalPaquetIncomplet() {
+        TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+        Information<Boolean> entree = new Information<>();
+        entree.add(true);
+        entree.add(false);
+
+        assertThrows(Exception.class, () -> decodeur.recevoir(entree));
+    }
+
+    @Test
+    @DisplayName("Codage canal - encodeur puis decodeur redonne le message initial")
+    void testEncodeurPuisDecodeur() throws Exception {
+        TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
+        TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
+        encodeur.connecter(decodeur);
+
+        Information<Boolean> entree = new Information<>();
+        entree.add(true); entree.add(false); entree.add(true); entree.add(true); entree.add(false);
+
+        encodeur.recevoir(entree);
+
+        assertEquals(entree, decodeur.getInformationEmise());
     }
 
     // TransmetteurLogiqueAnalogique
@@ -267,6 +400,63 @@ public class TransmetteurTest {
         tla.recevoir(entree);
 
         assertEquals(entree, tal.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("TAL - decalage nul par defaut et modification acceptee")
+    void testTALDecalageFenetreAccesseur() {
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
+
+        assertEquals(0, tal.getDecalageFenetre());
+        tal.setDecalageFenetre(4);
+        assertEquals(4, tal.getDecalageFenetre());
+        tal.setDecalageFenetre(-4);
+        assertEquals(-4, tal.getDecalageFenetre());
+    }
+
+    @Test
+    @DisplayName("TAL - decalage de fenetre hors bornes refuse")
+    void testTALDecalageFenetreInvalide() {
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
+
+        assertThrows(IllegalArgumentException.class, () -> tal.setDecalageFenetre(10));
+        assertThrows(IllegalArgumentException.class,
+            () -> new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f, -10));
+    }
+
+    @Test
+    @DisplayName("TAL - decalage positif simule une desynchronisation")
+    void testTALDecalageFenetrePositif() throws Exception {
+        int nbEch = 10;
+        TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, -1f, 1f, 5);
+        tla.connecter(tal);
+
+        Information<Boolean> entree = new Information<>();
+        entree.add(true); entree.add(false); entree.add(true); entree.add(false);
+        entree.add(true); entree.add(false); entree.add(true);
+
+        tla.recevoir(entree);
+
+        assertEquals(entree.nbElements(), tal.getInformationEmise().nbElements());
+        assertNotEquals(entree, tal.getInformationEmise());
+    }
+
+    @Test
+    @DisplayName("TAL - decalage negatif complete le debut de fenetre par du silence")
+    void testTALDecalageFenetreNegatif() throws Exception {
+        int nbEch = 10;
+        TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, -1f, 1f, -5);
+        tla.connecter(tal);
+
+        Information<Boolean> entree = new Information<>();
+        entree.add(true); entree.add(false); entree.add(true); entree.add(false);
+        entree.add(true); entree.add(false); entree.add(true);
+
+        tla.recevoir(entree);
+
+        assertEquals(entree.nbElements(), tal.getInformationEmise().nbElements());
     }
 
     @Test

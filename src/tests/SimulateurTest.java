@@ -70,6 +70,14 @@ public class SimulateurTest {
         });
     }
 
+    @Test
+    @DisplayName("Codeur canal - chaine logique sans bruit conserve le message")
+    void testCodeurCanalLogique() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-codeur", "-mess", "1011001"});
+        s.execute();
+        assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
+    }
+
     // Etape 2 : chaine analogique NRZ
 
     @Test
@@ -220,6 +228,14 @@ public class SimulateurTest {
         assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
     }
 
+    @Test
+    @DisplayName("Codeur canal - chaine analogique sans bruit conserve le message")
+    void testCodeurCanalAnalogique() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-codeur", "-form", "NRZ", "-mess", "1011001"});
+        s.execute();
+        assertEquals(0.0f, s.calculTauxErreurBinaire(), 0.0f);
+    }
+
     // Affichage (-s)
 
     @Test
@@ -234,6 +250,13 @@ public class SimulateurTest {
     @DisplayName("Affichage analogique NRZ - option -s construction OK")
     void testAffichageAnalogiqueNRZ() throws Exception {
         Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-mess", "20", "-seed", "1", "-s"});
+        try { s.execute(); } catch (Exception e) { /* GUI non disponible */ }
+    }
+
+    @Test
+    @DisplayName("Affichage TP5 - codeur et option -s construction OK")
+    void testAffichageCodeurCanal() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-codeur", "-form", "NRZ", "-mess", "1011001", "-s"});
         try { s.execute(); } catch (Exception e) { /* GUI non disponible */ }
     }
 
@@ -282,6 +305,20 @@ public class SimulateurTest {
             "-mess", "100000", "-snrpb", "4", "-seed", "1"});
         s.execute();
         assertEquals(1.25e-2, s.calculTauxErreurBinaire(), 0.15e-2);
+    }
+
+    @Test
+    @DisplayName("Codeur canal - ameliore le TEB avec bruit")
+    void testCodeurCanalAmelioreTEB() throws Exception {
+        Simulateur sansCodeur = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1",
+            "-mess", "10000", "-snrpb", "0", "-seed", "4"});
+        Simulateur avecCodeur = new Simulateur(new String[]{"-codeur", "-form", "NRZ", "-ampl", "-1", "1",
+            "-mess", "10000", "-snrpb", "0", "-seed", "4"});
+
+        sansCodeur.execute();
+        avecCodeur.execute();
+
+        assertTrue(avecCodeur.calculTauxErreurBinaire() < sansCodeur.calculTauxErreurBinaire());
     }
 
     @Test
