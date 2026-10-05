@@ -1,8 +1,7 @@
 package tests;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.DisplayName;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import information.Information;
 import transmetteurs.TransmetteurParfait;
@@ -23,8 +22,7 @@ public class TransmetteurTest {
     // Transmetteur (classe abstraite via TransmetteurParfait)
 
     @Test
-    @DisplayName("getInformationRecue - retourne l information recue")
-    void testGetInformationRecue() throws Exception {
+    public void testGetInformationRecue() throws Exception {
         TransmetteurParfait t = new TransmetteurParfait();
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(false);
@@ -33,8 +31,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("getInformationEmise - retourne l information emise")
-    void testGetInformationEmise() throws Exception {
+    public void testGetInformationEmise() throws Exception {
         TransmetteurParfait t = new TransmetteurParfait();
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(false);
@@ -43,22 +40,19 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("getInformationRecue - null avant reception")
-    void testGetInformationRecueNull() {
+    public void testGetInformationRecueNull() {
         TransmetteurParfait t = new TransmetteurParfait();
         assertNull(t.getInformationRecue());
     }
 
     @Test
-    @DisplayName("getInformationEmise - null avant emission")
-    void testGetInformationEmiseNull() {
+    public void testGetInformationEmiseNull() {
         TransmetteurParfait t = new TransmetteurParfait();
         assertNull(t.getInformationEmise());
     }
 
     @Test
-    @DisplayName("connecter et deconnecter une destination")
-    void testConnecterDeconnecter() throws Exception {
+    public void testConnecterDeconnecter() throws Exception {
         TransmetteurParfait t = new TransmetteurParfait();
         DestinationFinale d = new DestinationFinale();
 
@@ -78,8 +72,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("connecter plusieurs destinations")
-    void testConnecterPlusieursDestinations() throws Exception {
+    public void testConnecterPlusieursDestinations() throws Exception {
         TransmetteurParfait t = new TransmetteurParfait();
         DestinationFinale d1 = new DestinationFinale();
         DestinationFinale d2 = new DestinationFinale();
@@ -97,8 +90,7 @@ public class TransmetteurTest {
     // Codage de canal TP5
 
     @Test
-    @DisplayName("Encodeur canal - applique 0 -> 010 et 1 -> 101")
-    void testEncodeurCanal() throws Exception {
+    public void testEncodeurCanal() throws Exception {
         TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
         Information<Boolean> entree = new Information<>();
         entree.add(false); entree.add(true); entree.add(false);
@@ -113,8 +105,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Encodeur canal - information vide reste vide")
-    void testEncodeurCanalVide() throws Exception {
+    public void testEncodeurCanalVide() throws Exception {
         TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
 
         encodeur.recevoir(new Information<>());
@@ -123,8 +114,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Encodeur canal - transmet l information codee a une destination")
-    void testEncodeurCanalDestination() throws Exception {
+    public void testEncodeurCanalDestination() throws Exception {
         TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
         DestinationFinale destination = new DestinationFinale();
         encodeur.connecter(destination);
@@ -141,8 +131,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Decodeur canal - corrige tous les triplets de la table TP5")
-    void testDecodeurCanalTableComplete() throws Exception {
+    public void testDecodeurCanalTableComplete() throws Exception {
         TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
         Information<Boolean> entree = new Information<>();
         boolean[][] triplets = {
@@ -172,8 +161,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Decodeur canal - information vide reste vide")
-    void testDecodeurCanalVide() throws Exception {
+    public void testDecodeurCanalVide() throws Exception {
         TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
 
         decodeur.recevoir(new Information<>());
@@ -182,8 +170,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Decodeur canal - transmet l information decodee a une destination")
-    void testDecodeurCanalDestination() throws Exception {
+    public void testDecodeurCanalDestination() throws Exception {
         TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
         DestinationFinale destination = new DestinationFinale();
         decodeur.connecter(destination);
@@ -200,8 +187,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Decodeur canal - refuse un paquet incomplet")
-    void testDecodeurCanalPaquetIncomplet() {
+    public void testDecodeurCanalPaquetIncomplet() {
         TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
         Information<Boolean> entree = new Information<>();
         entree.add(true);
@@ -211,8 +197,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("Codage canal - encodeur puis decodeur redonne le message initial")
-    void testEncodeurPuisDecodeur() throws Exception {
+    public void testEncodeurPuisDecodeur() throws Exception {
         TransmetteurEncodeurCanal encodeur = new TransmetteurEncodeurCanal();
         TransmetteurDecodeurCanal decodeur = new TransmetteurDecodeurCanal();
         encodeur.connecter(decodeur);
@@ -228,8 +213,7 @@ public class TransmetteurTest {
     // TransmetteurLogiqueAnalogique
 
     @Test
-    @DisplayName("TLA NRZ - taille signal = nbBits * nbEch")
-    void testTLANRZTaille() throws Exception {
+    public void testTLANRZTaille() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", 10, 0f, 1f);
         Information<Boolean> info = new Information<>();
         for (int i = 0; i < 5; i++) info.add(i % 2 == 0);
@@ -238,8 +222,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA NRZ - valeurs correctes bit 1 et bit 0")
-    void testTLANRZValeurs() throws Exception {
+    public void testTLANRZValeurs() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", 10, 0f, 1f);
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(false);
@@ -251,8 +234,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA NRZT - taille signal correcte")
-    void testTLANRZTTaille() throws Exception {
+    public void testTLANRZTTaille() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZT", 30, 0f, 1f);
         Information<Boolean> info = new Information<>();
         for (int i = 0; i < 4; i++) info.add(true);
@@ -261,8 +243,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA NRZT - plateau au milieu du bit")
-    void testTLANRZTPlateauMilieu() throws Exception {
+    public void testTLANRZTPlateauMilieu() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZT", 30, 0f, 1f);
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(true); info.add(true);
@@ -272,8 +253,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA NRZT - rampes montante et descendante entre les bits")
-    void testTLANRZTRampesEntreBits() throws Exception {
+    public void testTLANRZTRampesEntreBits() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZT", 10, -2f, 2f);
         Information<Boolean> info = new Information<>();
         info.add(true); info.add(false); info.add(true);
@@ -293,8 +273,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA RZ - impulsion au tiers central seulement")
-    void testTLARZImpulsion() throws Exception {
+    public void testTLARZImpulsion() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("RZ", 30, 0f, 1f);
         Information<Boolean> info = new Information<>();
         info.add(true);
@@ -308,8 +287,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA RZ bit 0 - reste a aMin partout")
-    void testTLARZBitZero() throws Exception {
+    public void testTLARZBitZero() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("RZ", 30, 0f, 1f);
         Information<Boolean> info = new Information<>();
         info.add(false);
@@ -320,15 +298,13 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA - nbEch trop petit (3) doit echouer a la construction")
-    void testTLANbEchTropPetitEchoue() {
+    public void testTLANbEchTropPetitEchoue() {
         assertThrows(IllegalArgumentException.class,
             () -> new TransmetteurLogiqueAnalogique("RZ", 3, 0f, 1f));
     }
 
     @Test
-    @DisplayName("TLA - forme inconnue utilise le niveau du bit")
-    void testTLAFormeInconnue() throws Exception {
+    public void testTLAFormeInconnue() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("AUTRE", 10, -1f, 2f);
         Information<Boolean> info = new Information<>();
         info.add(false); info.add(true);
@@ -340,8 +316,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TLA - signal vide transmis a une destination")
-    void testTLASignalVide() throws Exception {
+    public void testTLASignalVide() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", 10, 0f, 1f);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         tla.connecter(destination);
@@ -355,8 +330,7 @@ public class TransmetteurTest {
     // TransmetteurAnalogiqueParfait
 
     @Test
-    @DisplayName("TAP - signal transmis sans modification")
-    void testTAPSansModification() throws Exception {
+    public void testTAPSansModification() throws Exception {
         TransmetteurAnalogiqueParfait tap = new TransmetteurAnalogiqueParfait(10, 0f, 1f);
         Information<Float> signal = new Information<>();
         signal.add(0.5f); signal.add(1.0f); signal.add(0.0f);
@@ -367,8 +341,7 @@ public class TransmetteurTest {
     // TransmetteurAnalogiqueLogique
 
     @Test
-    @DisplayName("TAL - decision correcte bit 1")
-    void testTALDecisionBit1() throws Exception {
+    public void testTALDecisionBit1() throws Exception {
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         Information<Float> signal = new Information<>();
         // 10 echantillons a 1.0 (bit 1)
@@ -378,8 +351,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - decision correcte bit 0")
-    void testTALDecisionBit0() throws Exception {
+    public void testTALDecisionBit0() throws Exception {
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, 0f, 1f);
         Information<Float> signal = new Information<>();
         for (int i = 0; i < 10; i++) signal.add(0.0f);
@@ -388,8 +360,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - sequence complete correcte")
-    void testTALSequence() throws Exception {
+    public void testTALSequence() throws Exception {
         int nbEch = 10;
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, 0f, 1f);
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, 0f, 1f);
@@ -403,8 +374,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - decalage nul par defaut et modification acceptee")
-    void testTALDecalageFenetreAccesseur() {
+    public void testTALDecalageFenetreAccesseur() {
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
 
         assertEquals(0, tal.getDecalageFenetre());
@@ -415,8 +385,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - decalage de fenetre hors bornes refuse")
-    void testTALDecalageFenetreInvalide() {
+    public void testTALDecalageFenetreInvalide() {
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
 
         assertThrows(IllegalArgumentException.class, () -> tal.setDecalageFenetre(10));
@@ -425,8 +394,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - decalage positif simule une desynchronisation")
-    void testTALDecalageFenetrePositif() throws Exception {
+    public void testTALDecalageFenetrePositif() throws Exception {
         int nbEch = 10;
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, -1f, 1f, 5);
@@ -443,8 +411,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - decalage negatif complete le debut de fenetre par du silence")
-    void testTALDecalageFenetreNegatif() throws Exception {
+    public void testTALDecalageFenetreNegatif() throws Exception {
         int nbEch = 10;
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", nbEch, -1f, 1f);
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", nbEch, -1f, 1f, -5);
@@ -460,8 +427,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - filtre adapte RZ : ignore les tiers hors impulsion")
-    void testTALFiltreAdapteRZ() throws Exception {
+    public void testTALFiltreAdapteRZ() throws Exception {
         // bit 0 en RZ, mais tres perturbe hors du tiers central : sans effet sur la decision
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("RZ", 30, 0f, 1f);
         Information<Float> signal = new Information<>();
@@ -473,8 +439,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - filtre adapte : decision sur tout le bit, pas sur un echantillon")
-    void testTALFiltreAdapteMoyenne() throws Exception {
+    public void testTALFiltreAdapteMoyenne() throws Exception {
         // bit 1 en NRZ dont l'echantillon du milieu est tres bas : la corrélation reste positive
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f);
         Information<Float> signal = new Information<>();
@@ -486,8 +451,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAL - NRZT : sequence correcte quelle que soit la rampe du bit precedent")
-    void testTALSequenceNRZT() throws Exception {
+    public void testTALSequenceNRZT() throws Exception {
         TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZT", 30, -1f, 1f);
         TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZT", 30, -1f, 1f);
         tla.connecter(tal);
@@ -502,8 +466,7 @@ public class TransmetteurTest {
     // TransmetteurAnalogiqueBruite
 
     @Test
-    @DisplayName("TAB - bruit reproductible avec une seed et signal transmis")
-    void testTABruitReproductible() throws Exception {
+    public void testTABruitReproductible() throws Exception {
         TransmetteurAnalogiqueBruite premier = new TransmetteurAnalogiqueBruite(10, 0f, 42);
         TransmetteurAnalogiqueBruite second = new TransmetteurAnalogiqueBruite(10, 0f, 42);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
@@ -522,8 +485,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAB - signal nul transmis sans bruit")
-    void testTABruitSignalNul() throws Exception {
+    public void testTABruitSignalNul() throws Exception {
         TransmetteurAnalogiqueBruite transmetteur = new TransmetteurAnalogiqueBruite(10, 0f, 42);
         Information<Float> signal = new Information<>();
         signal.add(0.0f); signal.add(0.0f);
@@ -534,8 +496,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAB - signal vide transmis sans erreur")
-    void testTABruitSignalVide() throws Exception {
+    public void testTABruitSignalVide() throws Exception {
         TransmetteurAnalogiqueBruite transmetteur = new TransmetteurAnalogiqueBruite(10, 0f, 42);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
         transmetteur.connecter(destination);
@@ -548,8 +509,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TAB - construction sans seed et signal de taille conservee")
-    void testTABruitSansSeed() throws Exception {
+    public void testTABruitSansSeed() throws Exception {
         TransmetteurAnalogiqueBruite transmetteur = new TransmetteurAnalogiqueBruite(10, 0f, null);
         Information<Float> signal = new Information<>();
         signal.add(1.0f); signal.add(0.0f);
@@ -565,8 +525,7 @@ public class TransmetteurTest {
     // TransmetteurAnalogiqueTrajetsMultiples
 
     @Test
-    @DisplayName("TATM - echo retarde applique apres le debut du signal")
-    void testTATMEchoRetarde() throws Exception {
+    public void testTATMEchoRetarde() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
             new TransmetteurAnalogiqueTrajetsMultiples(10, Float.POSITIVE_INFINITY,
                 new int[] {2}, new float[] {0.5f}, 42);
@@ -584,8 +543,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TATM - bruit reproductible avec une seed")
-    void testTATMBruitReproductible() throws Exception {
+    public void testTATMBruitReproductible() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples premier =
             new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], 42);
         TransmetteurAnalogiqueTrajetsMultiples second =
@@ -602,8 +560,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TATM - seed absente et signal vide transmis")
-    void testTATMSansSeedSignalVide() throws Exception {
+    public void testTATMSansSeedSignalVide() throws Exception {
         TransmetteurAnalogiqueTrajetsMultiples transmetteur =
             new TransmetteurAnalogiqueTrajetsMultiples(10, 0f, new int[0], new float[0], null);
         TransmetteurAnalogiqueLogique destination = new TransmetteurAnalogiqueLogique("NRZ", 1, 0f, 1f);
@@ -617,8 +574,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TATM - bruit identique au canal gaussien sans trajet indirect")
-    void testTATMMemeBruitQueCanalGaussien() throws Exception {
+    public void testTATMMemeBruitQueCanalGaussien() throws Exception {
         TransmetteurAnalogiqueBruite bruite = new TransmetteurAnalogiqueBruite(10, 3f, 42);
         TransmetteurAnalogiqueTrajetsMultiples trajets =
             new TransmetteurAnalogiqueTrajetsMultiples(10, 3f, new int[0], new float[0], 42);
@@ -632,8 +588,7 @@ public class TransmetteurTest {
     }
 
     @Test
-    @DisplayName("TATM - rejette des tableaux de trajets invalides")
-    void testTATMTrajetsInvalides() {
+    public void testTATMTrajetsInvalides() {
         assertThrows(IllegalArgumentException.class,
             () -> new TransmetteurAnalogiqueTrajetsMultiples(10, 0f,
                 new int[0], new float[] {0.5f}, 42));
