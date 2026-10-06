@@ -1,0 +1,355 @@
+serie;x;teb;teb_th;nb_bits;commande
+NRZ sans;-29;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -29
+NRZ sans;-28;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -28
+NRZ sans;-27;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -27
+NRZ sans;-26;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -26
+NRZ sans;-25;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -25
+NRZ sans;-24;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -24
+NRZ sans;-23;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -23
+NRZ sans;-22;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -22
+NRZ sans;-21;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -21
+NRZ sans;-20;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -20
+NRZ sans;-19;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -19
+NRZ sans;-18;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -18
+NRZ sans;-17;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -17
+NRZ sans;-16;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -16
+NRZ sans;-15;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -15
+NRZ sans;-14;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -14
+NRZ sans;-13;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -13
+NRZ sans;-12;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -12
+NRZ sans;-11;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -11
+NRZ sans;-10;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -10
+NRZ sans;-9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -9
+NRZ sans;-8;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -8
+NRZ sans;-7;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -7
+NRZ sans;-6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -6
+NRZ sans;-5;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -5
+NRZ sans;-4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -4
+NRZ sans;-3;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -3
+NRZ sans;-2;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -2
+NRZ sans;-1;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -1
+NRZ sans;0;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 0
+NRZ sans;1;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 1
+NRZ sans;2;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 2
+NRZ sans;3;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 3
+NRZ sans;4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 4
+NRZ sans;5;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 5
+NRZ sans;6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 6
+NRZ sans;7;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 7
+NRZ sans;8;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 8
+NRZ sans;9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 9
+NRZ sans;10;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 10
+NRZ sans;11;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 11
+NRZ sans;12;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 12
+NRZ sans;13;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 13
+NRZ sans;14;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 14
+NRZ sans;15;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 15
+NRZ sans;16;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 16
+NRZ sans;17;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 17
+NRZ sans;18;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 18
+NRZ sans;19;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 19
+NRZ sans;20;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 20
+NRZ sans;21;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 21
+NRZ sans;22;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 22
+NRZ sans;23;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 23
+NRZ sans;24;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 24
+NRZ sans;25;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 25
+NRZ sans;26;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 26
+NRZ sans;27;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 27
+NRZ sans;28;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 28
+NRZ sans;29;0.4967;0.5;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 29
+NRZ avec;-29;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -29 -codeur
+NRZ avec;-28;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -28 -codeur
+NRZ avec;-27;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -27 -codeur
+NRZ avec;-26;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -26 -codeur
+NRZ avec;-25;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -25 -codeur
+NRZ avec;-24;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -24 -codeur
+NRZ avec;-23;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -23 -codeur
+NRZ avec;-22;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -22 -codeur
+NRZ avec;-21;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -21 -codeur
+NRZ avec;-20;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -20 -codeur
+NRZ avec;-19;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -19 -codeur
+NRZ avec;-18;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -18 -codeur
+NRZ avec;-17;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -17 -codeur
+NRZ avec;-16;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -16 -codeur
+NRZ avec;-15;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -15 -codeur
+NRZ avec;-14;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -14 -codeur
+NRZ avec;-13;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -13 -codeur
+NRZ avec;-12;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -12 -codeur
+NRZ avec;-11;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -11 -codeur
+NRZ avec;-10;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -10 -codeur
+NRZ avec;-9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -9 -codeur
+NRZ avec;-8;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -8 -codeur
+NRZ avec;-7;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -7 -codeur
+NRZ avec;-6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -6 -codeur
+NRZ avec;-5;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -5 -codeur
+NRZ avec;-4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -4 -codeur
+NRZ avec;-3;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -3 -codeur
+NRZ avec;-2;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -2 -codeur
+NRZ avec;-1;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage -1 -codeur
+NRZ avec;0;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 0 -codeur
+NRZ avec;1;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 1 -codeur
+NRZ avec;2;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 2 -codeur
+NRZ avec;3;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 3 -codeur
+NRZ avec;4;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 4 -codeur
+NRZ avec;5;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 5 -codeur
+NRZ avec;6;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 6 -codeur
+NRZ avec;7;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 7 -codeur
+NRZ avec;8;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 8 -codeur
+NRZ avec;9;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 9 -codeur
+NRZ avec;10;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 10 -codeur
+NRZ avec;11;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 11 -codeur
+NRZ avec;12;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 12 -codeur
+NRZ avec;13;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 13 -codeur
+NRZ avec;14;0.0;0.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 14 -codeur
+NRZ avec;15;0.24835;0.25;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 15 -codeur
+NRZ avec;16;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 16 -codeur
+NRZ avec;17;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 17 -codeur
+NRZ avec;18;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 18 -codeur
+NRZ avec;19;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 19 -codeur
+NRZ avec;20;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 20 -codeur
+NRZ avec;21;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 21 -codeur
+NRZ avec;22;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 22 -codeur
+NRZ avec;23;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 23 -codeur
+NRZ avec;24;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 24 -codeur
+NRZ avec;25;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 25 -codeur
+NRZ avec;26;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 26 -codeur
+NRZ avec;27;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 27 -codeur
+NRZ avec;28;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 28 -codeur
+NRZ avec;29;1.0;1.0;20000;./simulateur -form NRZ -nbEch 30 -ampl -1 1 -decalage 29 -codeur
+NRZT sans;-29;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -29
+NRZT sans;-28;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -28
+NRZT sans;-27;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -27
+NRZT sans;-26;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -26
+NRZT sans;-25;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -25
+NRZT sans;-24;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -24
+NRZT sans;-23;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -23
+NRZT sans;-22;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -22
+NRZT sans;-21;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -21
+NRZT sans;-20;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -20
+NRZT sans;-19;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -19
+NRZT sans;-18;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -18
+NRZT sans;-17;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -17
+NRZT sans;-16;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -16
+NRZT sans;-15;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -15
+NRZT sans;-14;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -14
+NRZT sans;-13;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -13
+NRZT sans;-12;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -12
+NRZT sans;-11;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -11
+NRZT sans;-10;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -10
+NRZT sans;-9;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -9
+NRZT sans;-8;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -8
+NRZT sans;-7;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -7
+NRZT sans;-6;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -6
+NRZT sans;-5;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -5
+NRZT sans;-4;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -4
+NRZT sans;-3;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -3
+NRZT sans;-2;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -2
+NRZT sans;-1;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -1
+NRZT sans;0;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 0
+NRZT sans;1;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 1
+NRZT sans;2;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 2
+NRZT sans;3;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 3
+NRZT sans;4;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 4
+NRZT sans;5;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 5
+NRZT sans;6;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 6
+NRZT sans;7;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 7
+NRZT sans;8;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 8
+NRZT sans;9;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 9
+NRZT sans;10;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 10
+NRZT sans;11;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 11
+NRZT sans;12;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 12
+NRZT sans;13;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 13
+NRZT sans;14;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 14
+NRZT sans;15;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 15
+NRZT sans;16;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 16
+NRZT sans;17;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 17
+NRZT sans;18;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 18
+NRZT sans;19;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 19
+NRZT sans;20;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 20
+NRZT sans;21;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 21
+NRZT sans;22;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 22
+NRZT sans;23;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 23
+NRZT sans;24;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 24
+NRZT sans;25;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 25
+NRZT sans;26;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 26
+NRZT sans;27;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 27
+NRZT sans;28;0.4967;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 28
+NRZT sans;29;0.49675;0.5;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 29
+NRZT avec;-29;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -29 -codeur
+NRZT avec;-28;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -28 -codeur
+NRZT avec;-27;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -27 -codeur
+NRZT avec;-26;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -26 -codeur
+NRZT avec;-25;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -25 -codeur
+NRZT avec;-24;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -24 -codeur
+NRZT avec;-23;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -23 -codeur
+NRZT avec;-22;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -22 -codeur
+NRZT avec;-21;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -21 -codeur
+NRZT avec;-20;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -20 -codeur
+NRZT avec;-19;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -19 -codeur
+NRZT avec;-18;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -18 -codeur
+NRZT avec;-17;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -17 -codeur
+NRZT avec;-16;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -16 -codeur
+NRZT avec;-15;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -15 -codeur
+NRZT avec;-14;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -14 -codeur
+NRZT avec;-13;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -13 -codeur
+NRZT avec;-12;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -12 -codeur
+NRZT avec;-11;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -11 -codeur
+NRZT avec;-10;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -10 -codeur
+NRZT avec;-9;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -9 -codeur
+NRZT avec;-8;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -8 -codeur
+NRZT avec;-7;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -7 -codeur
+NRZT avec;-6;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -6 -codeur
+NRZT avec;-5;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -5 -codeur
+NRZT avec;-4;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -4 -codeur
+NRZT avec;-3;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -3 -codeur
+NRZT avec;-2;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -2 -codeur
+NRZT avec;-1;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage -1 -codeur
+NRZT avec;0;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 0 -codeur
+NRZT avec;1;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 1 -codeur
+NRZT avec;2;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 2 -codeur
+NRZT avec;3;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 3 -codeur
+NRZT avec;4;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 4 -codeur
+NRZT avec;5;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 5 -codeur
+NRZT avec;6;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 6 -codeur
+NRZT avec;7;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 7 -codeur
+NRZT avec;8;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 8 -codeur
+NRZT avec;9;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 9 -codeur
+NRZT avec;10;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 10 -codeur
+NRZT avec;11;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 11 -codeur
+NRZT avec;12;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 12 -codeur
+NRZT avec;13;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 13 -codeur
+NRZT avec;14;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 14 -codeur
+NRZT avec;15;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 15 -codeur
+NRZT avec;16;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 16 -codeur
+NRZT avec;17;0.0;0.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 17 -codeur
+NRZT avec;18;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 18 -codeur
+NRZT avec;19;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 19 -codeur
+NRZT avec;20;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 20 -codeur
+NRZT avec;21;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 21 -codeur
+NRZT avec;22;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 22 -codeur
+NRZT avec;23;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 23 -codeur
+NRZT avec;24;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 24 -codeur
+NRZT avec;25;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 25 -codeur
+NRZT avec;26;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 26 -codeur
+NRZT avec;27;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 27 -codeur
+NRZT avec;28;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 28 -codeur
+NRZT avec;29;1.0;1.0;20000;./simulateur -form NRZT -nbEch 30 -ampl -1 1 -decalage 29 -codeur
+RZ sans;-29;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -29
+RZ sans;-28;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -28
+RZ sans;-27;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -27
+RZ sans;-26;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -26
+RZ sans;-25;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -25
+RZ sans;-24;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -24
+RZ sans;-23;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -23
+RZ sans;-22;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -22
+RZ sans;-21;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -21
+RZ sans;-20;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -20
+RZ sans;-19;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -19
+RZ sans;-18;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -18
+RZ sans;-17;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -17
+RZ sans;-16;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -16
+RZ sans;-15;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -15
+RZ sans;-14;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -14
+RZ sans;-13;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -13
+RZ sans;-12;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -12
+RZ sans;-11;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -11
+RZ sans;-10;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -10
+RZ sans;-9;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -9
+RZ sans;-8;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -8
+RZ sans;-7;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -7
+RZ sans;-6;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -6
+RZ sans;-5;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -5
+RZ sans;-4;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -4
+RZ sans;-3;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -3
+RZ sans;-2;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -2
+RZ sans;-1;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -1
+RZ sans;0;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 0
+RZ sans;1;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 1
+RZ sans;2;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 2
+RZ sans;3;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 3
+RZ sans;4;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 4
+RZ sans;5;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 5
+RZ sans;6;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 6
+RZ sans;7;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 7
+RZ sans;8;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 8
+RZ sans;9;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 9
+RZ sans;10;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 10
+RZ sans;11;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 11
+RZ sans;12;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 12
+RZ sans;13;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 13
+RZ sans;14;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 14
+RZ sans;15;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 15
+RZ sans;16;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 16
+RZ sans;17;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 17
+RZ sans;18;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 18
+RZ sans;19;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 19
+RZ sans;20;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 20
+RZ sans;21;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 21
+RZ sans;22;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 22
+RZ sans;23;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 23
+RZ sans;24;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 24
+RZ sans;25;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 25
+RZ sans;26;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 26
+RZ sans;27;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 27
+RZ sans;28;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 28
+RZ sans;29;0.49675;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 29
+RZ avec;-29;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -29 -codeur
+RZ avec;-28;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -28 -codeur
+RZ avec;-27;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -27 -codeur
+RZ avec;-26;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -26 -codeur
+RZ avec;-25;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -25 -codeur
+RZ avec;-24;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -24 -codeur
+RZ avec;-23;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -23 -codeur
+RZ avec;-22;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -22 -codeur
+RZ avec;-21;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -21 -codeur
+RZ avec;-20;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -20 -codeur
+RZ avec;-19;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -19 -codeur
+RZ avec;-18;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -18 -codeur
+RZ avec;-17;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -17 -codeur
+RZ avec;-16;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -16 -codeur
+RZ avec;-15;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -15 -codeur
+RZ avec;-14;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -14 -codeur
+RZ avec;-13;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -13 -codeur
+RZ avec;-12;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -12 -codeur
+RZ avec;-11;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -11 -codeur
+RZ avec;-10;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -10 -codeur
+RZ avec;-9;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -9 -codeur
+RZ avec;-8;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -8 -codeur
+RZ avec;-7;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -7 -codeur
+RZ avec;-6;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -6 -codeur
+RZ avec;-5;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -5 -codeur
+RZ avec;-4;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -4 -codeur
+RZ avec;-3;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -3 -codeur
+RZ avec;-2;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -2 -codeur
+RZ avec;-1;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage -1 -codeur
+RZ avec;0;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 0 -codeur
+RZ avec;1;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 1 -codeur
+RZ avec;2;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 2 -codeur
+RZ avec;3;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 3 -codeur
+RZ avec;4;0.0;0.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 4 -codeur
+RZ avec;5;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 5 -codeur
+RZ avec;6;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 6 -codeur
+RZ avec;7;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 7 -codeur
+RZ avec;8;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 8 -codeur
+RZ avec;9;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 9 -codeur
+RZ avec;10;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 10 -codeur
+RZ avec;11;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 11 -codeur
+RZ avec;12;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 12 -codeur
+RZ avec;13;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 13 -codeur
+RZ avec;14;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 14 -codeur
+RZ avec;15;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 15 -codeur
+RZ avec;16;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 16 -codeur
+RZ avec;17;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 17 -codeur
+RZ avec;18;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 18 -codeur
+RZ avec;19;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 19 -codeur
+RZ avec;20;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 20 -codeur
+RZ avec;21;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 21 -codeur
+RZ avec;22;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 22 -codeur
+RZ avec;23;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 23 -codeur
+RZ avec;24;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 24 -codeur
+RZ avec;25;0.4986;0.5;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 25 -codeur
+RZ avec;26;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 26 -codeur
+RZ avec;27;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 27 -codeur
+RZ avec;28;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 28 -codeur
+RZ avec;29;1.0;1.0;20000;./simulateur -form RZ -nbEch 30 -ampl 0 1 -decalage 29 -codeur
