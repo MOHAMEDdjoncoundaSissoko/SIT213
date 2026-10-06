@@ -20,6 +20,9 @@ import information.InformationNonConformeException;
  * deux valeurs possibles de ce bit, ce qui laisse dans g la seule partie qui
  * dépend du bit courant.
  *
+ * Pour simuler une désynchronisation entre émetteur et récepteur, la fenêtre de
+ * décision peut être décalée d'un nombre fixe d'échantillons (option -decalage).
+ *
  * @author ziani
  * @author sissoko
  * @author nanda
@@ -36,16 +39,43 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
     /** seuil de décision appliqué à la sortie du filtre */
     private double seuil;
 
+    /** décalage de la fenêtre de décision, en échantillons (0 : récepteur synchronisé) */
+    private final int decalage;
+
     /**
-     * Construit un récepteur à filtre adapté à la forme d'onde de l'émetteur.
+     * Construit un récepteur à filtre adapté à la forme d'onde de l'émetteur,
+     * synchronisé sur l'émetteur.
      * @param forme  forme d'onde ("NRZ", "NRZT" ou "RZ"), la même qu'à l'émission
      * @param nbEch  nombre d'échantillons par bit
      * @param aMin   amplitude du bit 0
      * @param aMax   amplitude du bit 1
      */
     public TransmetteurAnalogiqueLogique(String forme, int nbEch, float aMin, float aMax) {
+        this(forme, nbEch, aMin, aMax, 0);
+    }
+
+    /**
+     * Construit un récepteur désynchronisé : pour le bit i, la fenêtre de
+     * décision couvre les échantillons i * nbEch + decalage à
+     * (i + 1) * nbEch + decalage - 1. Un décalage positif simule un récepteur
+     * en retard sur l'émetteur, un décalage négatif un récepteur en avance.
+     * Hors du signal reçu (avant son début ou après sa fin), rien n'est reçu :
+     * les échantillons y valent 0.
+     * @param forme     forme d'onde ("NRZ", "NRZT" ou "RZ"), la même qu'à l'émission
+     * @param nbEch     nombre d'échantillons par bit
+     * @param aMin      amplitude du bit 0
+     * @param aMax      amplitude du bit 1
+     * @param decalage  décalage de la fenêtre, en échantillons, strictement inférieur à nbEch en valeur absolue
+     * @throws IllegalArgumentException si |decalage| est supérieur ou égal à nbEch
+     */
+    public TransmetteurAnalogiqueLogique(String forme, int nbEch, float aMin, float aMax, int decalage) {
         super();
+        if (Math.abs(decalage) >= nbEch) {
+            throw new IllegalArgumentException("Decalage de fenetre invalide : " + decalage
+                + " (doit etre strictement inferieur a nbEch = " + nbEch + " en valeur absolue)");
+        }
         this.nbEch = nbEch;
+        this.decalage = decalage;
 
         // formes de référence moyennées sur le bit précédent (seule la rampe NRZT en dépend)
         float[] s1 = new float[nbEch];
@@ -79,9 +109,10 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         int nbBits = informationRecue.nbElements() / nbEch;
 
         for (int i = 0; i < nbBits; i++) {
+            int debutFenetre = i * nbEch + decalage;
             double y = 0.0;
             for (int k = 0; k < nbEch; k++) {
-                y += informationRecue.iemeElement(i * nbEch + k) * filtre[k];
+                y += echantillonRecu(debutFenetre + k) * filtre[k];
             }
             informationEmise.add(y > seuil);
         }
@@ -89,5 +120,21 @@ public class TransmetteurAnalogiqueLogique extends Transmetteur<Float, Boolean> 
         for (DestinationInterface<Boolean> dest : destinationsConnectees) {
             dest.recevoir(informationEmise);
         }
+    }
+
+    /**
+     * Décalage de la fenêtre de décision par rapport au début réel des bits.
+     * @return le décalage, en échantillons (0 : récepteur synchronisé)
+     */
+    public int getDecalage() {
+        return decalage;
+    }
+
+    /** Échantillon reçu de rang j ; avant le début ou après la fin du signal, rien n'est reçu. */
+    private float echantillonRecu(int j) {
+        if (j < 0 || j >= informationRecue.nbElements()) {
+            return 0.0f;
+        }
+        return informationRecue.iemeElement(j);
     }
 }

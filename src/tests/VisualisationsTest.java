@@ -11,6 +11,9 @@ import visualisations.SondeAnalogique;
 import visualisations.SondeTextuelle;
 import visualisations.SondePuissance;
 import visualisations.Vue;
+import visualisations.VueDecalage;
+import transmetteurs.CodeurCanal;
+import transmetteurs.TransmetteurLogiqueAnalogique;
 
 /**
  * Tests JUnit pour les classes de visualisation.
@@ -144,5 +147,64 @@ public class VisualisationsTest {
             // VueCourbe peut echouer en headless
         }
         assertEquals(info, sonde.getInformationRecue());
+    }
+
+    // VueDecalage (fenetre interactive de desynchronisation) : calculs et dessin sans fenetre
+
+    @Test
+    @DisplayName("VueDecalage - taux d'erreur rang par rang, bit absent compte comme erreur")
+    void testVueDecalageTauxErreur() {
+        Information<Boolean> reference = new Information<>(new Boolean[] {true, false, true, true});
+        assertEquals(0.0f, VueDecalage.tauxErreur(reference, new Information<>(new Boolean[] {true, false, true, true})));
+        assertEquals(0.25f, VueDecalage.tauxErreur(reference, new Information<>(new Boolean[] {true, true, true, true})));
+        assertEquals(0.5f, VueDecalage.tauxErreur(reference, new Information<>(new Boolean[] {true, false})));
+        assertEquals(0.0f, VueDecalage.tauxErreur(new Information<>(), reference));
+    }
+
+    @Test
+    @DisplayName("VueDecalage - decider puis decoder : decalage fort avec codeur inverse le message")
+    void testVueDecalageDeciderDecoder() throws Exception {
+        Information<Boolean> message = new Information<>(new Boolean[] {true, false, false, true, true, false});
+        CodeurCanal codeur = new CodeurCanal();
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", 30, -1f, 1f);
+        codeur.connecter(emetteur);
+        codeur.recevoir(message);
+
+        Information<Boolean> sansDecalage = VueDecalage.decoder(
+            VueDecalage.decider(emetteur.getInformationEmise(), "NRZ", 30, -1f, 1f, 0));
+        Information<Boolean> decale = VueDecalage.decoder(
+            VueDecalage.decider(emetteur.getInformationEmise(), "NRZ", 30, -1f, 1f, 16));
+
+        assertEquals(message, sansDecalage);
+        assertEquals(1.0f, VueDecalage.tauxErreur(message, decale));
+    }
+
+    @Test
+    @DisplayName("VueDecalage - le trace marque en rouge les fenetres mal decidees")
+    void testVueDecalageTrace() throws Exception {
+        TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique("NRZ", 30, -1f, 1f);
+        emetteur.recevoir(new Information<>(new Boolean[] {true, false, true, true, false, false, true}));
+        Information<Float> signal = emetteur.getInformationEmise();
+        Information<Boolean> bits = emetteur.getInformationRecue();
+
+        assertFalse(contientFondRouge(signal, bits, 0));
+        assertTrue(contientFondRouge(signal, bits, 16));
+    }
+
+    /** Dessine la vue dans une image et cherche la couleur de fond des fenetres mal decidees. */
+    private static boolean contientFondRouge(Information<Float> signal, Information<Boolean> bits, int decalage)
+        throws Exception {
+        java.awt.image.BufferedImage image =
+            new java.awt.image.BufferedImage(960, 330, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        java.awt.Graphics2D g = image.createGraphics();
+        VueDecalage.tracer(g, 960, 330, signal, signal, bits,
+            VueDecalage.decider(signal, "NRZ", 30, -1f, 1f, decalage), 30, -1f, 1f, decalage);
+        int fondRouge = new java.awt.Color(255, 210, 210).getRGB();
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                if (image.getRGB(x, y) == fondRouge) return true;
+            }
+        }
+        return false;
     }
 }

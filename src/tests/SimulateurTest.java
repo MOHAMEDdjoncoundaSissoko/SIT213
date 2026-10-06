@@ -415,4 +415,90 @@ public class SimulateurTest {
     void testCodeurAvecParametre() {
         assertThrows(Exception.class, () -> new Simulateur(new String[]{"-codeur", "3"}));
     }
+
+    // Desynchronisation du recepteur (-decalage, extension hors commande unique)
+
+    @Test
+    @DisplayName("-decalage : valeurs invalides refusees, quel que soit l'ordre des options")
+    void testDecalageInvalide() throws Exception {
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-decalage"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-decalage", "abc"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-nbEch", "10", "-decalage", "10"}));
+        assertThrows(Exception.class, () -> new Simulateur(new String[]{"-decalage", "-10", "-nbEch", "10"}));
+        // -nbEch apres -decalage : 15 < 20 est accepte
+        new Simulateur(new String[]{"-decalage", "15", "-nbEch", "20"});
+    }
+
+    @Test
+    @DisplayName("-decalage 0 : meme TEB que sans l'option")
+    void testDecalageNul() throws Exception {
+        String[] base = {"-form", "NRZ", "-ampl", "-1", "1", "-mess", "5000", "-snrpb", "3", "-seed", "1"};
+        String[] avecDecalage = java.util.Arrays.copyOf(base, base.length + 2);
+        avecDecalage[base.length] = "-decalage";
+        avecDecalage[base.length + 1] = "0";
+        Simulateur sans = new Simulateur(base);
+        Simulateur avec = new Simulateur(avecDecalage);
+
+        sans.execute();
+        avec.execute();
+
+        assertEquals(sans.calculTauxErreurBinaire(), avec.calculTauxErreurBinaire());
+    }
+
+    @Test
+    @DisplayName("-decalage : NRZ sans bruit, TEB nul sous un demi-bit et 0,5 au-dela")
+    void testDecalageSansBruit() throws Exception {
+        // message 1011001110 : 5 des 9 bits suivants different du bit courant
+        String[][] cas = {{"14", "0.0"}, {"16", "0.5"}, {"-16", "0.5"}};
+        for (String[] c : cas) {
+            Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1",
+                "-mess", "1011001110", "-decalage", c[0]});
+            s.execute();
+            assertEquals(Float.parseFloat(c[1]), s.calculTauxErreurBinaire(), "decalage " + c[0]);
+        }
+    }
+
+    @Test
+    @DisplayName("-decalage avec -codeur : au-dela d'un demi-bit, tout le message est inverse")
+    void testDecalageCodeurInverseLeMessage() throws Exception {
+        // le recepteur lit le bit code suivant : (non b, b, b') au lieu de (b, non b, b),
+        // et le vote majoritaire du decodeur rend toujours non b
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1",
+            "-mess", "1000", "-seed", "2", "-codeur", "-decalage", "16"});
+
+        s.execute();
+
+        assertEquals(1.0f, s.calculTauxErreurBinaire());
+    }
+
+    @Test
+    @DisplayName("-decalage : TEB conforme a la theorie avec bruit (NRZ antipodal, 4 dB, d = 10)")
+    void testDecalageTheorie() throws Exception {
+        // theorie exacte : 0,1200 (contre 0,0125 sans decalage) ; ecart-type statistique 0,0019
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-ampl", "-1", "1",
+            "-mess", "30000", "-snrpb", "4", "-decalage", "10", "-seed", "1"});
+
+        s.execute();
+
+        assertEquals(0.1200, s.calculTauxErreurBinaire(), 0.006);
+    }
+
+    @Test
+    @DisplayName("-decalage active la simulation analogique")
+    void testDecalageActiveAnalogique() throws Exception {
+        // RZ par defaut : l'impulsion ne dure qu'un tiers de bit, un decalage de 6 suffit a fausser des bits
+        Simulateur s = new Simulateur(new String[]{"-mess", "1011001110", "-decalage", "6"});
+
+        s.execute();
+
+        assertTrue(s.calculTauxErreurBinaire() > 0.0f);
+    }
+
+    @Test
+    @DisplayName("Affichage - option -s avec -decalage construction OK")
+    void testDecalageAffichage() throws Exception {
+        Simulateur s = new Simulateur(new String[]{"-form", "NRZ", "-mess", "50", "-decalage", "5", "-s"});
+        // la fenetre interactive peut lever HeadlessException en environnement sans ecran
+        try { s.execute(); } catch (Exception e) { /* GUI non disponible */ }
+    }
 }

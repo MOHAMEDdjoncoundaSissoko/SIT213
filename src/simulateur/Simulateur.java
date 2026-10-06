@@ -19,6 +19,7 @@ import transmetteurs.TransmetteurLogiqueAnalogique;
 import transmetteurs.TransmetteurParfait;
 import visualisations.SondeAnalogique;
 import visualisations.SondeLogique;
+import visualisations.VueDecalage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,18 @@ public class Simulateur {
     /** indique si un codage de canal est utilisé (option -codeur) */
     private boolean codageCanal = false;
 
+    /** indique si le récepteur est désynchronisé (option -decalage, hors commande unique) */
+    private boolean desynchronisation = false;
+
+    /** décalage de la fenêtre de décision du récepteur, en échantillons (option -decalage) */
+    private int decalage = 0;
+
+    /** l'émetteur de la chaîne analogique (null en simulation logique) */
+    private TransmetteurLogiqueAnalogique emetteur = null;
+
+    /** le canal de la chaîne analogique (null en simulation logique) */
+    private Transmetteur<Float, Float> canal = null;
+
     /** le composant Source de la chaine de transmission */
     private Source<Boolean> source = null;
 
@@ -141,8 +154,7 @@ public class Simulateur {
                 transmetteurLogique.connecter(new SondeLogique("Recepteur", 10));
             }
         } else {
-            TransmetteurLogiqueAnalogique emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
-            Transmetteur<Float, Float> canal;
+            emetteur = new TransmetteurLogiqueAnalogique(forme, nbEch, aMin, aMax);
             if (canalTrajetsMultiples) {
                 // sans -snrpb : Eb/N0 infini, les échos sont la seule perturbation
                 float ebN0Trajets = canalBruite ? ebN0 : Float.POSITIVE_INFINITY;
@@ -156,7 +168,8 @@ public class Simulateur {
             } else {
                 canal = new TransmetteurAnalogiqueParfait(nbEch, aMin, aMax);
             }
-            TransmetteurAnalogiqueLogique recepteur = new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax);
+            TransmetteurAnalogiqueLogique recepteur =
+                new TransmetteurAnalogiqueLogique(forme, nbEch, aMin, aMax, decalage);
 
             entree.connecter(emetteur);
             emetteur.connecter(canal);
@@ -253,6 +266,17 @@ public class Simulateur {
             } else if (args[i].matches("-codeur")) {
                 codageCanal = true;
 
+            } else if (args[i].matches("-decalage")) {
+                // extension hors commande unique : récepteur désynchronisé de d échantillons
+                simulationAnalogique = true;
+                desynchronisation = true;
+                i++;
+                try {
+                    decalage = Integer.parseInt(args[i]);
+                } catch (Exception e) {
+                    throw new ArgumentsException("Valeur du parametre -decalage invalide");
+                }
+
             } else if (args[i].matches("-ti")) {
                 // Syntaxe : -ti dt1 ar1 [dt2 ar2 ...] (5 couples au maximum)
                 // les couples sont lus tant que l'argument suivant est un entier
@@ -298,6 +322,12 @@ public class Simulateur {
                 throw new ArgumentsException("Option invalide : " + args[i]);
             }
         }
+
+        // -nbEch peut suivre -decalage : la borne ne se vérifie qu'une fois toutes les options lues
+        if (Math.abs(decalage) >= nbEch) {
+            throw new ArgumentsException("Valeur du parametre -decalage invalide : " + decalage
+                + " (doit etre strictement inferieur a nbEch = " + nbEch + " en valeur absolue)");
+        }
     }
 
 
@@ -306,6 +336,13 @@ public class Simulateur {
      */
     public void execute() throws Exception {
         source.emettre();
+
+        // avec -s et -decalage : fenêtre interactive pour faire varier le décalage du récepteur
+        if (affichage && desynchronisation) {
+            new VueDecalage(canal.getInformationEmise(), emetteur.getInformationEmise(),
+                emetteur.getInformationRecue(), source.getInformationEmise(),
+                forme, nbEch, aMin, aMax, codageCanal, decalage);
+        }
     }
 
 

@@ -35,6 +35,29 @@ run_test() {
     fi
 }
 
+# Fonction pour les tests dont le TEB est connu exactement (simulations sans bruit)
+# $1 = Description, $2 = Commande, $3 = TEB attendu tel qu'affiché (ex. 0.0 ou 1.0)
+run_teb_exact_test() {
+    NB_TESTS=$((NB_TESTS + 1))
+    local description="$1"
+    local commande="$2"
+    local attendu="$3"
+
+    echo -n "Test $NB_TESTS : $description ... "
+
+    output=$(eval "$commande" 2>/dev/null)
+    exit_code=$?
+
+    # la sortie se termine par "TEB : <valeur>" : la valeur doit être exactement celle attendue
+    if [ $exit_code -eq 0 ] && [[ "$output" == *"TEB : $attendu" ]]; then
+        echo -e "${VERT}OK${NEUTRE}"
+        NB_OK=$((NB_OK + 1))
+    else
+        echo -e "${ROUGE}KO (exit=$exit_code, attendu TEB : $attendu, sortie: $output)${NEUTRE}"
+        NB_KO=$((NB_KO + 1))
+    fi
+}
+
 # Fonction pour les tests d'erreur (doit echouer avec code non-zero)
 # $1 = Description, $2 = Commande
 run_error_test() {
@@ -144,43 +167,57 @@ run_test "Codage de canal (trajets indirects, bruité)" "./simulateur -mess 1000
 # Avec des objets Float, la même simulation dépassait 256 Mo (OutOfMemoryError).
 run_test "Mémoire (100 000 bits codés, tas Java de 256 Mo)" "JAVA_TOOL_OPTIONS=-Xmx256m ./simulateur -mess 100000 -form NRZ -ampl -1 1 -snrpb 4 -codeur"
 
+# --- ÉTAPE 5 : désynchronisation du récepteur (-decalage d, extension hors commande unique) ---
+
+# Test 22 : décalage de 14 échantillons sur 30 (moins d'un demi-bit), sans bruit : aucune erreur
+run_teb_exact_test "Désynchronisation faible (décalage 14 < nbEch/2) : TEB nul" "./simulateur -mess 1000 -form NRZ -ampl -1 1 -decalage 14" "0.0"
+
+# Test 23 : décalage de 16 échantillons (plus d'un demi-bit) avec codeur : tout le message est inversé
+run_teb_exact_test "Désynchronisation forte avec codeur (décalage 16) : message inversé" "./simulateur -mess 1000 -form NRZ -ampl -1 1 -codeur -decalage 16" "1.0"
+
 # --- TESTS D'ERREURS (le simulateur doit échouer) ---
 
-# Test 22 : option inconnue
+# Test 24 : option inconnue
 run_error_test "Erreur (option inconnue)" "./simulateur -foobar"
 
-# Test 23 : amplitude non numérique
+# Test 25 : amplitude non numérique
 run_error_test "Erreur (amplitude invalide)" "./simulateur -ampl abc"
 
-# Test 24 : nombre d'échantillons négatif
+# Test 26 : nombre d'échantillons négatif
 run_error_test "Erreur (nbEch invalide)" "./simulateur -nbEch -5"
 
-# Test 25 : nombre d'échantillons sous le minimum
+# Test 27 : nombre d'échantillons sous le minimum
 run_error_test "Erreur (nbEch 3, en dessous du minimum de 10)" "./simulateur -nbEch 3"
 
-# Test 26 : amplitude min > max
+# Test 28 : amplitude min > max
 run_error_test "Erreur (ampl min > max)" "./simulateur -ampl 1 0"
 
-# Test 27 : amplitude min = max
+# Test 29 : amplitude min = max
 run_error_test "Erreur (ampl min = max)" "./simulateur -ampl 1 1"
 
-# Test 28 : Eb/N0 non numérique
+# Test 30 : Eb/N0 non numérique
 run_error_test "Erreur (snrpb non flottant)" "./simulateur -snrpb abc"
 
-# Test 29 : Eb/N0 manquant
+# Test 31 : Eb/N0 manquant
 run_error_test "Erreur (snrpb sans valeur)" "./simulateur -snrpb"
 
-# Test 30 : -ti sans couple dt ar
+# Test 32 : -ti sans couple dt ar
 run_error_test "Erreur (ti sans couple)" "./simulateur -ti"
 
-# Test 31 : -ti avec dt mais sans ar
+# Test 33 : -ti avec dt mais sans ar
 run_error_test "Erreur (ti sans valeur ar)" "./simulateur -ti 10"
 
-# Test 32 : -ti avec plus de 5 couples
+# Test 34 : -ti avec plus de 5 couples
 run_error_test "Erreur (ti plus de 5 couples)" "./simulateur -ti 1 0.1 2 0.1 3 0.1 4 0.1 5 0.1 6 0.1"
 
-# Test 33 : -codeur ne prend pas de paramètre
+# Test 35 : -codeur ne prend pas de paramètre
 run_error_test "Erreur (codeur avec paramètre)" "./simulateur -codeur 3"
+
+# Test 36 : -decalage non entier
+run_error_test "Erreur (decalage non entier)" "./simulateur -decalage abc"
+
+# Test 37 : -decalage d'au moins un bit
+run_error_test "Erreur (decalage >= nbEch)" "./simulateur -nbEch 10 -decalage 10"
 
 echo "------------------------------------------"
 echo -e "  RÉSULTAT : ${VERT}${NB_OK}/${NB_TESTS}${NEUTRE} OK"

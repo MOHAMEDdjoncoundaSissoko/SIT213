@@ -40,7 +40,7 @@ Le projet respecte une architecture modulaire orientée objet (interfaces `Sourc
 | `genDoc` | génère la Javadoc des sources (hors tests) dans `docs/` |
 | `cleanAll` | vide `bin/` et `docs/` |
 | `simulateur` | lance une simulation ; options conformes à la commande unique (voir ci-dessous) |
-| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : 21 exécutions nominales (dont un test de mémoire) et 12 cas d'erreur |
+| `runTests` | autotests de bout en bout du simulateur (étapes 1 à 5) : 23 exécutions nominales (dont un test de mémoire et deux tests de désynchronisation à TEB exact) et 14 cas d'erreur |
 | `README.md` | ce fichier |
 
 Les tests unitaires JUnit se lancent, après `./compile`, avec :
@@ -74,7 +74,10 @@ Depuis la racine du projet :
 * `-ti dt ar [dt ar ...]` : canal à trajets multiples. Chaque couple ajoute un trajet indirect décalé de `dt` échantillons (entier ≥ 0) et d'amplitude relative `ar` (flottant) : $r(n) = s(n) + \sum_k ar_k \, s(n - dt_k)$. De 1 à 5 couples. Sans `-snrpb`, seuls les échos perturbent le signal ; avec `-snrpb`, le bruit gaussien est ajouté après les échos. Défaut : pas de trajet indirect.
 * `-codeur` : active le codage de canal. Un codeur est inséré juste après la source (`0 → 010`, `1 → 101`) et un décodeur juste avant la destination (mot de code le plus proche, soit une erreur corrigée par paquet de trois bits). Le TEB est mesuré entre la source et la destination. Défaut : pas de codage.
 
-La présence d'au moins une des options `-form`, `-nbEch`, `-ampl`, `-snrpb` ou `-ti` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
+**Extension (hors commande unique) :**
+* `-decalage d` : désynchronise le récepteur. Sa fenêtre de décision est décalée de `d` échantillons par rapport au début réel de chaque bit (`d > 0` : récepteur en retard, `d < 0` : en avance), avec `|d| < nbEch`. Le TEB affiché tient compte de ce décalage. Avec `-s`, une fenêtre interactive s'ouvre en plus : un curseur (ou la molette) fait varier le décalage, le tracé montre le signal émis, le signal reçu et les fenêtres de décision (fond rouge : bit mal décidé), et le TEB du message complet est recalculé. Défaut : récepteur synchronisé (`d = 0`).
+
+La présence d'au moins une des options `-form`, `-nbEch`, `-ampl`, `-snrpb`, `-ti` ou `-decalage` active la simulation analogique. En cas d'argument invalide, le simulateur affiche l'erreur et se termine avec un code de retour non nul.
 
 ---
 
@@ -91,6 +94,11 @@ Valeurs mesurées avec `-seed 1` sur 10 000 bits (le TEB varie légèrement d'un
 | `./simulateur -mess 0110100101 -form RZ -nbEch 20 -ampl 0 5 -s` | 0.0 (avec affichage des sondes) |
 | `./simulateur -mess 60000 -form NRZ -nbEch 10 -ampl -1 1 -snrpb 2 -seed 1` | ≈ 0.038 |
 | `./simulateur -mess 60000 -form NRZ -nbEch 10 -ampl -1 1 -snrpb 2 -seed 1 -codeur` | ≈ 0.0041 (théorie $3p^2 - 2p^3$ avec $p = 0{,}0375$) |
+| `./simulateur -mess 1000 -form NRZ -ampl -1 1 -decalage 14` | 0.0 (fenêtre décalée de moins d'un demi-bit) |
+| `./simulateur -mess 1000 -form NRZ -ampl -1 1 -decalage 16` | ≈ 0.5 (le récepteur lit le bit suivant) |
+| `./simulateur -mess 1000 -form NRZ -ampl -1 1 -decalage 16 -codeur` | 1.0 (tout le message est inversé) |
+| `./simulateur -mess 30000 -form NRZ -ampl -1 1 -snrpb 4 -decalage 10 -seed 1` | ≈ 0.12 (contre 0.0125 sans décalage) |
+| `./simulateur -mess 200 -form NRZ -ampl -1 1 -snrpb 6 -decalage 8 -s` | fenêtre interactive de désynchronisation |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.5 -seed 1` | 0.0 (écho trop faible pour franchir le seuil) |
 | `./simulateur -mess 10000 -form NRZ -nbEch 10 -ampl -1 1 -ti 10 0.9 20 0.9 -seed 1` | ≈ 0.25 (erreur dès que les deux bits précédents sont opposés au bit courant) |
 

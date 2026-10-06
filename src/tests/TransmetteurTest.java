@@ -311,6 +311,52 @@ public class TransmetteurTest {
         assertEquals(entree, tal.getInformationEmise());
     }
 
+    // TransmetteurAnalogiqueLogique desynchronise (fenetre de decision decalee)
+
+    /** Bits decides par un recepteur NRZ (-1, 1) a 10 echantillons par bit, decale de d. */
+    private static Information<Boolean> decideAvecDecalage(String message, int d) throws Exception {
+        TransmetteurLogiqueAnalogique tla = new TransmetteurLogiqueAnalogique("NRZ", 10, -1f, 1f);
+        TransmetteurAnalogiqueLogique tal = new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f, d);
+        tla.connecter(tal);
+        tla.recevoir(bits(message));
+        return tal.getInformationEmise();
+    }
+
+    @Test
+    @DisplayName("TAL decale - moins d'un demi-bit : decisions inchangees")
+    void testTALDecalageFaible() throws Exception {
+        // fenetre a cheval : 6 echantillons du bit courant, 4 du voisin -> le bit courant l'emporte
+        assertEquals(bits("1011001"), decideAvecDecalage("1011001", 4));
+        assertEquals(bits("1011001"), decideAvecDecalage("1011001", -4));
+    }
+
+    @Test
+    @DisplayName("TAL decale - retard de plus d'un demi-bit : le bit suivant est lu")
+    void testTALDecalagePositifFort() throws Exception {
+        // d = 6 : 4 echantillons du bit i, 6 du bit i+1 -> on decide b(i+1) ;
+        // le dernier bit (4 echantillons recus, 6 hors du signal) reste juste
+        assertEquals(bits("0110011"), decideAvecDecalage("1011001", 6));
+    }
+
+    @Test
+    @DisplayName("TAL decale - avance de plus d'un demi-bit : le bit precedent est lu")
+    void testTALDecalageNegatifFort() throws Exception {
+        // d = -6 : 6 echantillons du bit i-1, 4 du bit i -> on decide b(i-1) ;
+        // le premier bit (6 echantillons hors du signal, 4 recus) reste juste
+        assertEquals(bits("1101100"), decideAvecDecalage("1011001", -6));
+    }
+
+    @Test
+    @DisplayName("TAL decale - decalage d'au moins un bit refuse, accesseur")
+    void testTALDecalageLimites() {
+        assertEquals(0, new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f).getDecalage());
+        assertEquals(-9, new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f, -9).getDecalage());
+        assertThrows(IllegalArgumentException.class,
+            () -> new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f, 10));
+        assertThrows(IllegalArgumentException.class,
+            () -> new TransmetteurAnalogiqueLogique("NRZ", 10, -1f, 1f, -10));
+    }
+
     // TransmetteurAnalogiqueBruite
 
     @Test
