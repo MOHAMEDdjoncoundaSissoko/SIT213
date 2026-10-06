@@ -514,7 +514,7 @@ Le dernier test simulateur répond à la limite relevée à l'étape 3 : les tes
 \subsection{Limites identifiées}
 \begin{itemize}
   \item \textbf{Semences liées.} Avec \texttt{-seed}, la source et le canal utilisent toujours la même semence, donc des suites pseudo-aléatoires liées. Utiliser \texttt{seed} et \texttt{seed + 1} garantirait leur indépendance. Les courbes restent conformes à la théorie, ce qui indique que l'effet est négligeable ici.
-  \item \textbf{Mémoire.} \cls{Information} stocke des \texttt{Float} (objets) : une simulation de 200\,000 bits à 30 échantillons occupe environ 400~Mo. Les balayages sont donc découpés en tranches ; un stockage en \texttt{float[]} réduirait fortement l'empreinte. \emph{Ce stockage a été réalisé à l'étape 5 (section~\ref{sec:perf}).}
+  \item \textbf{Mémoire.} \cls{Information} stocke des \texttt{Float} (objets) : une simulation de 200\,000 bits à 30 échantillons occupe environ 400~Mo. Les balayages sont donc découpés en tranches ; un stockage en \texttt{float[]} réduirait fortement l'empreinte.
   \item \textbf{Pas de compensation des échos.} Le filtre adapté est optimal contre le bruit, pas contre l'IES. Un égaliseur est nécessaire pour annuler les trajets multiples.
   \item Le rapport de l'étape 3 prévoyait une option pour conserver la décision sur l'échantillon central. La commande unique n'en prévoyant pas, la comparaison est faite en recompilant la version de l'étape 3 depuis git (script de courbes).
 \end{itemize}
@@ -557,12 +557,12 @@ Sans \texttt{-codeur}, la chaîne est celle de l'étape 4. En simulation logique
 \section{Récapitulatif des modifications depuis l'étape 4}
 \begin{center}\small\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}X}\toprule
 Élément & Modification\\\midrule
-\texttt{CodeurCanal} & \textbf{Nouvelle classe} (\texttt{Transmetteur<Boolean, Boolean>}) : chaque bit reçu est émis sur trois bits, $0 \to 010$ et $1 \to 101$.\\
-\texttt{DecodeurCanal} & \textbf{Nouvelle classe} : chaque paquet de trois bits redonne un bit, par choix du mot de code le plus proche. Une erreur par paquet est corrigée.\\
+\texttt{CodeurCanal} & Nouvelle classe (\texttt{Transmetteur<Boolean, Boolean>}) : chaque bit reçu est émis sur trois bits, $0 \to 010$ et $1 \to 101$.\\
+\texttt{DecodeurCanal} & Nouvelle classe : chaque paquet de trois bits redonne un bit, par choix du mot de code le plus proche. Une erreur par paquet est corrigée.\\
 \texttt{Simulateur} & Option \texttt{-codeur} ; la chaîne se branche sur deux extrémités logiques (source et destination, ou codeur et décodeur) ; sondes logiques du message émis et du message décodé avec \texttt{-s}. Option \texttt{-decalage d} (extension hors commande unique) pour désynchroniser le récepteur.\\
 \texttt{TransmetteurAnalogique}\newline\texttt{Logique} & Décalage optionnel de la fenêtre de décision, pour simuler une désynchronisation (section~\ref{sec:desync}) ; 0 par défaut, résultats inchangés.\\
-\texttt{VueDecalage} & \textbf{Nouvelle classe} : fenêtre interactive de désynchronisation (curseur, tracé des fenêtres de décision sur le signal, TEB recalculé), ouverte avec \texttt{-s -decalage}.\\
-\texttt{InformationFlottante} & \textbf{Nouvelle classe} (sous-classe d'\texttt{Information<Float>}) : le signal analogique est rangé dans un tableau de \texttt{float} au lieu d'objets \texttt{Float}, pour réduire la mémoire (section~\ref{sec:perf}).\\
+\texttt{VueDecalage} & Nouvelle classe : fenêtre interactive de désynchronisation (curseur, tracé des fenêtres de décision sur le signal, TEB recalculé), ouverte avec \texttt{-s -decalage}.\\
+\texttt{InformationFlottante} & Nouvelle classe (sous-classe d'\texttt{Information<Float>}) : le signal analogique est rangé dans un tableau de \texttt{float} au lieu d'objets \texttt{Float}, pour réduire la mémoire (section~\ref{sec:perf}).\\
 \texttt{TransmetteurLogique}\newline\texttt{Analogique},\newline\texttt{TransmetteurAnalogique}\newline\texttt{Bruite} & L'émetteur et le canal bruité (donc aussi le canal à trajets multiples) produisent une \texttt{InformationFlottante}. Leurs calculs sont inchangés.\\
 Tests JUnit & 29 tests ajoutés : 125 tests, tous réussis.\\
 \texttt{runTests} & Section « Étape 5 » : 6 exécutions nominales, dont un test de mémoire et deux tests de désynchronisation à TEB exact, et 3 tests d'erreur (37 tests).\\
@@ -599,9 +599,9 @@ Le codeur associe à chaque bit un mot de trois bits : le bit, son inverse, puis
 000 & 001 & 010 & 011 & 100 & 101 & 110 & 111\\\midrule
 0 & 1 & 0 & 0 & 1 & 1 & 0 & 1\\\bottomrule
 \end{tabular}\end{center}
-Les deux mots diffèrent sur leurs trois bits (distance de Hamming 3). Le décodeur choisit le mot le plus proche du paquet reçu (tableau de droite, celui du TP5) : un paquet qui contient \textbf{une} erreur est à distance 1 du bon mot et à distance 2 de l'autre, il est donc corrigé ; avec deux ou trois erreurs, le décodeur se trompe.
+Les deux mots diffèrent sur leurs trois bits (distance de Hamming 3). Le décodeur choisit le mot le plus proche du paquet reçu (tableau de droite, celui du TP5) : un paquet qui contient une erreur est à distance 1 du bon mot et à distance 2 de l'autre, il est donc corrigé ; avec deux ou trois erreurs, le décodeur se trompe.
 
-Ce code est un code à répétition dont le bit du milieu est inversé. Le mot le plus proche s'obtient donc par un \textbf{vote majoritaire} après avoir ré-inversé le bit du milieu, ce qui évite d'écrire les huit cas :
+Ce code est un code à répétition dont le bit du milieu est inversé. Le mot le plus proche s'obtient donc par un vote majoritaire après avoir ré-inversé le bit du milieu, ce qui évite d'écrire les huit cas :
 \begin{lstlisting}
 // CodeurCanal.emettre()
 for (boolean bit : informationRecue) {        // 0 -> 010, 1 -> 101
@@ -620,10 +620,10 @@ for (int i = 0; i < nbPaquets; i++) {
     informationEmise.add(votesPourUn >= 2);
 }
 \end{lstlisting}
-Un test JUnit vérifie que ce vote reproduit exactement les huit lignes de la table du TP5.
+Un test JUnit vérifie que ce vote reproduit les huit lignes de la table du TP5.
 
 \subsection{Lecture en termes d'automate}
-Le décodeur est un \textbf{transducteur déterministe} : il lit les bits trois par trois et, pour chacun des $2^3 = 8$ paquets possibles, il existe une et une seule sortie. Vu comme un automate, il part d'un état initial, compte les votes en lisant trois bits (au plus quatre états de comptage : 0, 1, 2 ou 3 votes pour « 1 »), émet un bit, puis revient à l'état initial. Le déterminisme a ici un intérêt pratique direct : le décodage ne demande ni retour en arrière ni mémoire au-delà du paquet en cours, et son coût est proportionnel à la longueur du message.
+Le décodeur est un transducteur déterministe : il lit les bits trois par trois et, pour chacun des $2^3 = 8$ paquets possibles, il existe une et une seule sortie. Vu comme un automate, il part d'un état initial, compte les votes en lisant trois bits (au plus quatre états de comptage : 0, 1, 2 ou 3 votes pour « 1 »), émet un bit, puis revient à l'état initial. Le déterminisme a ici un intérêt pratique direct : le décodage ne demande ni retour en arrière ni mémoire au-delà du paquet en cours, et son coût est proportionnel à la longueur du message.
 
 \subsection{Intégration dans le simulateur}
 Le codeur et le décodeur sont des \texttt{Transmetteur<Boolean, Boolean>}, comme le transmetteur parfait de l'étape 1. Le simulateur définit deux « extrémités logiques », entre lesquelles il branche la chaîne logique ou analogique sans autre changement :
@@ -672,14 +672,14 @@ Le gain est pratiquement le même pour les trois formes d'onde : le décodeur ne
 \subsection{Comparaison à énergie égale par bit d'information}
 \begin{figure}[htbp]\centering\includegraphics[width=0.85\linewidth]{figures/fig_codage_equitable.pdf}
 \caption{NRZ antipodal : TEB en fonction de $\EbNo$ par bit d'information. Avec le codeur, l'énergie d'un bit utile est celle de ses trois bits codés ; la courbe est celle de la figure~\ref{fig:codageformes}, décalée de $10\log_{10}3 = 4{,}8$~dB.}\label{fig:equitable}\end{figure}
-La comparaison précédente avantage le codage : avec \texttt{-codeur}, le simulateur émet trois bits par bit utile, chacun avec la même énergie. La transmission consomme donc \textbf{trois fois plus d'énergie} et, à débit d'émission constant, dure trois fois plus longtemps. Si l'on raisonne à énergie égale par bit d'information, la courbe codée se décale de 4,8~dB vers la droite (figure~\ref{fig:equitable}) et passe \emph{au-dessus} de la courbe sans codage :
+La comparaison précédente avantage le codage : avec \texttt{-codeur}, le simulateur émet trois bits par bit utile, chacun avec la même énergie. La transmission consomme donc trois fois plus d'énergie et, à débit d'émission constant, dure trois fois plus longtemps. Si l'on raisonne à énergie égale par bit d'information, la courbe codée se décale de 4,8~dB vers la droite (figure~\ref{fig:equitable}) et passe \emph{au-dessus} de la courbe sans codage :
 \begin{center}\begin{tabular}{lccc}\toprule
 $\EbNo$ par bit utile pour $10^{-3}$ & sans codeur & avec codeur & bilan\\\midrule
 NRZ antipodal $(-1,1)$ & 6,8 dB & 8,2 dB & perte de 1,4 dB\\
 NRZT antipodal $(-1,1)$ & 7,7 dB & 8,9 dB & perte de 1,3 dB\\
 RZ unipolaire $(0,1)$ & 9,8 dB & 11,2 dB & perte de 1,4 dB\\\bottomrule
 \end{tabular}\end{center}
-Le code regagne 3,4~dB par la correction d'erreur, mais en dépense 4,8 par sa redondance. Ce résultat est connu : le gain de codage asymptotique d'un code de rendement $R$ qui corrige $t$ erreurs, décodé par décisions fermes, vaut $10\log_{10}\big(R\,(t+1)\big)$~[2], soit ici $10\log_{10}(2/3) = -1{,}8$~dB. Nos mesures ($-1{,}3$ à $-1{,}4$~dB entre $10^{-2}$ et $10^{-5}$) tendent vers cette valeur. Un décodage souple, qui additionnerait les trois sorties du filtre adapté avant de décider, ramènerait exactement aux performances sans codage : un code à répétition n'apporte pas de gain de codage, il échange du débit contre de la fiabilité.
+Le code regagne 3,4~dB par la correction d'erreur, mais en dépense 4,8 par sa redondance. Ce résultat est connu : le gain de codage asymptotique d'un code de rendement $R$ qui corrige $t$ erreurs, décodé par décisions fermes, vaut $10\log_{10}\big(R\,(t+1)\big)$~[2], soit ici $10\log_{10}(2/3) = -1{,}8$~dB. Nos mesures ($-1{,}3$ à $-1{,}4$~dB entre $10^{-2}$ et $10^{-5}$) tendent vers cette valeur. Un décodage souple, qui additionnerait les trois sorties du filtre adapté avant de décider, ramènerait aux performances sans codage : un code à répétition n'apporte pas de gain de codage, il échange du débit contre de la fiabilité.
 
 \textbf{Réponse à la question 2 du TP5.} Le codage améliore le TEB à puissance d'émission et rapport signal à bruit par bit émis constants (gain de 3,4~dB, quelle que soit la forme d'onde), au prix d'un débit utile divisé par trois. Il ne constitue pas une amélioration à énergie constante par bit d'information. Son intérêt pratique est donc de fiabiliser une liaison dont on ne peut pas augmenter la puissance, quand on accepte de réduire le débit.
 
@@ -692,9 +692,9 @@ Le code regagne 3,4~dB par la correction d'erreur, mais en dépense 4,8 par sa r
 sans codeur & 6,8 dB & 8,6 dB & 1,8 dB\\
 avec codeur & 3,4 dB & 4,6 dB & 1,2 dB\\\bottomrule
 \end{tabular}\end{center}
-L'explication tient à la forme du signal codé. Sans codage, deux bits consécutifs diffèrent une fois sur deux. Avec le code, les trois bits d'un mot alternent toujours, et seul le passage d'un mot au suivant peut conserver la valeur : deux bits consécutifs diffèrent \textbf{5 fois sur 6}. Or, pour un écho d'un demi-bit, la partie~II a montré que l'écho n'aide la décision que si les bits sont égaux, et que le bruit est réglé sur la puissance reçue $P_s$. Avec le signal codé, $P_s = \frac16(1+ar)^2 + \frac56\cdot\frac12\big[(1-ar)^2 + (1+ar)^2\big] = 1{,}42$ pour $ar = 0{,}5$, contre $1{,}75$ sans codage : le bruit ajouté pour un même \texttt{-snrpb} est plus faible.
+L'explication tient à la forme du signal codé. Sans codage, deux bits consécutifs diffèrent une fois sur deux. Avec le code, les trois bits d'un mot alternent toujours, et seul le passage d'un mot au suivant peut conserver la valeur : deux bits consécutifs diffèrent 5 fois sur 6. Or, pour un écho d'un demi-bit, la partie~II a montré que l'écho n'aide la décision que si les bits sont égaux, et que le bruit est réglé sur la puissance reçue $P_s$. Avec le signal codé, $P_s = \frac16(1+ar)^2 + \frac56\cdot\frac12\big[(1-ar)^2 + (1+ar)^2\big] = 1{,}42$ pour $ar = 0{,}5$, contre $1{,}75$ sans codage : le bruit ajouté pour un même \texttt{-snrpb} est plus faible.
 
-\textbf{Sans bruit (étape 4a).} En NRZ unipolaire $(0,1)$, où un écho fort fait franchir le seuil (partie~II), le codage \textbf{n'apporte rien} :
+\textbf{Sans bruit (étape 4a).} En NRZ unipolaire $(0,1)$, où un écho fort fait franchir le seuil (partie~II), le codage n'apporte rien :
 \begin{center}\begin{tabular}{ccccc}\toprule
 $dt$ & $ar$ & sans codeur (simulé) & avec codeur (simulé) & théorie (les deux)\\\midrule
 30 & 0,4 & 0 & 0 & 0\\
@@ -703,16 +703,16 @@ $dt$ & $ar$ & sans codeur (simulé) & avec codeur (simulé) & théorie (les deux
 20 & 0,9 & 0,248 & 0,248 & 0,25\\
 10 & 0,9 & 0 & 0 & 0\\\bottomrule
 \end{tabular}\end{center}
-Sans bruit, un bit 0 est faux chaque fois qu'il suit un bit 1 dont l'écho dépasse le seuil. Dans le mot $010$ qui suit un mot $101$, le premier et le troisième bit sont deux 0 précédés d'un 1 : le paquet contient \textbf{deux} erreurs, que le décodeur ne peut pas corriger. Ce cas se produit quand un bit d'information 0 suit un bit 1, soit une fois sur quatre : le TEB vaut $1/4$, comme sans codage. Le code corrige des erreurs isolées et aléatoires ; il est sans effet contre des erreurs systématiques, liées au signal lui-même. Contre les échos, il faut un égaliseur.
+Sans bruit, un bit 0 est faux chaque fois qu'il suit un bit 1 dont l'écho dépasse le seuil. Dans le mot $010$ qui suit un mot $101$, le premier et le troisième bit sont deux 0 précédés d'un 1 : le paquet contient deux erreurs, que le décodeur ne peut pas corriger. Ce cas se produit quand un bit d'information 0 suit un bit 1, soit une fois sur quatre : le TEB vaut $1/4$, comme sans codage. Le code corrige des erreurs isolées et aléatoires ; il est sans effet contre des erreurs systématiques, liées au signal lui-même. Contre les échos, il faut un égaliseur.
 
 \subsection{Synchronisation émetteur/récepteur}
-Dans le simulateur, le récepteur connaît exactement le début de chaque bit : la synchronisation est parfaite par construction. La question 3 du TP5, qui porte sur l'amélioration de la synchronisation, demande donc de pouvoir simuler une désynchronisation. Elle fait l'objet de la section suivante.
+Dans le simulateur, le récepteur connaît le début de chaque bit : la synchronisation est parfaite par construction. La question 3 du TP5, qui porte sur l'amélioration de la synchronisation, demande donc de pouvoir simuler une désynchronisation. Elle fait l'objet de la section suivante.
 
 \section{Désynchronisation du récepteur (question 3 du TP5)}\label{sec:desync}
-La question 3 du TP5 demande si le simulateur permet de mettre en évidence l'amélioration de la synchronisation émetteur/récepteur promise par le code. Pour y répondre, nous avons rendu la fenêtre de décision du récepteur réglable : on peut ainsi \textbf{simuler une désynchronisation} et observer son effet sur les signaux et sur le TEB.
+La question 3 du TP5 demande si le simulateur permet de mettre en évidence l'amélioration de la synchronisation émetteur/récepteur promise par le code. Pour y répondre, nous avons rendu la fenêtre de décision du récepteur réglable : on peut ainsi simuler une désynchronisation et observer son effet sur les signaux et sur le TEB.
 
 \subsection{Modèle et réalisation}
-Par défaut, l'émetteur et le récepteur partagent la même base de temps : le bit $i$ occupe exactement les échantillons $iN$ à $(i+1)N - 1$, et le récepteur intègre exactement cette fenêtre. La synchronisation est parfaite. Nous modélisons une \textbf{erreur de synchronisation constante} par un décalage $d$ de la fenêtre de décision :
+Par défaut, l'émetteur et le récepteur partagent la même base de temps : le bit $i$ occupe les échantillons $iN$ à $(i+1)N - 1$, et le récepteur intègre cette fenêtre. La synchronisation est parfaite. Nous modélisons une erreur de synchronisation constante par un décalage $d$ de la fenêtre de décision :
 \[ \text{fenêtre du bit } i = \big[\, iN + d,\ iN + d + N \,\big[, \qquad |d| < N, \]
 $d > 0$ correspondant à un récepteur en retard sur l'émetteur et $d < 0$ à un récepteur en avance. La fenêtre mord donc sur le bit suivant ou sur le bit précédent. Avant le début et après la fin du signal, rien n'est reçu (échantillons nuls).
 \begin{lstlisting}
@@ -744,15 +744,15 @@ Avec $d = 10$ (un tiers de bit), chaque fenêtre contient deux tiers du bit cour
 Sans bruit, le TEB est nul tant que la fenêtre contient davantage du bit courant que de son voisin, puis saute brusquement :
 \begin{center}\begin{tabular}{lccc}\toprule
 Forme & décalages sans erreur & TEB au-delà, sans codeur & TEB au-delà, avec codeur\\\midrule
-NRZ antipodal $(-1,1)$ & $-14 \le d \le 14$ & 0,5 & \textbf{1}\\
-NRZT antipodal $(-1,1)$ & $-12 \le d \le 17$ & 0,5 & \textbf{1}\\
-RZ unipolaire $(0,1)$ & $-4 \le d \le 4$ & 0,5 & 0,5, puis \textbf{1} si $|d| \ge 26$\\\bottomrule
+NRZ antipodal $(-1,1)$ & $-14 \le d \le 14$ & 0,5 & 1\\
+NRZT antipodal $(-1,1)$ & $-12 \le d \le 17$ & 0,5 & 1\\
+RZ unipolaire $(0,1)$ & $-4 \le d \le 4$ & 0,5 & 0,5, puis 1 si $|d| \ge 26$\\\bottomrule
 \end{tabular}\end{center}
 \begin{itemize}
   \item \textbf{NRZ} : la sortie du filtre vaut $2\big[(N - |d|)\,s_i + |d|\,s_{\text{voisin}}\big]$. Tant que $|d| < N/2$, le bit courant l'emporte. Au-delà, le récepteur décide la valeur du voisin, et se trompe chaque fois que les deux bits diffèrent, soit une fois sur deux.
   \item \textbf{NRZT} : la tolérance est dissymétrique. Un récepteur en retard ($d > 0$) saute la rampe du début du bit, qui dépend du bit précédent, et n'atteint que la rampe du bit suivant, qui part du niveau du bit courant : il tolère jusqu'à 17 échantillons. En avance, il intègre la fin du bit précédent et ne tolère que 12 échantillons.
   \item \textbf{RZ} : l'impulsion n'occupe que le tiers central du bit. Dès que la fenêtre se décale de la moitié de cette impulsion ou plus ($N/6 = 5$ échantillons), elle ne voit plus assez d'impulsion pour décider un 1 : tous les bits 1 sont perdus. C'est la forme d'onde la plus sensible à la désynchronisation. Pour $|d| \ge 26$, la fenêtre voit au contraire plus de la moitié de l'impulsion du bit \emph{voisin}, et décide ce bit.
-  \item \textbf{Avec le codeur}, la tolérance est la même, mais au-delà le TEB vaut \textbf{1} en NRZ et NRZT : \emph{tout le message est inversé}. Le récepteur lit, pour le paquet $(b, \bar b, b)$, les bits $(\bar b, b, b')$ ; après ré-inversion du bit du milieu, le vote majoritaire donne toujours $\bar b$. En RZ, pour $5 \le |d| \le 25$, toutes les décisions valent 0 et le décodeur rend 0 pour chaque paquet : le TEB reste de 0,5 ; pour $|d| \ge 26$, le récepteur lit le bit voisin et le message est de nouveau inversé.
+  \item \textbf{Avec le codeur}, la tolérance est la même, mais au-delà le TEB vaut 1 en NRZ et NRZT : \emph{tout le message est inversé}. Le récepteur lit, pour le paquet $(b, \bar b, b)$, les bits $(\bar b, b, b')$ ; après ré-inversion du bit du milieu, le vote majoritaire donne toujours $\bar b$. En RZ, pour $5 \le |d| \le 25$, toutes les décisions valent 0 et le décodeur rend 0 pour chaque paquet : le TEB reste de 0,5 ; pour $|d| \ge 26$, le récepteur lit le bit voisin et le message est de nouveau inversé.
 \end{itemize}
 
 \subsection{Effet sur le TEB avec bruit}
@@ -768,12 +768,12 @@ avec codeur, théorie & 0,0939 & 0,00549 & 0,000465 & 0,00549 & 0,0939 & 0,306 &
 \bottomrule\end{tabular}\end{center}
 \begin{itemize}
   \item Avec du bruit, il n'y a plus de tolérance : le TEB augmente dès le premier échantillon de décalage, car la partie du voisin réduit la marge de décision. En NRZ, un décalage d'un sixième de bit ($d = 5$) triple déjà le TEB.
-  \item \textbf{Le codeur reste utile pour les petits décalages}, mais devient nuisible au-delà d'environ $|d| = 12$ en NRZ : son TEB tend vers 1 alors que celui sans codeur tend vers 0,5. En NRZT, le croisement a lieu à $d = 16$ en retard mais dès $d = -10$ en avance ; en RZ, les deux TEB valent 0,5 dès $|d| \ge 10$.
+  \item Le codeur reste utile pour les petits décalages, mais devient nuisible au-delà d'environ $|d| = 12$ en NRZ : son TEB tend vers 1 alors que celui sans codeur tend vers 0,5. En NRZT, le croisement a lieu à $d = 16$ en retard mais dès $d = -10$ en avance ; en RZ, les deux TEB valent 0,5 dès $|d| \ge 10$.
   \item L'effet est rapide : en NRZ, une erreur de synchronisation d'un tiers de bit multiplie le TEB par 10 sans codeur et par 200 avec codeur.
 \end{itemize}
 
 \subsection{Le code permet de détecter une désynchronisation}
-Le code ne protège donc pas contre une erreur de synchronisation. Sa structure permet en revanche de la \textbf{détecter}. Quand le récepteur est synchronisé, les paquets reçus sont des mots de code ($010$ ou $101$), sauf erreur due au bruit. Quand il est décalé de plus d'un demi-bit, il lit $(\bar b, b, b')$, qui n'est un mot de code que si $b' \ne b$ : un paquet sur deux n'en est plus un.
+Le code ne protège donc pas contre une erreur de synchronisation. Sa structure permet en revanche de la détecter. Quand le récepteur est synchronisé, les paquets reçus sont des mots de code ($010$ ou $101$), sauf erreur due au bruit. Quand il est décalé de plus d'un demi-bit, il lit $(\bar b, b, b')$, qui n'est un mot de code que si $b' \ne b$ : un paquet sur deux n'en est plus un.
 \begin{center}\footnotesize\begin{tabular}{lcccccc}\toprule
 NRZ antipodal, avec codeur, $d$ & $0$ & $5$ & $10$ & $14$ & $16$ & $20$\\\midrule
 sans bruit : paquets invalides & 0,0~\% & 0,0~\% & 0,0~\% & 0,0~\% & 50,3~\% & 50,3~\%\\
@@ -786,11 +786,11 @@ Un récepteur qui surveille la proportion de paquets invalides peut donc repére
 \subsection{Réponse à la question 3}
 \textbf{En partie.} Le simulateur permet désormais de :
 \begin{itemize}
-  \item \textbf{simuler une désynchronisation} constante et observer son effet sur les signaux (fenêtre interactive) et sur le TEB (option \texttt{-decalage}) ;
-  \item vérifier que le code \textbf{ne protège pas} contre une erreur de synchronisation : il la rend même catastrophique au-delà d'un demi-bit (message inversé) ;
-  \item montrer que le code permet de la \textbf{détecter} (paquets invalides), et vérifier la propriété annoncée par le TP : jamais plus de deux bits consécutifs identiques dans le signal codé (test JUnit).
+  \item simuler une désynchronisation constante et observer son effet sur les signaux (fenêtre interactive) et sur le TEB (option \texttt{-decalage}) ;
+  \item vérifier que le code ne protège pas contre une erreur de synchronisation : il la rend même catastrophique au-delà d'un demi-bit (message inversé) ;
+  \item montrer que le code permet de la détecter (paquets invalides), et vérifier la propriété annoncée par le TP : jamais plus de deux bits consécutifs identiques dans le signal codé (test JUnit).
 \end{itemize}
-L'amélioration promise par le TP concerne cependant la \textbf{récupération du rythme} : un récepteur réel recale en permanence son horloge sur les transitions du signal reçu, et une longue suite de bits identiques, sans transition, le laisse dériver. Notre modèle utilise un décalage \emph{constant} et un récepteur qui ne se recale jamais : il ne peut pas montrer ce gain. Il faudrait pour cela modéliser une horloge de réception légèrement différente de celle de l'émission (un décalage qui grandit au fil des bits) et un récepteur qui se recale sur chaque transition détectée. Sans codage, les longues suites de bits identiques laisseraient la dérive s'accumuler ; avec le code, une transition au moins tous les deux bits la corrigerait.
+L'amélioration promise par le TP concerne cependant la récupération du rythme : un récepteur réel recale en permanence son horloge sur les transitions du signal reçu, et une longue suite de bits identiques, sans transition, le laisse dériver. Notre modèle utilise un décalage \emph{constant} et un récepteur qui ne se recale jamais : il ne peut pas montrer ce gain. Il faudrait pour cela modéliser une horloge de réception légèrement différente de celle de l'émission (un décalage qui grandit au fil des bits) et un récepteur qui se recale sur chaque transition détectée. Sans codage, les longues suites de bits identiques laisseraient la dérive s'accumuler ; avec le code, une transition au moins tous les deux bits la corrigerait.
 
 \section{Confrontation aux prévisions}
 \subsection{Ce qui est conforme}
@@ -829,7 +829,7 @@ Les tests 22 et 23 comparent le TEB affiché \emph{exactement} à la valeur atte
 Le test 21 vérifie le gain de mémoire de la section~\ref{sec:perf} : il simule 100\,000 bits codés (9 millions d'échantillons) en limitant la mémoire de la machine virtuelle Java à 256~Mo (variable d'environnement \texttt{JAVA\_TOOL\_OPTIONS=-Xmx256m}). Avec l'ancien stockage, cette simulation s'arrête sur une \texttt{OutOfMemoryError} ; avec le nouveau, elle réussit, et réussit encore avec 128~Mo.
 
 \subsection{Tests unitaires JUnit}
-La suite passe de 96 à \textbf{125 tests}, tous réussis. Tests ajoutés :
+La suite passe de 96 à 125 tests, tous réussis. Tests ajoutés :
 \begin{itemize}
   \item \textbf{codeur} : $0 \to 010$ et $1 \to 101$ ; jamais trois bits consécutifs identiques dans le signal codé ;
   \item \textbf{décodeur} : les huit lignes de la table du TP5 ; une erreur sur le premier, le deuxième ou le troisième bit d'un paquet est corrigée ; deux erreurs dans un paquet donnent le mauvais bit (limite du code) ; message vide et paquet incomplet en fin de message ;
@@ -880,7 +880,7 @@ signal.ajouter(formeBit(forme, nbEch, aMin, aMax, bit, bitPrecedent));
   \item \textbf{Seule différence} : la valeur \texttt{null}, qu'un \texttt{float} ne peut pas représenter, est refusée. Le simulateur n'en produit jamais.
 \end{itemize}
 
-\textbf{Vérification.} Les calculs sont inchangés : seule la façon de ranger les valeurs change. Nous avons comparé l'ancienne et la nouvelle version sur 89 configurations (trois formes d'onde, deux jeux d'amplitudes, avec et sans bruit, échos, codeur, deux semences, messages fixes) : les TEB sont \textbf{identiques au bit près}. Tous les tests JUnit et \texttt{runTests} passent. Les courbes de ce rapport, calculées avant la modification, restent donc valables.
+\textbf{Vérification.} Les calculs sont inchangés : seule la façon de ranger les valeurs change. Nous avons comparé l'ancienne et la nouvelle version sur 89 configurations (trois formes d'onde, deux jeux d'amplitudes, avec et sans bruit, échos, codeur, deux semences, messages fixes) : les TEB sont identiques au bit près. Tous les tests JUnit et \texttt{runTests} passent. Les courbes de ce rapport, calculées avant la modification, restent donc valables.
 
 \begin{center}\begin{tabular}{lccc}\toprule
 200\,000 bits, $N = 30$ & avant & après & gain\\\midrule
